@@ -1,32 +1,32 @@
 /*
 
 	@Author:
-	@Brief: This the client side bridge to the server.
-			Its the point where data is recieved from the server.
+	@Brief: 
+	This the client side bridge to the server.
+	Its the point where data is recieved from the server.
 */
 
 
 // Connect to the ip of the server. 
 // This will change according to the network.
 var socket = io.connect('193.156.105.166:7541');
-
-// The kinect data dent from the java client.
+// A map of the kinect joints as vector3's
 var kinectMap = {};
+// Has the server recieved any kinect data.
 var kinect = false;
 	
-	/*	
-		This is where we recieve the kinect data from the java app.
-	*/
-	socket.on('passClientData', function ( data ){
-	
-		// We have the kinect data in the game now.  
-		if( data != null){
-			kinectMap = data ;
-			console.log('We have the kinect data in the game now.');
-		}	
-		else{
-			console.log("We've dropped a packet, it was null.");
-		}
+/*	
+	This is where we recieve the kinect data from the java app.
+*/
+socket.on('passClientData', function ( data ){
+	 
+	if( data != null){
+		kinectMap = data ;
+		console.log('We have the kinect data in the game now.');
+	}	
+	else{
+		console.log("We've dropped a packet, it was null.");
+	}
 		
 	});
 	
