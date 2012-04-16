@@ -1,5 +1,8 @@
 /*
 
+	@Author: James Browne
+	
+	@Brief:
 	A model that represents all the joint data from the kinect.
 	Upon creation there will be 15 joints.
 	After construction the individual joints data will be passed as a map.
@@ -9,7 +12,7 @@
 function Model( name, jointNames ){
 
 	this._joint = {};				// Map of joint objects.
-	this._jointNames = jointNames;	// Array of key values for the kinect data.
+	this._jointNames = jointNames;			// Array of key values for the kinect data.
 		
 	// Construct all the joints.
 	for( var i = 0; i < this._jointNames.length; i++){
@@ -26,9 +29,12 @@ function Model( name, jointNames ){
 
 
 
-/*
-	Probably be never used.
 
+
+/*
+	@Brief:
+	
+	@Arguments:
 
 */
 Model.prototype.setJointPosition = function( name, pos ){
@@ -36,9 +42,14 @@ Model.prototype.setJointPosition = function( name, pos ){
 	this._joint[ name ].setPosition( pos );
 }
 
-/*
-	Probably be never used.
 
+
+
+
+/*
+	@Brief:
+	
+	@Arguments:
 
 */
 Model.prototype.setAllJoints = function( map ){
@@ -50,9 +61,14 @@ Model.prototype.setAllJoints = function( map ){
 	}
 }
 
-/*
-	Probably be never used.
 
+
+
+
+/*
+	@Brief:
+	
+	@Arguments:
 
 */
 Model.prototype.getPosition = function(  ){
