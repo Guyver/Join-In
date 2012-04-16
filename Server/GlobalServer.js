@@ -40,7 +40,7 @@ var server = http.createServer( function ( request , response ) {
     var filePath = '.' + request.url;
 	
     if ( filePath == './' )// Just the root.
-        filePath = './index.htm';// Default page, our case the game html page.
+        filePath = '../scripts/index.htm';// Default page, our case the game html page.
          
     var extname = path.extname( filePath );
     var contentType = 'text/html';
