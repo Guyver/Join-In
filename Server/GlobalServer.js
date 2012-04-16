@@ -57,40 +57,44 @@ var server = http.createServer( function ( request , response ) {
      
     path.exists(filePath, function(exists) {// Check to see if the file exists
      
-        if (exists) {// REturned from the callback, checking to see if valid.
-			// Read file, filePath. Plus a callback
-            fs.readFile(filePath, function(error, content) {
-                if (error) {
-				// If theres and error throw 500
+        if (exists) {// Returned from the callback, checking to see if valid.
+			
+            fs.readFile(filePath, function(error, content) {// Read file, filePath. Plus a callback
+            	
+                if (error) {// If theres and error throw 500
+				
                     response.writeHead(500);
                     response.end();
                 }
-                else {
-				// Otherwise return the file.
+                else {	// Otherwise return the file.
+			
                     response.writeHead(200, { 'Content-Type': contentType });
                     response.end(content, 'utf-8');
                 }
             });
         }
         else {// Throw 404 if the file isn't there.
+        
             response.writeHead(404);
             response.end();
         }
     });
      
-});
+});// End of Http create server.
 
 var socket = io.listen( server ); 		// Socket IO server instance.
 
-var kinectMap = {};
+var kinectMap = {};				// A map containing a 3d vector for each joint.
 
 
 // Add a connect listener
 socket.sockets.on( 'connection', function( client ){
 	
 	// Store a global reference to the client connected.
-	if(gClient !== )
-	gClient = client;
+	if(gClient !== undefined ){
+		gClient = client;	
+	}
+	
 	
 	/*
 	    The browser calls this to retrieve the latest kinect data from the server.	
@@ -114,14 +118,9 @@ socket.sockets.on( 'connection', function( client ){
 // Listen for connection
 server.listen( clientPort );
 
-
-
-
-
-
 //====================================================================================================================================================================
 //
-//										CONNECTION TO OPENNI
+//	CONNECTION TO OPENNI
 //
 //
 //====================================================================================================================================================================
@@ -147,6 +146,7 @@ javaServer.on('close', function () {
     console.log('Server closed');
 });
 
+// Debugging variables.
 var packetCount = 0;
 var fullPackets = 0;
 var dataBuffer = "";
@@ -156,17 +156,19 @@ var kinectSynced = false;
 
 javaServer.on('connection', function ( javaSocket ) {
 	
-	// Store the address of the java client.
+    // Store the address of the java client.
     var clientAddress = javaSocket.address().address + ':' + javaSocket.address().port;
 	
-	// Log that a client has connected...
+    // Log that a client has connected...
     console.log('Java ' + clientAddress + ' connected');
+
+    // Send a message to openNi that we are ready to recieve some funk.
+    javaSocket.write( '\n' );
 	
-	javaSocket.write( '\n' );
-	
-	// When data is called, do first data listener.
+    // The point of entry, giggidy, from openNi
     javaSocket.on('data', function( data ){
 		
+		// Debugging Node is a pain in the balls.
 		packetLength = data.length;
 		packetCount++;
 		console.log("	");
@@ -178,24 +180,28 @@ javaServer.on('connection', function ( javaSocket ) {
 		
 		newlineIndex = dataBuffer.indexOf( '\n' );
 		
-		if( newlineIndex == -1){
+		if( newlineIndex == -1){// Did we find an end of line?
+		
 			console.log("There was no end of line");
 			javaSocket.write( '\n' );
 			return;// If there was no end of package in the data return.
 		}
+		
 		console.log("There was an end of line detected.");
 		kinectMap = JSON.parse( dataBuffer.slice(0, newlineIndex) );
 		fullPackets++;
-        dataBuffer = dataBuffer.slice(newlineIndex + 1);
+        	dataBuffer = dataBuffer.slice(newlineIndex + 1);
 		
 		
-		if( !kinectSynced ){
+		if( !kinectSynced ){// Used by the client to only stream when we have connected to openNi.
 			kinectSynced = true;
 			gClient.emit('kinectSynced', true);
 			console.log("The kinect data has began streaming and the browser should connect.");
 		}
+		
 		javaSocket.write( '\n' );
-	});
+		
+	});// End of on.Data
 
 	// User has disconnected...
     javaSocket.on('close', function() {
