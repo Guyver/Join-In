@@ -1,24 +1,23 @@
-
-/*			CLASS DESCRIPTION	
+/*			
 	@Author: James Browne
-	@Company: Norut
-	@Name: ImageManager
-	@Brief: A single object that handles all the images for the game.
-			It loads all the images given and stores them for use.
+	
+	@Brief: 
+	A single object that handles all the images for the game.
+	It loads all the images given and stores them for use.
 			
-			Example usage:
+	Example usage:
 			
-			var loader = new ImageManager();
-			loader.queueDownload( '../../img/example.jpg' );
-			loader.downloadAll( startGame );
-			...
-			this.img = loader[ '../../img/example.jpg' ];	
+	var loader = new ImageManager();
+	loader.queueDownload( '../../img/example.jpg' );
+	loader.downloadAll( startGame );
+	...
+	this.img = loader[ '../../img/example.jpg' ];	
 
 */
 function ImageManager() {
 
-    this.successNum = 0;		// The number of load callbacks we get for the listener.
-    this.errorNum = 0;			// The number of error callbacks we recieved on loading.
+    this.successNum = 0;	// The number of load callbacks we get for the listener.
+    this.errorNum = 0;		// The number of error callbacks we recieved on loading.
     this.cache = {};            // Store them here so we can get them for use. Pass url as a key...sounds gay so might change after test!
     this.downloadQueue = [];	// The queue of images to be processed.
 }
