@@ -1,21 +1,21 @@
 /*
 	@Author: James Browne.
 	
-	@Brief: This global server will hold the game logic.
-	When a client connects it will store them in an array.
-	The game will use that array along with the kinect data-
-	to position the client in the game.
-	All the clients in the game will be drawn using that array.
+	@Brief: 
+	This was designed to recieve kinect data from and OpenNi interface and to staore it.
+	Ze client can conect then and request it per frame to draw the user in the browser.
 	
-	CONNECTS TO: Browser, LocalServer
+	...neat ain't it.
+	
+	CONNECTS TO: Browser, Java Web sockets.
 	
 */
-//====================================================================================================================================================================
-//
-//		CONNECTION TO LOCAL NODE SERVER
-//
-//
-//====================================================================================================================================================================
+
+/*======================================================
+
+	ACT 1: Server the client the game.
+
+========================================================*/
 
 
 // The port to listen for client connctions.
@@ -28,6 +28,8 @@ var fs = require('fs');
 var path = require('path');
 // Sockets
 var io = require('./lib/socket.io');
+// A map containing a 3d vector for each joint.
+var kinectMap = {};				
 
 
 //Server
@@ -84,14 +86,12 @@ var server = http.createServer( function ( request , response ) {
 
 var socket = io.listen( server ); 		// Socket IO server instance.
 
-var kinectMap = {};				// A map containing a 3d vector for each joint.
-
 
 // Add a connect listener
 socket.sockets.on( 'connection', function( client ){
 	
 	// Store a global reference to the client connected.
-	if(gClient !== undefined ){
+	if(gClient !== null ){
 		gClient = client;	
 	}
 	
@@ -118,12 +118,11 @@ socket.sockets.on( 'connection', function( client ){
 // Listen for connection
 server.listen( clientPort );
 
-//====================================================================================================================================================================
-//
-//	CONNECTION TO OPENNI
-//
-//
-//====================================================================================================================================================================
+/*===================================================
+	
+	ACT 2 : Connect to openNi and get the data.
+
+====================================================*/
 var javaPort = 7540;
 var javaServer = require('net').createServer();
 
