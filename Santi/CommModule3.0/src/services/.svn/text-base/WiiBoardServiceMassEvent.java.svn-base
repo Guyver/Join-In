@@ -1,0 +1,48 @@
+package services;
+
+import control.IEventCommModule;
+
+import edu.unsw.cse.wiiboard.event.WiiBoardMassEvent;
+/**
+ * Defines the WiiBoard mass events.
+ * @author Santiago Hors Fraile
+ */
+public class WiiBoardServiceMassEvent implements IEventCommModule {
+
+	/**
+	 * Represents the total weight on the WiiBoard
+	 */
+	public double totalWeight;
+	/**
+	 * Represents the weight on the top left section of the WiiBoard.
+	 */
+	public double topLeft; 
+	/**
+	 * Represents the weight on the top left section of the WiiBoard.
+	 */
+	public double topRight;
+	/**
+	 * Represents the weight on the bottom left section of the WiiBoard.
+	 */
+	public double bottomLeft;
+	/**
+	 * Represents the weight on the bottom right section of the WiiBoard.
+	 */
+	public double bottomRight;
+	
+	/**
+	 * Sets the fields of this class with the data contained in the given parameter.
+	 * @param massEvent The new mass status report.
+	 */
+	public WiiBoardServiceMassEvent(WiiBoardMassEvent massEvent) {
+		totalWeight = massEvent.getTotalWeight();
+		topLeft = massEvent.getTopLeft();
+		topRight= massEvent.getTopRight();
+		bottomLeft = massEvent.getBottomLeft();
+		bottomRight = massEvent.getBottomRight();
+	}
+
+
+
+
+}

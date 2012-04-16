@@ -1,0 +1,66 @@
+package control;
+
+
+import java.util.LinkedList;
+import java.util.List;
+
+
+
+/**
+ * Abstract class which gives basic functionalities to all other launchers.
+ * @author santiago
+ */
+public abstract class LauncherWrapper extends Thread{
+
+	/**
+	 * Contains all listeners that are listening the service that this class wrap
+	 */
+	public List<IListenerCommModule> listenersList = new LinkedList<IListenerCommModule>();
+	
+	/**
+	 * Activated when there has been as many calls from  service as dropServices()
+	 */
+	boolean deviceNotNecessaryAnyLonger = false; 
+	
+	/**
+	 * Adds a listener to the list of listeners
+	 * @param l This is the listener to be added
+	 */
+	public void addListener(IListenerCommModule l) {
+		if(!deviceNotNecessaryAnyLonger){
+			listenersList.add(l);
+		}
+	}
+	
+	/**
+	 * Removes a listener to the list of listeners
+	 * @param l This is the listener to be removed
+	 */
+	public void removeListener(IListenerCommModule l){		
+		
+		if(!deviceNotNecessaryAnyLonger){
+			listenersList.remove(l);
+		}
+		
+	}
+	
+	/**
+	 * Called when any service is no longer needed.
+	 */
+	public void dropService(){
+		if(listenersList.size()>0){
+			listenersList.remove(listenersList.size()-1);
+			if(listenersList.size()==0){
+				deviceNotNecessaryAnyLonger = true; 
+			}
+		}
+
+	}
+		
+	
+
+
+	
+	
+	
+}
