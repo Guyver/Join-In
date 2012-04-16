@@ -1,0 +1,18 @@
+package iservices;
+
+import services.WiiMoteServiceRotationSpeedEvent;
+
+import control.IListenerCommModule;
+
+/**
+ * Must be implemented by any class which wants to receive rotation speed events from the WiiMotionPlus
+ * @author Santiago Hors Fraile
+ */
+public interface IWiiMoteRotationSpeedService extends IListenerCommModule {
+	/**
+	 * Must be implemented to manage the WiiMoteServiceRotationSpeedEvent received.
+	 * @param se This is the WiiMoteServiceRotationSpeedEvent received.
+	 */
+	public void rotationSpeedReceived(WiiMoteServiceRotationSpeedEvent se);
+
+}

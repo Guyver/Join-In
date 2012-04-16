@@ -1,0 +1,56 @@
+package NoninPackage;
+
+
+public class TestCutre implements INoninListener{
+
+	public static void main (String [] args) {
+		TestCutre obj = new TestCutre();
+		
+		obj.estaConectadoNonin();
+	}
+
+	public boolean estaConectadoNonin(){
+	 
+		TestCutre tes = new TestCutre();
+		
+		try{
+			NoninManager nm = new NoninManager();
+			nm.addListener(tes);
+			nm.connect();
+			
+
+		    
+			long inicio = System.currentTimeMillis();
+			boolean noCumplido=true;
+			while(noCumplido)
+			if((System.currentTimeMillis()-inicio)>12000){
+				System.out.println("Parar");
+				nm.disconnect();
+				noCumplido=false;
+			}
+			
+		
+			//System.out.println("Conectado el n con ID = " + wiimote.getId());
+			return true;
+		}catch(Exception e){
+			System.out.println("No esta conectado");
+			return false;
+		}
+	
+		
+	}
+
+
+
+	@Override
+	public void noninUpdate(NoninEvent ne) {
+		
+		System.out.println("Pulso: "+ne.pulse);
+		System.out.println("Oxigenacion: "+ne.oxy);
+
+		
+	}
+
+
+
+}

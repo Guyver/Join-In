@@ -1,0 +1,33 @@
+package services;
+
+import org.wiigee.event.AccelerationEvent;
+
+import control.IEventCommModule;
+
+/**
+ * Defines the WiiMote acceleration events.
+ * @author Santiago Hors Fraile
+ */
+public class WiiMoteServiceAccelerationEvent implements IEventCommModule{
+	/**
+	 * Represents the x, y and z accelerations.
+	 */
+	public double X, Y, Z;
+	/**
+	 * Represents the absolute value of the acceleration.
+	 */
+	public double absvalue;
+	
+	/**
+	 * Sets the fields of this class with the information contained in the given parameter.
+	 * @param event The new acceleration event.
+	 */
+	public WiiMoteServiceAccelerationEvent(AccelerationEvent event) {
+		this.X = event.getX();
+		this.Y = event.getY();
+		this.Z = event.getZ();
+		this.absvalue= event.getAbsValue();
+	}
+
+
+}
