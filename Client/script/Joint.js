@@ -1,34 +1,38 @@
-//===============================================================
-//	A Base class for an Joint to be derived from.
-//
-//
-//
-//
-//
-//===============================================================
+/*
+	@Author: James Browne
+	
+	@Brief:
+	A model has 15 joints and this is the template class for them all.
+
+*/
 function Joint(  ){
 
-	this._accel = new THREE.Vector3();			// Usually Gravity if ignoring external force.
+	this._accel = new THREE.Vector3();		// Usually Gravity if ignoring external force.
 	this._velocity = new THREE.Vector3();		// Velocity vector.
 	this._direction = new THREE.Vector3();		// Direction vector, maybe use a quaternion.
 	
-		// Set up the sphere vars
+	// Set up the sphere vars
 	var radius = 10, segments = 10, rings = 10;
 	this._Material = new THREE.MeshLambertMaterial( {color: 0x000000 });
 	this._Geometry = new THREE.SphereGeometry( radius, segments, rings );
 	
-	this._mesh = new THREE.Mesh( this._Geometry , this._Material );					// The mesh of the Joint. Contains physical properties.
+	// The mesh of the Joint. Contains physical properties.
+	this._mesh = new THREE.Mesh( this._Geometry , this._Material );		
 	
-	scene.add( this._mesh );													// Add ourself to the scene.
+	// Add ourself to the scene.
+	scene.add( this._mesh );						
 }
 
 
 
-//===============================================================
-//
-//
-//===============================================================
-Joint.prototype.Move = function( dt ){
+/*
+	@Brief:
+	NOT USED
+	
+	@Arguments:
+
+*/
+Joint.prototype.move = function( dt ){
 
 	// New position. S = U + T + 1/2 x A x (TxT)
 	this._pos = this._pos + this._velocity + dt + 0.5 * this._accel * ( dt * dt );
@@ -39,70 +43,91 @@ Joint.prototype.Move = function( dt ){
 	// Calculate the accleration of the Joint.
 	CalcualteAccel();
 	
+	// Draw yourself.
 	Render();
 };
 
 
 
-//===============================================================
-//
-//
-//===============================================================
-Joint.prototype.CalcualteAccel = function( extForce, gravity){
+/*
+	@Brief:
+	NOT USED
+	
+	@Arguments:
+
+*/
+Joint.prototype.calcualteAccel = function( extForce, gravity){
 
 	this._accel = gravity + extForce;
 };
 
 
 
-//===============================================================
-//	Probably won't be used as the scene renders it.
-//
-//===============================================================
-Joint.prototype.Render = function(  ){
+/*
+	@Brief:
+	NOT USED
+	
+	@Arguments:
+
+*/
+Joint.prototype.render = function(  ){
 
 
 };
 
 
 
-//===============================================================
-//	
-//
-//===============================================================
-Joint.prototype.SetMaterial = function( ){
+/*
+	@Brief:
+	NOT USED
+	
+	@Arguments:
+
+*/
+Joint.prototype.setMaterial = function( ){
 
 };
 
 
 
-//===============================================================
-//	The mesh will be the Joints geometry plus the material.
-//
-//===============================================================
-Joint.prototype.SetMesh = function(  ){
+/*
+	@Brief:
+	NOT USED
+	
+	@Arguments:
+
+*/
+Joint.prototype.setMesh = function(  ){
 	// Probably redundant!
 
 };
 
 
+/*
+	@Brief:
+	Get the position of the Joint.
+	
+	@Arguments:
+	N/A
 
-//===============================================================
-//	The mesh will be the Joints geometry plus the material.
-//
-//===============================================================
+*/
 Joint.prototype.getPosition = function(  ){
 
 	return ( this._mesh.position );
 	
 };
 
-//===============================================================
-//	Set the position of the joint.
-//
-//===============================================================
+/*
+	@Brief:
+	Set the position of the Joint using the arguments.
+	
+	@Arguments:
+	position: The position to set the joint...
+
+*/
 Joint.prototype.setPosition = function( position ){
 
+	// The mesh hold the properties, not the joint class.
 	this._mesh.position = position;
 	
 };
