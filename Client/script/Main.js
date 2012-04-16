@@ -1,10 +1,12 @@
-//=========================================================================
-//								The Dude!
-//
-//
-//	Three.js research at its finest. I'm gonna throw some Newtonian mechanics
-//	in its grill and see what the frame rate is like.
-//=========================================================================
+/*=========================================================================
+
+	@Author: James Browne
+	
+	@Brief:
+	This is where the magic happens. The entry point, kind of.
+	The game logic is carried out here after initalising the game.
+	
+=========================================================================*/
 
 
 // Variables for the sugary goodness!
@@ -29,10 +31,8 @@ var imgContainer;
 
 
 /*====================================INIT()==========================================
-//	 -
-//
-//
-//	Set up stuff!
+
+	Initalise some variables needed for start up.
 //========================================================================*/
 function init(){
 	
@@ -71,13 +71,11 @@ function init(){
 
 
 
-/*================================INIT CAMERA()=======================================
-//	 -
-//
-//	Initalise our Three camera.
-//
-//
-//========================================================================*/
+/*================================INIT CAMERA()==========================
+
+	Initalise our Three camera.
+
+========================================================================*/
 function initCamera(){
 	
 	nearClip = 1;
@@ -94,12 +92,10 @@ function initCamera(){
 
 
 /*================================INIT SCENE()========================================
-//	
-//
-//	Initalise the scene that will contain all the game data.
-//
-//
-//========================================================================*/
+
+	Initalise the scene that will contain all the game data.
+
+========================================================================*/
 function initScene(){
 	
 	// the scene contains all the 3D object data
@@ -110,11 +106,10 @@ function initScene(){
 
 
 /*===============================INIT RENDERER()======================================
-//	 -
-//
-//	Set up the renderer that will decide render what is in the view frustrum.
-//	This will be a CANVAS renderer, not webgl. For the test at least.
-//
+
+	Set up the renderer that will decide render what is in the view frustrum.
+	This will be a CANVAS renderer, not webgl. For the test at least.
+
 //========================================================================*/
 function initRenderer(){
 	
@@ -141,11 +136,9 @@ function initRenderer(){
 
 
 /*===============================SETUP LIGHTS()=======================================
-//	 -
-//
-//	Let there be light!
-//	
-//
+
+	Let there be light!
+
 //========================================================================*/
 function setupLights(){
 	
@@ -177,10 +170,9 @@ function setupLights(){
 
 
 /*===============================CREATE OBJECTS()=====================================
-//	 - 
-//
-//	Set up stuff! Args: Name, Position (vector3), Mesh (Three.Mesh)
-//========================================================================*/
+
+	Set up stuff! Args: Name, Position (vector3), Mesh (Three.Mesh)
+========================================================================*/
 function createObjects(){
 	
 
@@ -207,13 +199,13 @@ function createObjects(){
 
 
 /*===============================GAME LOOP()==========================================
-//	 -
-//
-//	This is the main game loop. Where all the magic happens if you will.
-//	I'm calculating delta time here to use for Newtonian Mechanics. :D
-//
+
+	This is the main game loop. Where all the magic happens if you will.
+	I'm calculating delta time here to use for Newtonian Mechanics. :D
+
 //========================================================================*/
 function gameLoop(){
+	
 	// Initalise last for the 1st iteration.
 	if(!last)	{
 		last= new Date();
@@ -252,6 +244,7 @@ function gameLoop(){
 			this.camera.lookAt( this.player.getPosition() );
 		}
 	}catch( err ){
+		
 		console.log("kinectMap is undefined or null");
 		kinectMap.clear();
 		return;
@@ -268,10 +261,10 @@ function gameLoop(){
 
 
 /*================================RENDER()============================================
-//	 -
-//
-//	Render stuff!
-//========================================================================*/
+	
+	Render some stuff to the html page.
+	
+========================================================================*/
 function render(){
 
 	var x = document.getElementById('string');
@@ -285,13 +278,13 @@ function render(){
 
 
 /*================================SETUP GUI()=========================================
-//	 -
-//
-//	Make the Gui do stuff, the callbacks for changable variables is in here. 
-//	I did it like this so I can change the time step and watch at run time.
-// In effect you can edit at run time now using the GUI Paramaters :)
-// Like a boss!
-//========================================================================*/
+
+	Make the Gui do stuff, the callbacks for changable variables is in here. 
+	I did it like this so I can change the time step and watch at run time.
+	In effect you can edit at run time now using the GUI Paramaters :)
+ 	Like a boss!
+ 	
+========================================================================*/
 function setupGui(){
 	
 	// The number of entries/spaces on the GUI
@@ -354,13 +347,11 @@ function setupGui(){
 
 
 /*================================SETUP ENVIORNMENT()=================================
-//	 -
-//
-//	Make the Gui do stuff, the callbacks for changable variables is in here. 
-//	I did it like this so I can change the time step and watch at run time.
-// In effect you can edit at run time now using the GUI Paramaters :)
-// Like a boss!
-//========================================================================*/
+
+	Create a box around the origin for testing.
+	Will be a nice sandbox to play with our model.
+	
+========================================================================*/
 function setupEnviornment(){
 
 	// Create a texture from an image, image mush be a power of 2 in size. i.e 512*256
@@ -380,10 +371,9 @@ function setupEnviornment(){
 
 
 /*=================================SYNC KINECT()=============================================
-//	 - 
-//
-//	is called when the window loads!
-//========================================================================*/
+
+	Syncronise the model with the Kinect data we've got from openNi
+========================================================================*/
 function syncKinect() {  
 	
 	player.setAllJoints( kinectMap );
@@ -393,10 +383,9 @@ function syncKinect() {
 
 
 /*=================================LOAD()=============================================
-//	 - 
-//
-//	is called when the window loads!
-//========================================================================*/
+
+	Fired whenis called when the window loads!
+========================================================================*/
 function load() {  
 	init(); 
 }  
@@ -405,10 +394,9 @@ function load() {
 
 
 /*=================================RANDOM RANGE()=====================================
-//	 - 
-//
-//	Helper function for random numbers
-//========================================================================*/
+
+	Helper function for random numbers
+========================================================================*/
 function randomRange(min, max) {
 	return Math.random()*(max-min) + min;
 }
@@ -417,16 +405,15 @@ function randomRange(min, max) {
 
 
 /*==================================RESIZE()==========================================
-//	 - 
-//
-//	Helper function for resizing the display
+
+	Helper function for resizing the display
 //========================================================================*/
 function resize(){
     
 	// Fit the render area into the window.
 	renderer.setSize( window.innerWidth, window.innerHeight );
-    // Redraw 
-    render();
+    	// Redraw 
+    	render();
 }
 
 window.addEventListener('resize', resize, false);
