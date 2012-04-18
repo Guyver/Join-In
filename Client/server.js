@@ -36,56 +36,63 @@ var kinectMap = {};
 var server = http.createServer( function ( request , response ) {
  
     console.log('request starting...');
-     
-    var filePath = '.' + request.url;
 	
-    if ( filePath == './' )// Just the root.
-        filePath = '../scripts/index.htm';// Default page, our case the game html page.
-         
+    var filePath = '.' + request.url;
+
+    if ( filePath == './' ){// Just the root, localtion of server.js. Will only enter here initally.
+        filePath = './index.htm';// Serve html page.
+	}
+	
     var extname = path.extname( filePath );
+	
     var contentType = 'text/html';
 	
     switch ( extname ) {
         case '.js':// Serving some script.
             contentType = 'text/javascript';
+			filePath = './script'+request.url;
+			console.log( "Serving JS" ); 
             break;
         case '.css':// Serving some style
             contentType = 'text/css';
+			filePath = '..'+request.url;
+			console.log( "Serving CSS" ); 
             break;
 		case '.png':// We're serving an image.
             contentType = 'image/png';
+			filePath = '.'+request.url;
+			console.log( "Serving PNG" ); 
             break;
     }
      
-    path.exists(filePath, function(exists) {// Check to see if the file exists
+    path.exists( filePath, function(exists) {// Check to see if the file exists
      
         if (exists) {// Returned from the callback, checking to see if valid.
-			
-            fs.readFile(filePath, function(error, content) {// Read file, filePath. Plus a callback
-            	
-                if (error) {// If theres and error throw 500
-				
+			// Read file from disk and trigger callback.
+            fs.readFile( filePath, function(error, content) {
+                if (error) {
+					// If there's and error throw 500
                     response.writeHead(500);
                     response.end();
                 }
-                else {	// Otherwise return the file.
-			
+                else {
+					// Otherwise return the file.
                     response.writeHead(200, { 'Content-Type': contentType });
                     response.end(content, 'utf-8');
                 }
             });
         }
-        else {// Throw 404 if the file isn't there.
-        
+        else {
+			// Throw 404 if the file isn't there.
             response.writeHead(404);
             response.end();
         }
-    });
-     
+	});
+	
 });// End of Http create server.
 
 var socket = io.listen( server ); 		// Socket IO server instance.
-
+var gClient;
 
 // Add a connect listener
 socket.sockets.on( 'connection', function( client ){
