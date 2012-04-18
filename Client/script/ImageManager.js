@@ -62,7 +62,7 @@ ImageManager.prototype.downloadAll = function( downloadCallback ) {
         var img = new Image();
 		
 		/*  Can be tricky to understand, 'this' is a reference to the current object and 'self' is a class object reference.
-			For example, in the "load" callback this is a reference to the image of the event and not the ImageManager.
+			For example, inside the "load" listener callback, "this" is a reference to the image of the event and not the ImageManager.
 			I use 'manager' to call the asset manager function in here as its safer than using this explicitly.		
 		*/
         var manager = this; 
