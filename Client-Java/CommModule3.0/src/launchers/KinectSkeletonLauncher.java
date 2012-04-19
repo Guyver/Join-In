@@ -19,6 +19,9 @@ import iservices.*;
 
 import java.util.Iterator;
 
+
+import kinectThreads.KinectEnhacedSkeletonLauncher;
+
 import KinectPackage.IKinectListener;
 import KinectPackage.KinectEvent;
 
@@ -34,8 +37,18 @@ import control.LauncherWrapper;
  * @author Santiago Hors Fraile
  */
 public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectListener{
-	
-
+	/**
+	 * The thread that is going to be created to send the user's skeleton date to through the socket.
+	 */
+	private Thread t1; 
+	/**
+	 * This object privides more functionalities to the Launcher, including the Thread-running capability to send the data to the server.
+	 */
+	private KinectEnhacedSkeletonLauncher kinectEnhacedSkeletonLauncher;
+	/**
+	 * The user's label we want to track his/her skeleton to. 
+	 */
+	private int userId;
 	
 	/**
 	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
@@ -45,7 +58,7 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectLi
 	public void addListener (IKinectSkeletonService l) throws Exception{
 
 		super.addListener(l);
-
+		
 	}
 	
 	/**
@@ -73,11 +86,58 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectLi
 		while(it.hasNext()){
 			IKinectSkeletonService l = (IKinectSkeletonService)it.next();
 			l.kinectUpdate(se);
+			kinectEnhacedSkeletonLauncher.setLastKinectSkeletonServiceEvent(se);
+			
+			
 		}		
 		
 	}
+	/**
+	 * Default constructor
+	 */
+	public KinectSkeletonLauncher(){
+		setUserId(0);
+		kinectEnhacedSkeletonLauncher=null;
+		t1=null;
 	
+		
+	}
+	/**
+	 * Constructor with parameter.
+	 * @param userId The user's label we want to track his/her skeleton to.
+	 */
+	public KinectSkeletonLauncher(int userId){
+		
+		
+		setUserId(userId);
+		restartSendingThread();
+	}
 
+	/**
+	 * @return the userId
+	 */
+	public int getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(int userId) {
+		
+	
+		this.userId = userId;	
+		
+	
+	}
+	/**
+	 * THis function (re)starts the thread which sends the data to the server through the socket.
+	 */
+	public void restartSendingThread(){
+	kinectEnhacedSkeletonLauncher= new KinectEnhacedSkeletonLauncher(userId);
+	t1 = new Thread(kinectEnhacedSkeletonLauncher);
+	t1.start();
+}
 
 	
 	

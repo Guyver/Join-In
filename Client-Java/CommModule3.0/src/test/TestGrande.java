@@ -17,23 +17,22 @@
 package test;
 
 
-import iservices.IKinectAbsoluteSpaceForATimeService;
-import iservices.IKinectTotalSpaceTravelledForATimeService;
-import iservices.IKinectUserJointReachPointService;
-
 import java.io.IOException;
 
-
-import org.OpenNI.Point3D;
-import org.OpenNI.SkeletonJoint;
-
-
-
-import launchers.*;
-
-
-
-import control.*;
+import launchers.KinectAbsoluteSpaceForATimeLauncher;
+import launchers.KinectSkeletonLauncher;
+import launchers.KinectTotalSpaceTravelledForATimeLauncher;
+import launchers.KinectUserJointReachPointLauncher;
+import launchers.NoninLauncher;
+import launchers.NunchukAnalogStickLauncher;
+import launchers.NunchukButtonsLauncher;
+import launchers.WiiBoardLauncher;
+import launchers.WiiMoteAccelerationLauncher;
+import launchers.WiiMoteButtonsLauncher;
+import launchers.WiiMoteIRGlanceLauncher;
+import launchers.WiiMoteIRLauncher;
+import launchers.WiiMoteRotationLauncher;
+import control.DeviceManager;
 
 public class TestGrande 
 {
@@ -72,19 +71,23 @@ public class TestGrande
     	
     	
     	int theUserIWant=1;
+    
     	
+    	DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540);
+
+    	dm.adjustKinectForTheBestTilt(theUserIWant);
+    
+
     	
-    	DeviceManager dm = DeviceManager.getDeviceManager();
-    	
-    	//dm.adjustKinectForTheBestTilt(theUserIWant);
-    	
-    	
-		ksl= dm.getKinectSkeletonLauncher(theUserIWant);
+    /*
+    	ksl= dm.getKinectSkeletonLauncher(theUserIWant);
+		
 		ClaseQueImplementaAKinectSkeleton cqaks= new ClaseQueImplementaAKinectSkeleton();
 		
 		ksl.addListener(cqaks);
-		Thread t1 = new Thread(cqaks);
-		t1.start();
+		
+		/*Thread t1 = new Thread(cqaks);
+		t1.start();*/
 		
 		
 		/*
