@@ -1,4 +1,4 @@
-/*
+/**
 	@Author: James Browne.
 	
 	@Brief: 
@@ -62,6 +62,16 @@ var server = http.createServer( function ( request , response ) {
             contentType = 'image/png';
 			filePath = '.'+request.url;
 			console.log( "Serving PNG" ); 
+            break;
+		case '.jpg':// We're serving an image.
+            contentType = 'image/jpg';
+			filePath = '.'+request.url;
+			console.log( "Serving JPG" ); 
+            break;
+		case '.dae':// We're serving an image.
+            contentType = 'text/plain';
+			filePath = '.'+request.url;
+			console.log( "Serving DAE" ); 
             break;
     }
      

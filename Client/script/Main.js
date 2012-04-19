@@ -1,4 +1,4 @@
-/*=========================================================================
+/**=========================================================================
 
 	@Author: James Browne
 	
@@ -63,6 +63,16 @@ function init(){
 	// Skybox...etc
 	setupEnviornment();
 	
+	
+	
+	var x = new THREE.ColladaLoader();
+	x.load( 'models/warehouse_model.dae', function( collada ){
+		var model = collada.scene;
+		model.scale.set(100,100,100);
+		model.rotation.x = -Math.PI/2;
+		scene.add( model );	
+	
+	});
 	// Initalise the game loop to 60fps. Anim frame pffft
 	interval = setInterval( 'gameLoop()', 1000 / 60 );
 
@@ -191,7 +201,8 @@ function createObjects(){
 				'RIGHT_KNEE',
 				'RIGHT_SHOULDER',
 				'TORSO'];
-		player = new Model( 'James', jointList );
+				
+		player = new Player( 'James', 42, 'model/monster.dae', new THREE.Vector3( 100,100,100) );
 
 		
 }
@@ -376,7 +387,7 @@ function setupEnviornment(){
 ========================================================================*/
 function syncKinect() {  
 	
-	player.setAllJoints( kinectMap );
+	player.syncJoints( kinectMap );
 }  
 
 

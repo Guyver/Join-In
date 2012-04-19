@@ -1,4 +1,4 @@
-/*
+/**
 
 	@Author: James Browne
 	
@@ -9,7 +9,7 @@
 
 */
 
-function Model( name, jointNames ){
+function Model( jointNames ){
 
 	this._joint = {};				// Map of joint objects.
 	this._jointNames = jointNames;			// Array of key values for the kinect data.
