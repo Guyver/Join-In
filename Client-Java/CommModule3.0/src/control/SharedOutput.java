@@ -2,45 +2,37 @@ package control;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 import javax.vecmath.Vector3d;
 
 import org.OpenNI.SkeletonJoint;
 
 import services.KinectSkeletonServiceEvent;
-import test.SocketUtils;
 
 import com.google.gson.Gson;
 
 public class SharedOutput {
 	
 	static private SharedOutput rc = null;
-	//static Semaphore sem; 
+	SocketUtils su = null;
 	
 	static public SharedOutput getSharedOutput() {
 		
 	        if (rc == null) {
 	            rc = new SharedOutput();
-	          //  sem = new Semaphore(1,true);
 	        }
 	        return rc;
      }
 
 
 	public void performTransference(IEventCommModule se){
-		/*try {
-			sem.acquire();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
-		SocketUtils su = null;
+	
+		
 		
 		while (su == null) {
 			try {
 				
-				su = SocketUtils.getSocket("193.156.105.166", 7540);
+				su = SocketUtils.getSocket(DeviceManager.getDeviceManager().getIpAddress(), DeviceManager.getDeviceManager().getPort());
 			} catch (Exception e) {
 				su = null;
 			}
@@ -80,10 +72,9 @@ public class SharedOutput {
 			su.sendMessage(s);
 			
 			System.out.println("Sending: "+s.toString());
-			//Thread.sleep(500);
-			//sem.release();
+		
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+	
 			e.printStackTrace();
 		}
 	
