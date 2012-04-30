@@ -1,9 +1,8 @@
-/**	@name Player.js
+/**	@Name:	Player Class
+
 	@Author: James Browne
 	
-	@Description:
-	The user's class. This will hold all the data relevant to the player.
-	
+	@Brief:
 
 */
 
@@ -30,7 +29,10 @@ function Player( name, id, meshUrl, position){
 	// The unique id, i.p address for Example.
 	this._id = id;
 	// The avatar url.
-	this._model = this.loadModelMesh( meshUrl );
+	if( meshUrl != ""){
+		this._model = this.loadModelMesh( meshUrl );
+	}
+	
 	// The data for the joints
 	this._rig = new Model( jointList );
 	// The global position.
@@ -43,6 +45,9 @@ function Player( name, id, meshUrl, position){
 	this._walkSpeed = 5;
 	// The direction of the player.
 	this._direction = new THREE.Vector3(0,0,0);
+	// Something nice to look at.
+	this._sightNode = new THREE.Vector3(0,0,0);
+	
 };
 
 
@@ -84,7 +89,9 @@ Player.prototype.update = function( dt ){
 */
 Player.prototype.syncJoints = function( jointMap ){
 
-	this._rig.setAllJoints( jointMap );
+	 var newPosition = this._rig.setAllJoints( jointMap, this._position );
+	 this._position = newPosition;
+	
 };
 
 
@@ -122,6 +129,8 @@ Player.prototype.setPosition = function( pos ){
 Player.prototype.getPosition = function(  ){
 
 	return ( this._position );
+	
+	//return this._rig.getPosition();
 };
 
 
@@ -144,7 +153,51 @@ Player.prototype.rotate = function( pos ){
 
 
 
-/**	@name LOAD MODEL MESH( path to model file )
+/**	@Name: MOVE
+
+	@Brief:When the player moves it should move the model.
+	The joint data and its own position also.
+	
+	@Arguments: Vector3 pos
+	A vector to translate the current position to.
+	
+	@Returns:
+	N/A
+*/
+Player.prototype.move = function( pos ){
+
+	// Update player position.
+	this._position.addSelf( pos );
+	//Update the player's model position.
+	//this._model.mesh.position = this._position;
+	// Update the player's bone position.
+	//this._rig.update( this._position );
+	// Update the player's sight node.
+	this._sightNode = this._rig.getPosition();
+};
+
+
+
+/**	@Name:	Get Sight Node
+	
+	@Brief:
+	A model that represents all the joint data from the kinect.
+	Upon creation there will be 15 joints.
+	After construction the individual joints data will be passed as a map.
+	
+	@Arguments: N/A
+	
+	@Returns: Vector3 sight node position
+
+*/
+Player.prototype.getSightNode = function( ) {
+
+	return ( this._sightNode );
+};
+
+
+
+/**	@name LOAD MODEL MESH( )
 
 	@brief
 	Load a model from file specified.
@@ -156,10 +209,13 @@ Player.prototype.rotate = function( pos ){
 	N/A
 */
 Player.prototype.loadModelMesh = function( url ){
+	
 	var that = this;
 	new THREE.ColladaLoader().load( url ,function( collada ){
+		
 		that._model = collada;
-		//model.scale.set(0.1,0.1,0.1);
+		model.scale.set(0.1,0.1,0.1);
+		that._model.position = that._position;
 		that._model.scene.rotation.x = -Math.PI/2;
 		scene.add( that._model.scene );
 	});
