@@ -2,10 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/org.OpenNI.jar"/>
 	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
 	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
 	<classpathentry kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/ch.ntb.usb-0.5.9_REVISED.jar"/>
+	<classpathentry kind="lib" path="lib/org.OpenNI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

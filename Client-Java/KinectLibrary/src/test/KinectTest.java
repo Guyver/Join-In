@@ -1,6 +1,8 @@
 package test;
 
 
+import org.OpenNI.SkeletonJoint;
+
 import KinectPackage.IKinectListener;
 import KinectPackage.KinectEvent;
 import KinectPackage.KinectManager;
@@ -21,7 +23,7 @@ public class KinectTest implements IKinectListener
 	
 	public void testing(){
 		KinectTest tes = new KinectTest();
-		KinectManager km = new KinectManager();
+		KinectManager km = new KinectManager(1);
 		km.addListener(tes);
 	
 		try {
@@ -33,11 +35,12 @@ public class KinectTest implements IKinectListener
 		
 	}
 
-@Override
-public void kinectUpdate(KinectEvent ke) {
+	@Override
+	public void kinectUpdate(KinectEvent ke) {
 	
-
-
+		if(ke.getKinectData().getSkeletonManager().getJoint3D(1, SkeletonJoint.RIGHT_HAND).getX()!=0.0){
+			System.out.println(ke.getKinectData().getSkeletonManager().getJoint3D(1, SkeletonJoint.RIGHT_HAND));
+		}
 	
 	}
 

@@ -86,8 +86,9 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectLi
 		while(it.hasNext()){
 			IKinectSkeletonService l = (IKinectSkeletonService)it.next();
 			l.kinectUpdate(se);
-			kinectEnhacedSkeletonLauncher.setLastKinectSkeletonServiceEvent(se);
-			
+			if(kinectEnhacedSkeletonLauncher!=null){
+				kinectEnhacedSkeletonLauncher.setLastKinectSkeletonServiceEvent(se);
+			}
 			
 		}		
 		
@@ -103,16 +104,29 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectLi
 		
 	}
 	/**
-	 * Constructor with parameter.
+	 * Constructor with parameter. We assume the the skeleton launcher does not have to send the SkeletonJointData through the socket.
 	 * @param userId The user's label we want to track his/her skeleton to.
 	 */
 	public KinectSkeletonLauncher(int userId){
 		
 		
 		setUserId(userId);
-		restartSendingThread();
+		
 	}
-
+	/**
+	 * Constructor with parameter.
+	 * @param userId The user's label we want to track his/her skeleton to.
+	 * @param sendSkeletonJointDataToSocket A boolean parameter that represents whether the skeleton launcher has to send the SkeletonJointData through the socket or not.
+	 */
+	public KinectSkeletonLauncher(int userId, boolean sendSkeletonJointDataToSocket){
+		
+		
+		setUserId(userId);
+		if(sendSkeletonJointDataToSocket){
+			restartSendingThread();
+		}
+		
+	}
 	/**
 	 * @return the userId
 	 */
@@ -131,7 +145,7 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectLi
 	
 	}
 	/**
-	 * THis function (re)starts the thread which sends the data to the server through the socket.
+	 * This function (re)starts the thread which sends the data to the server through the socket.
 	 */
 	public void restartSendingThread(){
 	kinectEnhacedSkeletonLauncher= new KinectEnhacedSkeletonLauncher(userId);

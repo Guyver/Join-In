@@ -51,9 +51,7 @@ public class MotorCommunicator
 
   public MotorCommunicator()
   { 
-    System.out.println("Looking for device: (vendor: " + 
-                         toHexString(VENDOR_ID) + 
-         "; product: " + toHexString(PRODUCT_ID) + ")");
+    //System.out.println("Looking for device: (vendor: " + toHexString(VENDOR_ID) + "; product: " + toHexString(PRODUCT_ID) + ")");
     dev = USB.getDevice(VENDOR_ID, PRODUCT_ID);
     if (dev == null)
       System.out.println("Device not found");
@@ -61,10 +59,10 @@ public class MotorCommunicator
     //System.out.println("Max packet size: " +
     //             dev.getDeviceDescriptor().getBMaxPacketSize0());
     try {
-      System.out.println("Opening device");
+    //  System.out.println("Opening device");
       dev.open(1, 0, -1); 
       // open device with configuration 1, interface 0 and no alt interface
-      System.out.println("Opened device");
+      //System.out.println("Opened device");
     }
     catch (USBException e) {
       System.out.println(e);
@@ -72,7 +70,7 @@ public class MotorCommunicator
     }
   }  // end of MotorCommunicator()
 
-
+/*
   private String toHexString(int b)
   // chanage the hexadecimal integer into "0x.." string format
   {  
@@ -82,7 +80,7 @@ public class MotorCommunicator
     else
       return "0x" + hex;
   }  // end of toHexString()
-
+*/
 
 	
   public void close()

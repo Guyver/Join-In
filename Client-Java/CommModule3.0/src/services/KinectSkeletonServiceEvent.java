@@ -159,6 +159,10 @@ public class KinectSkeletonServiceEvent implements IEventCommModule {
 
 	}
 
+	public KinectSkeletonServiceEvent() {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * @return the userId
 	 */

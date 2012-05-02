@@ -44,15 +44,34 @@ public class SkeletonManager
   private HashMap<Integer, Skeleton3D> userSkels3D;
     // maps user IDs --> a 3D skeleton
 
+  private int maximumNumberOfKinectUsers; 
+  
+  private List<Integer> idOfUsersWhoAreBeingTracked;
+ 
+  public IObserver<UserEventArgs> newUserObserver;
+  
+  public SkeletonManager(UserGenerator userGenerator, int maximumNumberOfKinectUsers)
+  {
+	this.maximumNumberOfKinectUsers=maximumNumberOfKinectUsers;
+    this.userGenerator = userGenerator;
+    configure();
+    idOfUsersWhoAreBeingTracked=new LinkedList<Integer>();
+    userSkels3D = new HashMap<Integer, Skeleton3D>();
 
+  } // end of SkelsManager()
+  
+  
+  
   public SkeletonManager(UserGenerator userGenerator)
   {
     this.userGenerator = userGenerator;
     configure();
-
+    idOfUsersWhoAreBeingTracked=new LinkedList<Integer>();
     userSkels3D = new HashMap<Integer, Skeleton3D>();
+    maximumNumberOfKinectUsers= 1;
   } // end of SkelsManager()
 
+  
 
 
   private void configure()
@@ -69,18 +88,19 @@ public class SkeletonManager
       skeletonCapability.setSkeletonProfile(SkeletonProfile.ALL);
              // other possible values: UPPER_BODY, LOWER_BODY, HEAD_HANDS
 
-      
+      newUserObserver = new NewUserObserver();
       // set up 7 observers
-      userGenerator.getNewUserEvent().addObserver(new NewUserObserver());  // new user found
+      userGenerator.getNewUserEvent().addObserver(newUserObserver);  // new user found
       userGenerator.getLostUserEvent().addObserver(new LostUserObserver());  // lost a user
       userGenerator.getUserExitEvent().addObserver(new ExitUserObserver());        // user has exited (but may re-enter)
       userGenerator.getUserReenterEvent().addObserver(new ReEnterUserObserver());  // user has re-entered
 
       poseDetectionCapability.getPoseDetectedEvent().addObserver( new PoseDetectedObserver());    // for when a pose is detected
-
+      
       skeletonCapability.getCalibrationStartEvent().addObserver( new CalibrationStartObserver());    // calibration is starting
       skeletonCapability.getCalibrationCompleteEvent().addObserver( new CalibrationCompleteObserver());   
              // for when skeleton calibration is completed, and tracking starts
+     
     } 
     catch (Exception e) {
       System.out.println(e);
@@ -149,20 +169,41 @@ public class SkeletonManager
     +  lose a user  
        (causes the deletion of its userSkels3D entry + scene graph)
   */
+ 
 
-
-  class NewUserObserver implements IObserver<UserEventArgs>
-  {
-	public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
-    {
-      System.out.println("Detected new user " + args.getId());
-      try {
-        // try to detect a pose for the new user
-        poseDetectionCapability.startPoseDetection(calibPose, args.getId());
-      }
-      catch (StatusException e)
-      { e.printStackTrace(); }
-    }
+	class NewUserObserver implements IObserver<UserEventArgs> {
+	
+		public void update(IObservable<UserEventArgs> observable,
+				UserEventArgs args) {
+				
+		
+					System.out.println("Detected new user " + args.getId());
+					
+					try {  
+						if(idOfUsersWhoAreBeingTracked.size()<maximumNumberOfKinectUsers&&!idOfUsersWhoAreBeingTracked.contains(new Integer(args.getId()))){
+							idOfUsersWhoAreBeingTracked.add(new Integer(args.getId()));
+							System.out.println("Taking care of user "+ args.getId());
+					
+							poseDetectionCapability.startPoseDetection(calibPose,args.getId());
+					  
+						}
+						
+						if(idOfUsersWhoAreBeingTracked.size()==maximumNumberOfKinectUsers){
+							
+							userGenerator.getNewUserEvent().deleteObserver(newUserObserver);
+						
+							System.out.println("I stop detecting more users");
+						}else{
+							
+						}
+						// try to detect a pose for the new user
+					
+					} catch (StatusException e) {
+						e.printStackTrace();
+					}
+				
+		}
+		
   }  // end of NewUserObserver inner class
 
 
@@ -171,14 +212,28 @@ public class SkeletonManager
   {
     public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
     { 
-      int userID = args.getId();
-      System.out.println("Lost track of user " + userID);
-
-      // delete skeleton from userSkels3D and the scene graph
-      Skeleton3D skel = userSkels3D.remove(userID);
-      if (skel == null)
-        return;
-      skel.delete();
+    	
+	      int userID = args.getId();
+	      System.out.println("Lost track of user " + userID);
+	      if(idOfUsersWhoAreBeingTracked.contains(new Integer(userID))){
+	    	  idOfUsersWhoAreBeingTracked.remove(new Integer(userID));
+	    	  try{
+    		  userGenerator.getNewUserEvent().addObserver(newUserObserver);
+	    	  }catch(StatusException e){
+	    		  e.printStackTrace();
+	    	  }
+    		  
+    	  }
+	   	      
+	      // delete skeleton from userSkels3D and the scene graph
+	      Skeleton3D skel = userSkels3D.remove(userID);
+	      
+	      
+	      
+	      if (skel == null)
+	        return;
+	      skel.delete();
+	     
     }
   } // end of LostUserObserver inner class
 
@@ -186,16 +241,18 @@ public class SkeletonManager
 
   class ExitUserObserver implements IObserver<UserEventArgs>
   {
-    public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
-    { 
-      int userID = args.getId();
-      System.out.println("Exit of user " + userID);
-
-      // make 3D skeleton invisible when user exits
-      Skeleton3D skel = userSkels3D.get(userID);
-      if (skel == null)
-        return;
-     
+    public void update(IObservable<UserEventArgs> observable, UserEventArgs args) {
+    	
+				int userID = args.getId();
+				System.out.println("Exit of user " + userID);
+				 Skeleton3D skel ;
+				
+				// make 3D skeleton invisible when user exits
+				 skel = userSkels3D.get(userID);
+				
+				if (skel == null)
+					return;
+    	
     }
   } // end of ExitUserObserver inner class
 
@@ -204,15 +261,16 @@ public class SkeletonManager
   class ReEnterUserObserver implements IObserver<UserEventArgs>
   {
     public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
-    { 
+    { 	
+    	
       int userID = args.getId();
       System.out.println("Reentry of user " + userID);
-
+    
       // make 3D skeleton visible when user re-enters
       Skeleton3D skel = userSkels3D.get(userID);
       if (skel == null)
         return;
-     
+    
     }
   } // end of ReEnterUserObserver inner class
 
@@ -223,16 +281,19 @@ public class SkeletonManager
 	public void update(IObservable<PoseDetectionEventArgs> observable,
                                                      PoseDetectionEventArgs args)
     {
+	
       int userID = args.getUser();
-      System.out.println(args.getPose() + " pose detected for user " + userID);
-      try {
-        // finished pose detection; switch to skeleton calibration
- 
-        poseDetectionCapability.stopPoseDetection(userID);
-        skeletonCapability.requestSkeletonCalibration(userID, true);
-      }
-      catch (StatusException e)
-      {  e.printStackTrace(); }
+     
+	      System.out.println(args.getPose() + " pose detected for user " + userID);
+	      try {
+	        // finished pose detection; switch to skeleton calibration
+	    	
+	        poseDetectionCapability.stopPoseDetection(userID);
+	        skeletonCapability.requestSkeletonCalibration(userID, true);
+	      }
+	      catch (StatusException e)
+	      {  e.printStackTrace(); }
+	    
     }
   }  // end of PoseDetectedObserver inner class
 
@@ -241,6 +302,7 @@ public class SkeletonManager
 
   class CalibrationStartObserver implements IObserver<CalibrationStartEventArgs>
   {
+	 
     public void update(IObservable<CalibrationStartEventArgs> observable,
                                         CalibrationStartEventArgs args)
     { System.out.println("Calibration started for user " + args.getUser());  }
@@ -255,7 +317,7 @@ public class SkeletonManager
                                                     CalibrationProgressEventArgs args)
     {
       int userID = args.getUser();
-      System.out.println("Calibration status: " + args.getStatus() + " for user " + userID);
+                                                                        
       try {
         if (args.getStatus() == CalibrationProgressStatus.OK) {
           // calibration succeeded; move to skeleton tracking
@@ -265,14 +327,16 @@ public class SkeletonManager
           // create skeleton3D in userSkels3D, and add to scene
           Skeleton3D skel = new Skeleton3D(userID, skeletonCapability, false);
           userSkels3D.put(userID, skel);
-        
-        }
+      
+      
+        } 
         else   // calibration failed; return to pose detection
       
         	poseDetectionCapability.startPoseDetection(calibPose, userID);
       }
       catch (StatusException e)
       {  e.printStackTrace(); }
+     
     }
   }  // end of CalibrationCompleteObserver inner class
 

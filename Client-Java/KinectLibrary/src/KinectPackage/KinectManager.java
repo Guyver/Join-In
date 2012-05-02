@@ -23,13 +23,11 @@ import org.OpenNI.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class KinectManager implements Runnable {
 
-	/**
-	 * Represents whether the Kinect is running or not.
-	 */
-	private volatile boolean isRunning;
+
 
 	// OpenNI
 	private Context context;
@@ -38,11 +36,22 @@ public class KinectManager implements Runnable {
 	private MotorCommunicator motorCommunicator;
 	private DepthGenerator depthGenerator;
 	private ImageGenerator imageGenerator;
-
+	/**
+	 * This field represents the maximum number of users that can be tracked by the Kinect at the same time.
+	 */
+	private int  maximumNumberOfKinectUsers;
+	/**
+	 * This semaphore serializes the KinectEvent firing to the listeners.
+	 */
+	private Semaphore sem;
 	/**
 	 * Contains all Kinect listeners.
 	 */
 	List<IKinectListener> listenersList = new ArrayList<IKinectListener>();
+	/**
+	 * Represents whether the Kinect is running or not.
+	 */
+	private volatile boolean isRunning;
 
 	/**
 	 * @return the isRunning
@@ -163,12 +172,23 @@ public class KinectManager implements Runnable {
 	}
 
 	/**
-	 * Default constructor
+	 * Default constructor. It sets the maximum number of users that can be tracked by the Kinect at the same time to 1.
 	 */
 	public KinectManager() {
+		this.maximumNumberOfKinectUsers=1;
 		setMotorCommunicator(new MotorCommunicator());
 		configOpenNI();
-
+		sem = new Semaphore(1,true);
+	}
+	/**
+	 * This constructor creates a new KinectManager and sets the maximum number of users that can be tracked by the Kinect at the same time with the given parameter.
+	 * @param maximumNumberOfKinectUsers The maximum number of users that can be tracked by the Kinect at the same time.
+	 */
+	public KinectManager(int maximumNumberOfKinectUsers) {
+		this.maximumNumberOfKinectUsers=maximumNumberOfKinectUsers;
+		setMotorCommunicator(new MotorCommunicator());
+		configOpenNI();
+		sem = new Semaphore(1,true);
 	}
 
 	/**
@@ -191,7 +211,7 @@ public class KinectManager implements Runnable {
 	}
 
 	/**
-	 * Creates a new thread of this class
+	 * Creates a new thread of this class.
 	 */
 	private void activate() {
 		(new Thread(this)).start();
@@ -200,6 +220,9 @@ public class KinectManager implements Runnable {
 
 	// ------------------------OpenNI ---------------
 
+	/**
+	 * Sets up all the parameters related to OpenNI.
+	 */
 	private void configOpenNI()
 	// create context, user generator, and skeletons
 	{
@@ -213,7 +236,7 @@ public class KinectManager implements Runnable {
 			context.setGlobalMirror(true); // set mirror mode
 
 			userGenerator = UserGenerator.create(context);
-			skeletonManager = new SkeletonManager(userGenerator);
+			skeletonManager = new SkeletonManager(userGenerator, maximumNumberOfKinectUsers);
 			depthGenerator = DepthGenerator.create(context);
 			imageGenerator = ImageGenerator.create(context);
 
@@ -226,7 +249,7 @@ public class KinectManager implements Runnable {
 	} // end of configOpenNI()
 
 	/**
-	 * Disconnects the Kinect
+	 * Disconnects the Kinect.
 	 */
 	public void disconnect() {
 
@@ -245,23 +268,31 @@ public class KinectManager implements Runnable {
 	}
 
 	/**
-	 * Sends a new KinectEvent to the listeners registered in the listenerLists
+	 * Sends a new KinectEvent to the listeners registered in the listenerLists.
 	 * 
-	 * @param ke
+	 * @param keout
 	 *            The new KinectEvent
 	 */
 	private void fireKinectEvent(KinectEvent ke) {
-		Iterator<IKinectListener> it = listenersList.iterator();
-
-		while (it.hasNext()) {
-
-			IKinectListener kl = ((IKinectListener) it.next());
-
-			(new Thread(new EventLauncher(kl, ke))).start();
+		try{
+			sem.acquire();
+			Iterator<IKinectListener> it = listenersList.iterator();
+	
+			while (it.hasNext()) {
+	
+				IKinectListener kl = ((IKinectListener) it.next());
+	
+				(new Thread(new EventLauncher(kl, ke))).start();
+			}
+			sem.release();
+		}catch(Exception e){
+			System.out.println("Error at firing the Kinect Event in KinectManager");
 		}
-
 	}
 
+	/**
+	 * Runs the thread.
+	 */
 	public void run() {
 
 		isRunning = true;

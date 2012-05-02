@@ -15,19 +15,12 @@
  */
 package kinectThreads;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.vecmath.Vector3d;
-
-import org.OpenNI.SkeletonJoint;
 import org.OpenNI.StatusException;
 
-import com.google.gson.Gson;
-
 import control.DeviceManager;
-import control.SocketUtils;
+import control.SharedOutput;
+
 import services.KinectSkeletonServiceEvent;
 import launchers.KinectSkeletonLauncher;
 /**
@@ -39,18 +32,23 @@ public class KinectEnhacedSkeletonLauncher extends KinectSkeletonLauncher implem
 /**
  * The last state of the user's skeleton
  */
-	private KinectSkeletonServiceEvent lastKinectSkeletonServiceEvent;
+	private  KinectSkeletonServiceEvent lastKinectSkeletonServiceEvent;
 /**
  * A boolean variable which defines whether the specified user is valid (is within the Kinect scope and has been calibrated) or not.
  */
 	private boolean validUser;
+/**
+ * This field represents the serialized socket output.
+ */
+	private SharedOutput sharedOutput;
 
 	/**
 	 * Default constructor
 	 */
 	public KinectEnhacedSkeletonLauncher(){
-		
+		sharedOutput= SharedOutput.getSharedOutput();
 		validUser=false;
+		
 		lastKinectSkeletonServiceEvent=null;
 	}
 	/**
@@ -60,7 +58,7 @@ public class KinectEnhacedSkeletonLauncher extends KinectSkeletonLauncher implem
 	public KinectEnhacedSkeletonLauncher(int userId){
 		super.setUserId(userId);
 		validUser= isUserRegistered();
-		
+		sharedOutput= SharedOutput.getSharedOutput();
 	
 		lastKinectSkeletonServiceEvent=null;
 		
@@ -77,8 +75,7 @@ public class KinectEnhacedSkeletonLauncher extends KinectSkeletonLauncher implem
 	/**
 	 * @param lastKinectSkeletonServiceEvent the lastKinectSkeletonServiceEvent to set
 	 */
-	public void setLastKinectSkeletonServiceEvent(
-			KinectSkeletonServiceEvent lastKinectSkeletonServiceEvent) {
+	public void setLastKinectSkeletonServiceEvent(KinectSkeletonServiceEvent lastKinectSkeletonServiceEvent) {
 		this.lastKinectSkeletonServiceEvent = lastKinectSkeletonServiceEvent;
 	}
 
@@ -88,20 +85,8 @@ public class KinectEnhacedSkeletonLauncher extends KinectSkeletonLauncher implem
 	 */
 	public void run() {
 		while (true) {
-			
-			SocketUtils su = SocketUtils.getSocket(DeviceManager.getDeviceManager().getIpAddress(), DeviceManager.getDeviceManager().getPort());
-		
-			if (validUser) {
-				try {	
-						
-						su.readMessage();
-						
-						performTransference();
-										
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			if (validUser) {			
+				sharedOutput.performTransference(lastKinectSkeletonServiceEvent);
 			}
 		}
 	}
@@ -132,57 +117,4 @@ public class KinectEnhacedSkeletonLauncher extends KinectSkeletonLauncher implem
 		return found;
 	}
 	
-	private void performTransference(){
-	
-		SocketUtils su= SocketUtils.getSocket(DeviceManager.getDeviceManager().getIpAddress(), DeviceManager.getDeviceManager().getPort());
-		
-		while (su == null) {
-		
-			try {
-				
-				su = SocketUtils.getSocket(DeviceManager.getDeviceManager().getIpAddress(), DeviceManager.getDeviceManager().getPort());
-			} catch (Exception e) {
-				su = null;
-			}
-		}
-		try {
-	
-			
-			Gson gson = new Gson();
-			String s ="" ;
-			//System.out.println("Imprimiendo "+lastKinectSkeletonServiceEvent.getRightHand().toString());
-			if(lastKinectSkeletonServiceEvent instanceof KinectSkeletonServiceEvent){
-			
-				
-				Map<SkeletonJoint, Vector3d> map = new HashMap<SkeletonJoint, Vector3d>();
-				map.put(SkeletonJoint.HEAD, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getHead());
-				map.put(SkeletonJoint.LEFT_ELBOW, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getLeftElbow());
-				map.put(SkeletonJoint.LEFT_FOOT, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getLeftFoot());
-				map.put(SkeletonJoint.LEFT_HAND, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getLeftHand());
-				map.put(SkeletonJoint.LEFT_HIP, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getLeftHip());
-				map.put(SkeletonJoint.LEFT_KNEE, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getLeftKnee());
-				map.put(SkeletonJoint.LEFT_SHOULDER, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getLeftShoulder());
-				map.put(SkeletonJoint.NECK, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getNeck());
-				map.put(SkeletonJoint.RIGHT_ELBOW, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getRightElbow());
-				map.put(SkeletonJoint.RIGHT_FOOT, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getRightFoot());
-				map.put(SkeletonJoint.RIGHT_HAND, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getRightHand());
-				map.put(SkeletonJoint.RIGHT_HIP, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getRightHip());
-				map.put(SkeletonJoint.RIGHT_KNEE, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getRightKnee());
-				map.put(SkeletonJoint.RIGHT_SHOULDER, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getRightShoulder());
-				map.put(SkeletonJoint.TORSO, ((KinectSkeletonServiceEvent) lastKinectSkeletonServiceEvent).getTorso());
-				s= gson.toJson(map);
-			}
-	
-			
-			s+='\n';
-			
-			su.sendMessage(s);
-			
-			//System.out.println("Sending: "+s.toString());
-		
-		} catch (Exception e) {
-	
-			e.printStackTrace();
-		}
-	}
 }

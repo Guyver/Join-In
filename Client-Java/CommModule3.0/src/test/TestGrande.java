@@ -19,7 +19,14 @@ package test;
 
 import java.io.IOException;
 
+import kinectThreads.KinectEnhacedSkeletonLauncher;
+import kinectThreads.KinectPoseEnum;
+
+
+
 import launchers.KinectAbsoluteSpaceForATimeLauncher;
+
+import launchers.KinectPoseLauncher;
 import launchers.KinectSkeletonLauncher;
 import launchers.KinectTotalSpaceTravelledForATimeLauncher;
 import launchers.KinectUserJointReachPointLauncher;
@@ -54,6 +61,9 @@ public class TestGrande
 	KinectUserJointReachPointLauncher kujrpl;
 	KinectAbsoluteSpaceForATimeLauncher kasfatl;
 	KinectTotalSpaceTravelledForATimeLauncher ktstfatl;
+
+	
+	
 	public static void main (String args []) throws IOException
 	{		
 		System.setProperty("bluecove.jsr82.psm_minimum_off", "true");
@@ -68,26 +78,43 @@ public class TestGrande
     public TestGrande() throws Exception
     {    	
     	
-    	
-    	
     	int theUserIWant=1;
-    
+    	int maximumNumberOfKinectUsers =1;
     	
-    	DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540);
-
-    	dm.adjustKinectForTheBestTilt(theUserIWant);
-    
-
+    	//DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
+    	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.166", 7540,maximumNumberOfKinectUsers);
     	
-    /*
+    	
+    	//dm.adjustKinectForTheBestTilt(theUserIWant);
+    
+    	/*
+    	
+    	KinectPoseLauncher kplWalkLeftLegUp;
+    	KinectPoseLauncher kplWalkRightLegUp;
+    	KinectPoseLauncher kplStand;
+    	
+    	kplWalkLeftLegUp= dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.WALK_LEFT_LEG_UP);
+    	kplWalkRightLegUp= dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.WALK_RIGHT_LEG_UP);
+    	kplStand= dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.STAND);
+        
+    	ClaseQueImplementaAPose jiji = new ClaseQueImplementaAPose();
+    	
+    	kplWalkLeftLegUp.addListener(jiji);
+    	kplWalkRightLegUp.addListener(jiji);
+    	kplStand.addListener(jiji);
+    	Thread t1= new Thread(jiji);
+    	t1.start();
+    	
+    	*/
+    
     	ksl= dm.getKinectSkeletonLauncher(theUserIWant);
 		
 		ClaseQueImplementaAKinectSkeleton cqaks= new ClaseQueImplementaAKinectSkeleton();
 		
 		ksl.addListener(cqaks);
 		
-		/*Thread t1 = new Thread(cqaks);
-		t1.start();*/
+	
+		
 		
 		
 		/*

@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="lib/NoninLibrary.jar"/>
 	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
 	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
-	<classpathentry kind="lib" path="lib/org.OpenNI.jar"/>
 	<classpathentry kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/KinectLibrary.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>

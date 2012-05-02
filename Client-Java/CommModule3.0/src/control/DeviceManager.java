@@ -15,19 +15,22 @@
  */
 package control;
 
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 
 import javax.vecmath.Vector3d;
 
-import kinectThreads.KinectTilt;
+import kinectThreads.KinectPoseEnum;
+import kinectThreads.KinectPoseManager;
 
 import org.OpenNI.Point3D;
 import org.OpenNI.SkeletonJoint;
 import org.OpenNI.StatusException;
 import org.wiigee.control.WiimoteWiigee;
 import org.wiigee.device.Wiimote;
+
 
 import launchers.*;
 
@@ -53,7 +56,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 
 	/**
 	 * This object is the only object that can exist of this class. This object
-	 * have to be the one used to get the service launchers.
+	 * has to be the one used to get the service launchers.
 	 */
 	static private DeviceManager dm = null;
 	/**
@@ -112,8 +115,22 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 */
 	private int port;
 	
+	/**
+	 * This semamphore is used to ensure that we do not try to start up the Kinect in two places at the same time.
+	 */
 	private Semaphore sem ; 
-
+	
+	/**
+	 * This field represents the maximum number of users that the Kinect can track.
+	 */
+	private int maximumNumberOfKinectUsers; 
+	
+	/**
+	 * This static field allows handling with the Kinect pose detection manager.
+	 */
+	private static KinectPoseManager kinectPoseManager;
+	
+	
 	/**
 	 * 
 	 * Returns a new instance of DeviceManager if it did not exist or the
@@ -130,11 +147,38 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	
 		return dm;
 	}
-
 	/**
 	 * 
 	 * Returns a new instance of DeviceManager if it did not exist or the
 	 * instance that was created if there was a created instance already.
+	 * 
+	 * @param ipAddressParam
+	 *            The string containing the ipAddress of the socket we want to
+	 *            open. For example: "193.156.105.166"
+	 * @param portParam
+	 *            The port number of the IP address that we want to open the
+	 *            socket. For example: 7540
+	 * @param maximumNumberOfKinectusers The maximum number of users that the Kinect can track.
+	 * @return DeviceManager
+	 */
+	static public DeviceManager getDeviceManager(String ipAddressParam,
+			int portParam, int maximumNumberOfKinectUsers) {
+		System.setProperty("bluecove.jsr82.psm_minimum_off", "true");
+		if (dm == null) {
+			dm = new DeviceManager();
+		}
+		dm.setIpAddress(ipAddressParam);
+		dm.setPort(portParam);
+		kinectPoseManager = new KinectPoseManager();
+		SocketManager.getSocket(ipAddressParam, portParam);
+		dm.setMaximumNumberOfKinectUsers(maximumNumberOfKinectUsers);
+		return dm;
+	}
+	/**
+	 * 
+	 * Returns a new instance of DeviceManager if it did not exist or the
+	 * instance that was created if there was a created instance already.
+	 * It sets the maximum number of users that the Kinect can track to 1.
 	 * 
 	 * @param ipAddressParam
 	 *            The string containing the ipAddress of the socket we want to
@@ -152,9 +196,9 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		}
 		dm.setIpAddress(ipAddressParam);
 		dm.setPort(portParam);
-
-		SocketUtils.getSocket(ipAddressParam, portParam);
-	
+		kinectPoseManager = new KinectPoseManager();
+		SocketManager.getSocket(ipAddressParam, portParam);
+		dm.setMaximumNumberOfKinectUsers(1);
 		return dm;
 	}
 
@@ -854,11 +898,11 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		dm.waitForUserIsCalibrated(userId);
 		kinectCounter++;
 
-		kl = new KinectSkeletonLauncher(userId);
-		System.out
-				.println("He creado el kinect skeleton launcher desde device manager");
+		kl = new KinectSkeletonLauncher(userId, true);
+	
+		
 		kinectManager.addListener(kl);
-		System.out.println("Completo el getKinectSkeletonLauncher");
+	
 		return kl;
 	}
 
@@ -893,8 +937,12 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 */
 	public void dropKinect(LauncherWrapper kinectLauncher) {
 		kinectCounter--;
+		if(kinectLauncher instanceof KinectPoseLauncher){
+			kinectManager.removeListener(((KinectPoseLauncher)kinectLauncher).getPrivateKinectSkeletonLauncher());
+		}
 		kinectManager.removeListener((IKinectListener) kinectLauncher);
-		if (kinectManager == null) {
+	
+		if (kinectCounter == 0) {
 			kinectManager.disconnect();
 		}
 	}
@@ -1054,7 +1102,6 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 					// Active wait for the calibration of the user's skeleton
 				}
 			} catch (StatusException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1168,7 +1215,6 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					try {
@@ -1225,23 +1271,6 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		this.ipAddress = ipAddress;
 	}
 
-	/**
-	 * Tilts up or down the Kinect so that it can have the user's torso as
-	 * closer to the center of the camera viewframe as possible.
-	 * 
-	 * @param userId The user's label
-	 * @param kinectRealHight -1 use previous titl, 0 low, 1 medium , 2 high
-	 * @return Returns true if the Kinect has been tilted so that the player can
-	 *         be seen correctly. False otherwise.
-	 */
-	@Deprecated
-	public void adjustKinectForTheBestTiltWithTrigonometry(int userId, int kinectRealHight) {
-		
-		Thread t2 = new Thread(new KinectTilt(userId,kinectRealHight));
-		t2.start();
-		
-		
-	}
 	
 	/**
 	 * Starts the Kinect if it has not been started yet.
@@ -1250,7 +1279,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		try {
 			sem.acquire();
 			if (kinectManager == null) {
-				kinectManager = new KinectManager();
+				kinectManager = new KinectManager(maximumNumberOfKinectUsers);
 				try {
 					kinectManager.connect();
 				} catch (Exception e) {
@@ -1265,7 +1294,62 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		}
 		
 	}
+/**
+ * 
+ * @param userId The ID label of the user we want to detect the pose to.
+ * @param kinectPose The KinectPose that we want to be detected.
+ * @return A KinectPoseLauncher which will notify its listeners when the user with ID label userId performs the pose kinectPose. 
+ */
+	public KinectPoseLauncher getKinectPoseLauncher(int userId, KinectPoseEnum kinectPose) { // We
+		// allow
+		// to
+		// exist only
+		// one Kinect
+		// device
+
+		KinectPoseLauncher kpl = null;
+		
+		kinectStartUpKinectIfNeeded();
+
+		dm.waitForUserIsCalibrated(userId);
+		kinectCounter++;
+
+		kpl = new KinectPoseLauncher(userId, kinectPose);
 	
 	
+		
+		
+		try {
+			
+			kpl.setPrivateKinectSkeletonLauncher(new KinectSkeletonLauncher(userId, false));
+			
+			kinectManager.addListener(kpl.getPrivateKinectSkeletonLauncher());
+			
+			kpl.getPrivateKinectSkeletonLauncher().addListener(kinectPoseManager);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		kinectPoseManager.addListener(kpl);
+		
+		return kpl;
+	}
+	
+	/**
+	 * @return the maximumNumberOfKinectUsers
+	 */
+	public int getMaximumNumberOfKinectUsers() {
+		return maximumNumberOfKinectUsers;
+	}
+
+	/**
+	 * @param maximumNumberOfKinectUsers the maximumNumberOfKinectUsers to set
+	 */
+	public void setMaximumNumberOfKinectUsers(int maximumNumberOfKinectUsers) {
+		this.maximumNumberOfKinectUsers = maximumNumberOfKinectUsers;
+	}
 
 }
