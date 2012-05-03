@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
+import kinectThreads.KinectUserActionEnum;
+import kinectThreads.KinectUserActionEnum;
+
 import org.OpenNI.SkeletonJoint;
 
 import services.KinectUserActionServiceEvent;
@@ -46,8 +49,19 @@ public class SharedOutput {
 	 * This field represents the SocketManager of the socket we have stablished the communication through.
 	 */
 	private SocketManager sm = null;
-	
+	/**
+	 * This field serializes the output
+	 */
 	private static Semaphore  sem=null;
+	
+	/**
+	 * This field stores the last kind of the user's movement: walk, run, stand, go backwards, etc
+	 */
+	private KinectUserActionEnum lastMovement;
+	/**
+	 * This field stores the last kind of user's rotation: to the left, to the right or no rotation.
+	 */
+	private KinectUserActionEnum lastRotation; 
 	
 	/**
 	 * 
@@ -88,12 +102,15 @@ public class SharedOutput {
 			Gson gson = new Gson();
 			String s ="";
 			Map<Object, Object> map = new HashMap<Object, Object>();
-			
+			map.put("device", "kinect");
+				
+			/*
+			 * Map the joint positions
+			 */
 			if(se instanceof KinectSkeletonServiceEvent){
 				validEvent=true;
 				
 				
-				map.put("device", "kinect");
 				map.put("userID", ((KinectSkeletonServiceEvent) se).getUserId());
 				map.put("type", "jointPosition");
 				map.put(SkeletonJoint.HEAD, ((KinectSkeletonServiceEvent) se).getHead());
@@ -113,15 +130,68 @@ public class SharedOutput {
 				map.put(SkeletonJoint.TORSO, ((KinectSkeletonServiceEvent) se).getTorso());
 				
 			}
-			
+			/*
+			 * Map the user's movements
+			 */
 			if(se instanceof KinectUserActionServiceEvent){
 				validEvent=true;
-				
-				map.put("device", "kinect");
 				map.put("userID", ((KinectUserActionServiceEvent) se).getUserId());
 				map.put("type", "action");
-				map.put("action", ((KinectUserActionServiceEvent)se).getUserAction());
 				
+				String action= ((KinectUserActionServiceEvent)se).getUserAction();
+				/*
+				 * The KinectUserActionServiceEvent can store an action to walk, run, etc or to rotate the user. So,  we discriminate it here. 
+				 */
+				if(action.compareTo(KinectUserActionEnum.STAND.name())==0){
+					lastMovement=KinectUserActionEnum.STAND;
+				}else if(action.compareTo(KinectUserActionEnum.WALK.name())==0){
+					lastMovement=KinectUserActionEnum.WALK;
+				}else if(action.compareTo(KinectUserActionEnum.RUN.name())==0){
+					lastMovement=KinectUserActionEnum.RUN;
+				}else if(action.compareTo(KinectUserActionEnum.BACKWARDS.name())==0){
+					lastMovement=KinectUserActionEnum.BACKWARDS;
+				}else if(action.compareTo(KinectUserActionEnum.NO_ROTATION.name())==0){
+					lastRotation=KinectUserActionEnum.NO_ROTATION;
+				}else if(action.compareTo(KinectUserActionEnum.TURN_LEFT.name())==0){
+					lastRotation=KinectUserActionEnum.TURN_LEFT;
+				}else if(action.compareTo(KinectUserActionEnum.TURN_RIGHT.name())==0){
+					lastRotation=KinectUserActionEnum.TURN_RIGHT;
+				}
+				
+								
+				if(lastRotation==KinectUserActionEnum.TURN_LEFT){
+					map.put("rotateLeft","true");
+					map.put("rotateRight","false");
+				
+				}else if(lastRotation==KinectUserActionEnum.TURN_RIGHT){	
+					map.put("rotateLeft","false");
+					map.put("rotateRight", "true");
+				}else if(lastRotation== KinectUserActionEnum.NO_ROTATION){
+					map.put("rotateLeft","false");
+					map.put("rotateRight","false");
+				}
+				
+				if(lastMovement == KinectUserActionEnum.STAND){
+					map.put("standStill","true");
+					map.put("walk", "false");
+					map.put("run", "false");
+					map.put("backwards", "false");
+				}else if(lastMovement == KinectUserActionEnum.WALK){
+					map.put("standStill","false");
+					map.put("walk", "true");
+					map.put("run", "false");
+					map.put("backwards", "false");
+				}else if(lastMovement == KinectUserActionEnum.RUN){
+					map.put("standStill","false");
+					map.put("walk", "false");
+					map.put("run", "true");
+					map.put("backwards", "false");
+				}else if(lastMovement == KinectUserActionEnum.BACKWARDS){
+					map.put("standStill","false");
+					map.put("walk", "false");
+					map.put("run", "false");
+					map.put("backwards", "true");
+				}
 			}
 		
 			
@@ -129,22 +199,27 @@ public class SharedOutput {
 				s+= gson.toJson(map);
 				s+='\n';
 			
+				/*
+				 *  ----Start of critical section-----
+				 */
 				try {
 					sem.acquire();
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				String dummyReceivedMessage= sm.readMessage();
+				System.out.println("ENVIO: "+s.toString());
 				sm.sendMessage(s);
 				sem.release();
+				/*
+				 * ----End of critical section-----
+				 */
 				if(se instanceof KinectUserActionServiceEvent){
 				System.out.println("Sent: "+s.toString());
 				}
 			}
 			
 		} catch (Exception e) {
-	
 			e.printStackTrace();
 		}
 	
@@ -152,4 +227,8 @@ public class SharedOutput {
 		
 		
 	}
+	
+	
+	
+	
 }

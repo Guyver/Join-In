@@ -124,7 +124,11 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 			
 			posing= performPoseLogic(ke,this.getKinectPose());
 			if(posing){
-				if(lastTimePosingState==false){ 
+				if(
+						(this.getKinectPose().name().compareTo(KinectPoseEnum.WALK_LEFT_LEG_UP.name())==0
+						||
+						this.getKinectPose().name().compareTo(KinectPoseEnum.WALK_RIGHT_LEG_UP.name())==0)
+						&&lastTimePosingState==false){ 
 					lastTimePosingState=true;
 					KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),posing);		
 					Iterator<IListenerCommModule> it = super.listenersList.iterator();
@@ -132,8 +136,18 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 						IKinectPoseService l = (IKinectPoseService)it.next();
 						l.kinectPoseUpdate(se);
 					}		
-				}else{
-					//System.out.println("Y sigo posando...");
+				}else if (this.getKinectPose().name().compareTo(KinectPoseEnum.RISED_LEFT_HAND.name())==0||
+						this.getKinectPose().name().compareTo(KinectPoseEnum.RISED_RIGHT_HAND.name())==0||
+						this.getKinectPose().name().compareTo(KinectPoseEnum.HANDS_BACK.name())==0){
+					KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),posing);		
+					Iterator<IListenerCommModule> it = super.listenersList.iterator();
+					while(it.hasNext()){
+						IKinectPoseService l = (IKinectPoseService)it.next();
+						l.kinectPoseUpdate(se);
+					}		
+				}
+				else{
+					
 				}
 			}else{
 				if(lastTimePosingState==true){
@@ -157,6 +171,12 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 			return isPoseWalkingLeftLegUp(ksse);
 		}else if(poseToMatch.name()=="WALK_RIGHT_LEG_UP"){
 			return isPoseWalkingRightLegUp(ksse);
+		}else if(poseToMatch.name()=="RISED_LEFT_HAND"){
+			return isRisedLeftHand(ksse);
+		}else if(poseToMatch.name()=="RISED_RIGHT_HAND"){
+			return isRisedRightHand(ksse);
+		}else if(poseToMatch.name()=="HANDS_BACK"){
+			return isHandsBack(ksse);
 		}else{
 			return false;
 		}
@@ -164,51 +184,94 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 		
 	}
 	
+	
+
+	private boolean isRisedLeftHand(KinectSkeletonServiceEvent ksse) {
+		boolean isTheRequestedPose=false;
+		
+		if(ksse.getLeftHand().getY()>ksse.getNeck().getY()){
+			isTheRequestedPose=true;
+		}
+		
+		return isTheRequestedPose;
+	}
+
+	
+
+	private boolean isRisedRightHand(KinectSkeletonServiceEvent ksse) {
+		boolean isTheRequestedPose = false;
+
+		if (ksse.getRightHand().getY() > ksse.getNeck().getY()) {
+			isTheRequestedPose = true;
+		}
+
+		return isTheRequestedPose;
+	}
+
+	private boolean isHandsBack(KinectSkeletonServiceEvent ksse) {
+		boolean isTheRequestedPose = false;
+
+		if (ksse.getLeftHand().getZ() - ksse.getLeftHip().getZ()>200||ksse.getRightHand().getZ() - ksse.getRightHip().getZ()>200) {
+			isTheRequestedPose = true;
+		}
+
+		return isTheRequestedPose;
+	}
+	
 	/**
-	 * Specific algorithm to detect whether the user has the right leg up (similar to a walk step).
-	 * @param ksse The KinectSkeletonServiceEvent containing the Skeleton data of the user.
+	 * Specific algorithm to detect whether the user has the left leg up
+	 * (similar to a walk step).
+	 * 
+	 * @param ksse
+	 *            The KinectSkeletonServiceEvent containing the Skeleton data of
+	 *            the user.
 	 * @return True if the user is doing the pose. False otherwise.
 	 */
-private boolean isPoseWalkingRightLegUp(KinectSkeletonServiceEvent ksse) {
-		
-		boolean isTheRequestedPose=false;
-		double length= 40;
-		
-		if(ksse.getRightKnee().getY()>(ksse.getLeftKnee().getY()+length)){
-			isTheRequestedPose=true;
-		}
+	private boolean isPoseWalkingLeftLegUp(KinectSkeletonServiceEvent ksse) {
+		boolean isTheRequestedPose = false;
+		double length = 40;
 
-		return isTheRequestedPose;
-	}
-
-/**
- * Specific algorithm to detect whether the user has the left leg up (similar to a walk step).
- * @param ksse The KinectSkeletonServiceEvent containing the Skeleton data of the user.
- * @return True if the user is doing the pose. False otherwise.
- */
-private boolean isPoseWalkingLeftLegUp(KinectSkeletonServiceEvent ksse) {
-		boolean isTheRequestedPose=false;
-		double length= 40;
-		
-		if(ksse.getLeftKnee().getY()>(ksse.getRightKnee().getY()+length)){
-			isTheRequestedPose=true;
+		if (ksse.getLeftKnee().getY() > (ksse.getRightKnee().getY() + length)) {
+			isTheRequestedPose = true;
 		}
 		return isTheRequestedPose;
 	}
 
-/**
- * @return the kinectSkeletonLauncher
- */
-public KinectSkeletonLauncher getPrivateKinectSkeletonLauncher() {
-	return privateKinectSkeletonLauncher;
-}
+	/**
+	 * Specific algorithm to detect whether the user has the right leg up
+	 * (similar to a walk step).
+	 * 
+	 * @param ksse
+	 *            The KinectSkeletonServiceEvent containing the Skeleton data of
+	 *            the user.
+	 * @return True if the user is doing the pose. False otherwise.
+	 */
+	private boolean isPoseWalkingRightLegUp(KinectSkeletonServiceEvent ksse) {
 
-/**
- * @param kinectSkeletonLauncher the kinectSkeletonLauncher to set
- */
-public void setPrivateKinectSkeletonLauncher(KinectSkeletonLauncher privateKinectSkeletonLauncher) {
-	this.privateKinectSkeletonLauncher = privateKinectSkeletonLauncher;
-}
+		boolean isTheRequestedPose = false;
+		double length = 40;
 
+		if (ksse.getRightKnee().getY() > (ksse.getLeftKnee().getY() + length)) {
+			isTheRequestedPose = true;
+		}
+
+		return isTheRequestedPose;
+	}
+	
+	/**
+	 * @return the kinectSkeletonLauncher
+	 */
+	public KinectSkeletonLauncher getPrivateKinectSkeletonLauncher() {
+		return privateKinectSkeletonLauncher;
+	}
+
+	/**
+	 * @param kinectSkeletonLauncher
+	 *            the kinectSkeletonLauncher to set
+	 */
+	public void setPrivateKinectSkeletonLauncher(
+			KinectSkeletonLauncher privateKinectSkeletonLauncher) {
+		this.privateKinectSkeletonLauncher = privateKinectSkeletonLauncher;
+	}
 
 }

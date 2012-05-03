@@ -83,37 +83,49 @@ public class TestGrande
     	
     	//DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
     	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.166", 7540,maximumNumberOfKinectUsers);
-    	
+    	//DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.153", 7540,maximumNumberOfKinectUsers);
     	
     	//dm.adjustKinectForTheBestTilt(theUserIWant);
     
-    	/*
+    	
     	
     	KinectPoseLauncher kplWalkLeftLegUp;
     	KinectPoseLauncher kplWalkRightLegUp;
     	KinectPoseLauncher kplStand;
     	
+    	KinectPoseLauncher kplRisedLeftArm;
+    	KinectPoseLauncher kplRisedRightArm;
+    	KinectPoseLauncher kplHandsBack;
+    	
+    	
     	kplWalkLeftLegUp= dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.WALK_LEFT_LEG_UP);
     	kplWalkRightLegUp= dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.WALK_RIGHT_LEG_UP);
     	kplStand= dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.STAND);
+    	
+    	kplRisedLeftArm = dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.RISED_LEFT_HAND);
+    	kplRisedRightArm = dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.RISED_RIGHT_HAND);
+    	kplHandsBack = dm.getKinectPoseLauncher(theUserIWant, KinectPoseEnum.HANDS_BACK);
         
     	ClaseQueImplementaAPose jiji = new ClaseQueImplementaAPose();
     	
     	kplWalkLeftLegUp.addListener(jiji);
     	kplWalkRightLegUp.addListener(jiji);
     	kplStand.addListener(jiji);
+    	kplRisedLeftArm.addListener(jiji);
+    	kplRisedRightArm.addListener(jiji);
+    	kplHandsBack.addListener(jiji);
     	Thread t1= new Thread(jiji);
     	t1.start();
     	
-    	*/
-    
+    	
+    /*
     	ksl= dm.getKinectSkeletonLauncher(theUserIWant);
 		
 		ClaseQueImplementaAKinectSkeleton cqaks= new ClaseQueImplementaAKinectSkeleton();
 		
 		ksl.addListener(cqaks);
 		
-	
+	*/
 		
 		
 		

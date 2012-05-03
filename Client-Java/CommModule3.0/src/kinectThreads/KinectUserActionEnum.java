@@ -23,7 +23,11 @@ package kinectThreads;
 public enum KinectUserActionEnum {
 	STAND(0),
 	WALK(1),
-	RUN(2);
+	RUN(2),
+	BACKWARDS(3),
+	TURN_LEFT(4),
+	TURN_RIGHT(5),
+	NO_ROTATION(6);
 
 	private int code;
 

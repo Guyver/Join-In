@@ -23,7 +23,10 @@ package kinectThreads;
 public enum KinectPoseEnum {
 	STAND(0),
 	WALK_LEFT_LEG_UP(1),
-	WALK_RIGHT_LEG_UP(2);
+	WALK_RIGHT_LEG_UP(2),
+	RISED_LEFT_HAND(3),
+	RISED_RIGHT_HAND(4),
+	HANDS_BACK(5);
 
 	private int code;
 

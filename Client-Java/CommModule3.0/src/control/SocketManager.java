@@ -38,22 +38,15 @@ public class SocketManager {
  * @return The SocketManager to handle sending and receiving messages.
  */
 	static public SocketManager getSocket(String ipAddress, int port) {
-	
-
 		if (su == null) {
-	            su = new SocketManager();
-	            
-	        	try {
-	        		
-	    			socket = new Socket(ipAddress, port);
-	    		
-	    		  
+	            su = new SocketManager();           
+	        	try {      		
+	    			socket = new Socket(ipAddress, port);		  
 	    		} catch (UnknownHostException e) {
 	    			e.printStackTrace();
 	    		} catch (IOException e) {
 	    			e.printStackTrace();
-	    		}
-	        
+	    		}        
 	    }
 	    return su;
      }
