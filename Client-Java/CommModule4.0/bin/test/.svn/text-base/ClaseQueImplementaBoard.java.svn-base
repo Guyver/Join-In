@@ -1,0 +1,43 @@
+package test;
+
+import iservices.IWiiBoardService;
+
+import services.WiiBoardServiceButtonEvent;
+import services.WiiBoardServiceMassEvent;
+import services.WiiBoardServiceStatusEvent;
+
+public class ClaseQueImplementaBoard implements IWiiBoardService{
+
+
+	@Override
+	public void wiiBoardButtonEvent(WiiBoardServiceButtonEvent se) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void wiiBoardDisconnected() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void wiiBoardStatusEvent(WiiBoardServiceStatusEvent se) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void wiiBoardUpdate(WiiBoardServiceMassEvent se) {
+		System.out.println("Peso: "+se.totalWeight);		
+	}
+
+	
+	@Override
+	public void wiiBoardMassEvent(WiiBoardServiceMassEvent se) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

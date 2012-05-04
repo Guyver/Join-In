@@ -20,9 +20,10 @@ package KinectPackage;
 
 import org.OpenNI.*;
 
-import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
 public class KinectManager implements Runnable {
@@ -47,7 +48,7 @@ public class KinectManager implements Runnable {
 	/**
 	 * Contains all Kinect listeners.
 	 */
-	List<IKinectListener> listenersList = new ArrayList<IKinectListener>();
+	List<IKinectListener> listenersList = new CopyOnWriteArrayList<IKinectListener>();
 	/**
 	 * Represents whether the Kinect is running or not.
 	 */
@@ -276,6 +277,7 @@ public class KinectManager implements Runnable {
 	private void fireKinectEvent(KinectEvent ke) {
 		try{
 			sem.acquire();
+			
 			Iterator<IKinectListener> it = listenersList.iterator();
 	
 			while (it.hasNext()) {
@@ -286,7 +288,9 @@ public class KinectManager implements Runnable {
 			}
 			sem.release();
 		}catch(Exception e){
+			
 			System.out.println("Error at firing the Kinect Event in KinectManager");
+			e.printStackTrace();
 		}
 	}
 
