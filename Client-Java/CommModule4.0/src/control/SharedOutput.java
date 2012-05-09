@@ -213,15 +213,17 @@ public class SharedOutput {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
+				System.out.println("Waiting message");
 				String dummyReceivedMessage= sm.readMessage();
-				
+				System.out.println("Message received");
 				sm.sendMessage(s);
 				sem.release();
+				System.out.println("Sent: "+s.toString());
 				/*
 				 * ----End of critical section-----
 				 */
 				if(se instanceof KinectUserActionServiceEvent){
-				System.out.println("Sent: "+s.toString());
+			
 				}
 			}
 			
