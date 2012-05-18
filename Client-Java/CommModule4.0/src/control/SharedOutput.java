@@ -64,6 +64,10 @@ public class SharedOutput {
 	 */
 	private KinectUserActionEnum lastRotation; 
 
+	
+	static Map<Object, Object> actionMap; 
+	static Map<Object, Object> lastMovementMap; 
+	
 	/**
 	 * 
 	 * Returns a new instance of SharedOutupu if it did not exist or the
@@ -76,6 +80,14 @@ public class SharedOutput {
 	        if (rc == null) {
 	            rc = new SharedOutput();
 	            sem= new Semaphore(1, true);
+	            actionMap= new HashMap<Object, Object>();
+	            lastMovementMap= new HashMap<Object, Object>();
+	            lastMovementMap.put("standStill","true");
+	            lastMovementMap.put("walk", "false");
+	            lastMovementMap.put("run", "false");
+	            lastMovementMap.put("backwards", "false");
+	            lastMovementMap.put("rotateLeft","false");
+	            lastMovementMap.put("rotateRight","false");
 	        }
 	        return rc;
      }
@@ -102,9 +114,9 @@ public class SharedOutput {
 			
 			Gson gson = new Gson();
 			String s ="";
-			Map<Object, Object> map = new HashMap<Object, Object>();
-			map.put("device", "kinect");
-				
+			
+			actionMap.put("device", "kinect");
+			
 			/*
 			 * Map the joint positions
 			 */
@@ -112,32 +124,33 @@ public class SharedOutput {
 				validEvent=true;
 				
 				
-				map.put("userID", ((KinectSkeletonServiceEvent) se).getUserId());
-				map.put("type", "jointPosition");
-				map.put(SkeletonJoint.HEAD, ((KinectSkeletonServiceEvent) se).getHead());
-				map.put(SkeletonJoint.LEFT_ELBOW, ((KinectSkeletonServiceEvent) se).getLeftElbow());
-				map.put(SkeletonJoint.LEFT_FOOT, ((KinectSkeletonServiceEvent) se).getLeftFoot());
-				map.put(SkeletonJoint.LEFT_HAND, ((KinectSkeletonServiceEvent) se).getLeftHand());
-				map.put(SkeletonJoint.LEFT_HIP, ((KinectSkeletonServiceEvent) se).getLeftHip());
-				map.put(SkeletonJoint.LEFT_KNEE, ((KinectSkeletonServiceEvent) se).getLeftKnee());
-				map.put(SkeletonJoint.LEFT_SHOULDER, ((KinectSkeletonServiceEvent) se).getLeftShoulder());
-				map.put(SkeletonJoint.NECK, ((KinectSkeletonServiceEvent) se).getNeck());
-				map.put(SkeletonJoint.RIGHT_ELBOW, ((KinectSkeletonServiceEvent) se).getRightElbow());
-				map.put(SkeletonJoint.RIGHT_FOOT, ((KinectSkeletonServiceEvent) se).getRightFoot());
-				map.put(SkeletonJoint.RIGHT_HAND, ((KinectSkeletonServiceEvent) se).getRightHand());
-				map.put(SkeletonJoint.RIGHT_HIP, ((KinectSkeletonServiceEvent) se).getRightHip());
-				map.put(SkeletonJoint.RIGHT_KNEE, ((KinectSkeletonServiceEvent) se).getRightKnee());
-				map.put(SkeletonJoint.RIGHT_SHOULDER, ((KinectSkeletonServiceEvent) se).getRightShoulder());
-				map.put(SkeletonJoint.TORSO, ((KinectSkeletonServiceEvent) se).getTorso());
+				actionMap.put("userID", ((KinectSkeletonServiceEvent) se).getUserId());
+				actionMap.put("type", "jointPosition");
+				actionMap.put(SkeletonJoint.HEAD, ((KinectSkeletonServiceEvent) se).getHead());
+				actionMap.put(SkeletonJoint.LEFT_ELBOW, ((KinectSkeletonServiceEvent) se).getLeftElbow());
+				actionMap.put(SkeletonJoint.LEFT_FOOT, ((KinectSkeletonServiceEvent) se).getLeftFoot());
+				actionMap.put(SkeletonJoint.LEFT_HAND, ((KinectSkeletonServiceEvent) se).getLeftHand());
+				actionMap.put(SkeletonJoint.LEFT_HIP, ((KinectSkeletonServiceEvent) se).getLeftHip());
+				actionMap.put(SkeletonJoint.LEFT_KNEE, ((KinectSkeletonServiceEvent) se).getLeftKnee());
+				actionMap.put(SkeletonJoint.LEFT_SHOULDER, ((KinectSkeletonServiceEvent) se).getLeftShoulder());
+				actionMap.put(SkeletonJoint.NECK, ((KinectSkeletonServiceEvent) se).getNeck());
+				actionMap.put(SkeletonJoint.RIGHT_ELBOW, ((KinectSkeletonServiceEvent) se).getRightElbow());
+				actionMap.put(SkeletonJoint.RIGHT_FOOT, ((KinectSkeletonServiceEvent) se).getRightFoot());
+				actionMap.put(SkeletonJoint.RIGHT_HAND, ((KinectSkeletonServiceEvent) se).getRightHand());
+				actionMap.put(SkeletonJoint.RIGHT_HIP, ((KinectSkeletonServiceEvent) se).getRightHip());
+				actionMap.put(SkeletonJoint.RIGHT_KNEE, ((KinectSkeletonServiceEvent) se).getRightKnee());
+				actionMap.put(SkeletonJoint.RIGHT_SHOULDER, ((KinectSkeletonServiceEvent) se).getRightShoulder());
+				actionMap.put(SkeletonJoint.TORSO, ((KinectSkeletonServiceEvent) se).getTorso());
 				
+				actionMap.putAll(lastMovementMap);
 			}
 			/*
 			 * Map the user's movements
 			 */
 			if(se instanceof KinectUserActionServiceEvent){
-				validEvent=true;
-				map.put("userID", ((KinectUserActionServiceEvent) se).getUserId());
-				map.put("type", "action");
+				validEvent=false;
+				actionMap.put("userID", ((KinectUserActionServiceEvent) se).getUserId());
+				actionMap.put("type", "action");
 				
 				String action= ((KinectUserActionServiceEvent)se).getUserAction();
 				/*
@@ -161,50 +174,54 @@ public class SharedOutput {
 				
 								
 				if(lastRotation==KinectUserActionEnum.TURN_LEFT){
-					map.put("rotateLeft","true");
-					map.put("rotateRight","false");
+					lastMovementMap.put("rotateLeft","true");
+					lastMovementMap.put("rotateRight","false");
 				
 				}else if(lastRotation==KinectUserActionEnum.TURN_RIGHT){	
-					map.put("rotateLeft","false");
-					map.put("rotateRight", "true");
+					lastMovementMap.put("rotateLeft","false");
+					lastMovementMap.put("rotateRight", "true");
 				}else if(lastRotation== KinectUserActionEnum.NO_ROTATION){
-					map.put("rotateLeft","false");
-					map.put("rotateRight","false");
+					lastMovementMap.put("rotateLeft","false");
+					lastMovementMap.put("rotateRight","false");
 				}
 				
 				if(lastMovement == KinectUserActionEnum.STAND){
-					map.put("standStill","true");
-					map.put("walk", "false");
-					map.put("run", "false");
-					map.put("backwards", "false");
+					lastMovementMap.put("standStill","true");
+					lastMovementMap.put("walk", "false");
+					lastMovementMap.put("run", "false");
+					lastMovementMap.put("backwards", "false");
 				}else if(lastMovement == KinectUserActionEnum.WALK){
-					map.put("standStill","false");
-					map.put("walk", "true");
-					map.put("run", "false");
-					map.put("backwards", "false");
+					lastMovementMap.put("standStill","false");
+					lastMovementMap.put("walk", "true");
+					lastMovementMap.put("run", "false");
+					lastMovementMap.put("backwards", "false");
 				}else if(lastMovement == KinectUserActionEnum.RUN){
-					map.put("standStill","false");
-					map.put("walk", "false");
-					map.put("run", "true");
-					map.put("backwards", "false");
+					lastMovementMap.put("standStill","false");
+					lastMovementMap.put("walk", "false");
+					lastMovementMap.put("run", "true");
+					lastMovementMap.put("backwards", "false");
 				}else if(lastMovement == KinectUserActionEnum.BACKWARDS){
-					map.put("standStill","false");
-					map.put("walk", "false");
-					map.put("run", "false");
-					map.put("backwards", "true");
+					lastMovementMap.put("standStill","false");
+					lastMovementMap.put("walk", "false");
+					lastMovementMap.put("run", "false");
+					lastMovementMap.put("backwards", "true");
 				}
+				lastMovementMap=actionMap;
+		
 			}
 		
 			if(se instanceof KinectUserHugServiceEvent){
 				validEvent=true;
-				map.put("userID", ((KinectUserHugServiceEvent) se).getUserId());
-				map.put("type", "hug");
+				actionMap.put("userID", ((KinectUserHugServiceEvent) se).getUserId());
+				actionMap.put("type", "hug");
 
 			}
 			if(validEvent){	
-				s+= gson.toJson(map);
-				s+='\n';
+				
+				s+= gson.toJson(actionMap);
 			
+				s+='\n';
+				
 				/*
 				 *  ----Start of critical section-----
 				 */
@@ -213,12 +230,14 @@ public class SharedOutput {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-				System.out.println("Waiting message");
+			//	System.out.println("Waiting message");
 				String dummyReceivedMessage= sm.readMessage();
-				System.out.println("Message received");
+				
 				sm.sendMessage(s);
 				sem.release();
-				System.out.println("Sent: "+s.toString());
+				
+					System.out.println("Sent: "+s.toString());
+				
 				/*
 				 * ----End of critical section-----
 				 */

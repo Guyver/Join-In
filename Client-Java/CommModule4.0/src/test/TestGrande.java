@@ -92,8 +92,6 @@ public class TestGrande
     
     	
     	
-    	
-    	
     	KinectUserMovementLauncher kumLauncher;
     	KinectUserHugLauncher kuhLauncher;
     	
@@ -107,25 +105,23 @@ public class TestGrande
     	kumLauncher.addListener(jiji);
     	kuhLauncher.addListener(jiji);
     
-    	
-    
    
     	Thread t1= new Thread(jiji);
     	t1.start();
     	
     	
     	
-    /*
+    
     	ksl= dm.getKinectSkeletonLauncher(theUserIWant);
 		
 		ClaseQueImplementaAKinectSkeleton cqaks= new ClaseQueImplementaAKinectSkeleton();
 		
 		ksl.addListener(cqaks);
-		*/
+		
 	
 		
 		
-		
+	
 		/*
 		
 		IKinectAbsoluteSpaceForATimeService kasfats = new ClaseQueImplementaAAbsoluteSpace();

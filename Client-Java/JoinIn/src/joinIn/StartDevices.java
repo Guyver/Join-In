@@ -2,6 +2,7 @@ package joinIn;
 
 import java.io.IOException;
 
+import launchers.KinectSkeletonLauncher;
 import launchers.KinectUserHugLauncher;
 import launchers.KinectUserMovementLauncher;
 import test.ClaseQueImplementaAPose;
@@ -26,10 +27,23 @@ public class StartDevices {
 	{    	
 		int theUserIWant=1;
     	int maximumNumberOfKinectUsers =1;
-     	DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
- 
+     	//DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
+    	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.158", 7540,maximumNumberOfKinectUsers);
+    	 
+    	 
+    	
+    	
      	KinectUserMovementLauncher kumLauncher;
     	KinectUserHugLauncher kuhLauncher;
+    	
+    	
+    	  
+    	KinectSkeletonLauncher ksl= dm.getKinectSkeletonLauncher(theUserIWant);
+		
+		SkeletonJointHandler cqaks= new SkeletonJointHandler();
+		
+		ksl.addListener(cqaks);
+    	
     	
     	kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant);
     	kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
@@ -45,13 +59,8 @@ public class StartDevices {
     	t1.start();
     	
     	
-    /*
-    	KinectSkeletonLauncher ksl= dm.getKinectSkeletonLauncher(theUserIWant);
+  
 		
-		SkeletonJointHandler cqaks= new SkeletonJointHandler();
-		
-		ksl.addListener(cqaks);
-		*/
 	
 	}
 

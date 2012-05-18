@@ -15,6 +15,7 @@ public class KinectTest implements IKinectListener
  
 
 	public static void main (String [] args) throws Exception {
+		System.out.println(System.getProperty("java.library.path"));
 		KinectTest obj = new KinectTest();
 		obj.testing();
 	
