@@ -8,8 +8,6 @@ import services.KinectUserActionServiceEvent;
 import services.KinectUserHugServiceEvent;
 import iservices.IKinectPoseService;
 
-
-
 public class PoseHandler implements IKinectPoseService, Runnable {
 
 	boolean leftLegUp;
@@ -21,77 +19,100 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 	long lastStep;
 	int userId;
 	SharedOutput sharedOutput;
-	
-	long lastRisedHand;
+
+	long lastRotationPerfomed;
 	String lastRotationState;
-	
+
 	boolean openedHugDone;
 	boolean hugCompleted;
-	
-	
-	public PoseHandler(){
-		leftLegUp=false;
-		rightLegUp=false;
-		lastLeftStep=0;
-		lastRightStep=0;
-		standStillInARaw=0;
-		lastMovementState="";
-		lastStep=0;
-		sharedOutput= SharedOutput.getSharedOutput();
-		
-		lastRisedHand=0;
-		lastRotationState="";
-		
-		openedHugDone=false;
-		hugCompleted=false;
+
+	boolean wait;
+
+	long lastInProgressEventReceived;
+
+	public PoseHandler() {
+		wait = false;
+		leftLegUp = false;
+		rightLegUp = false;
+		lastLeftStep = 0;
+		lastRightStep = 0;
+		standStillInARaw = 0;
+		lastMovementState = "";
+		lastStep = 0;
+		sharedOutput = SharedOutput.getSharedOutput();
+
+		lastRotationPerfomed = 0;
+		lastRotationState = "";
+
+		openedHugDone = false;
+		hugCompleted = false;
+		lastInProgressEventReceived = 0;
 	}
-	
+
 	@Override
 	public void kinectPoseUpdate(KinectPoseServiceEvent se) {
-		userId= se.getUserId();
+		userId = se.getUserId();
 
-		if(se.getKinectPose().name().compareTo(KinectPoseEnum.WALK_LEFT_LEG_UP.name())==0){
-			lastLeftStep=System.currentTimeMillis();
-			lastStep=lastLeftStep;
-			if(!leftLegUp){
-				if(System.currentTimeMillis()-lastRightStep>800){
-						lastMovementState=KinectUserActionEnum.WALK.name();
-				}else{
-						lastMovementState=KinectUserActionEnum.RUN.name();
+		if (!se.isPosing()) {// Será porque está en proceso
+			wait = true;
+			lastInProgressEventReceived = System.currentTimeMillis();
+
+		} else {
+
+			wait = false;
+
+			if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.WALK_LEFT_LEG_UP.name()) == 0) {
+
+				lastLeftStep = System.currentTimeMillis();
+				lastStep = lastLeftStep;
+				if (!leftLegUp) {
+					if (System.currentTimeMillis() - lastRightStep > 800) {
+						lastMovementState = KinectUserActionEnum.WALK.name();
+					} else {
+						lastMovementState = KinectUserActionEnum.RUN.name();
+					}
+					leftLegUp = true;
+					rightLegUp = false;
 				}
-				leftLegUp=true;
-				rightLegUp=false;
-			}
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.WALK_RIGHT_LEG_UP.name())==0){
-			lastRightStep=System.currentTimeMillis();
-			lastStep=lastRightStep;
-			if(!rightLegUp){
-				if(System.currentTimeMillis()-lastLeftStep>800){
-					lastMovementState=KinectUserActionEnum.WALK.name();
-				}else{
-					lastMovementState=KinectUserActionEnum.RUN.name();
+			} else if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.WALK_RIGHT_LEG_UP.name()) == 0) {
+
+				lastRightStep = System.currentTimeMillis();
+				lastStep = lastRightStep;
+				if (!rightLegUp) {
+					if (System.currentTimeMillis() - lastLeftStep > 800) {
+						lastMovementState = KinectUserActionEnum.WALK.name();
+					} else {
+						lastMovementState = KinectUserActionEnum.RUN.name();
+					}
+					rightLegUp = true;
+					leftLegUp = false;
 				}
-				rightLegUp=true;
-				leftLegUp=false;				
-			}
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.HANDS_BACK.name())==0){
-			lastMovementState=KinectUserActionEnum.BACKWARDS.name();
-			lastStep=System.currentTimeMillis();
-			rightLegUp=false;
-			leftLegUp=false;
-			lastMovementState=KinectUserActionEnum.BACKWARDS.name();
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.RISED_LEFT_HAND.name())==0){
-			lastRisedHand=System.currentTimeMillis();
-			lastRotationState=KinectUserActionEnum.TURN_LEFT.name();
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.RISED_RIGHT_HAND.name())==0){
-			lastRisedHand=System.currentTimeMillis();
-			lastRotationState=KinectUserActionEnum.TURN_RIGHT.name();
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.OPENED_HUG.name())==0){
-			openedHugDone=true;
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.CLOSED_HUG.name())==0){
-			if(openedHugDone){
-				openedHugDone=false;
-				hugCompleted=true;
+			} else if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.BOTH_HANDS_BACK.name()) == 0) {
+				lastMovementState = KinectUserActionEnum.BACKWARDS.name();
+				lastStep = System.currentTimeMillis();
+				rightLegUp = false;
+				leftLegUp = false;
+				lastMovementState = KinectUserActionEnum.BACKWARDS.name();
+			} else if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.LEFT_HAND_BACK.name()) == 0) {
+				lastRotationPerfomed = System.currentTimeMillis();
+				lastRotationState = KinectUserActionEnum.TURN_LEFT.name();
+			} else if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.RIGHT_HAND_BACK.name()) == 0) {
+				lastRotationPerfomed = System.currentTimeMillis();
+				lastRotationState = KinectUserActionEnum.TURN_RIGHT.name();
+			} else if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.OPENED_HUG.name()) == 0) {
+				openedHugDone = true;
+			} else if (se.getKinectPose().name()
+					.compareTo(KinectPoseEnum.CLOSED_HUG.name()) == 0) {
+				if (openedHugDone) {
+					openedHugDone = false;
+					hugCompleted = true;
+				}
 			}
 		}
 	}
@@ -102,20 +123,31 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 		String currentMovementState="";
 		String currentRotationState="";
 		while(true){
-	
+			
+			//Walking or running
 			if(currentMovementState.compareTo(KinectUserActionEnum.BACKWARDS.name())!=0&&System.currentTimeMillis()-lastStep>1000&& lastMovementState.compareTo(KinectUserActionEnum.STAND.name())!=0){		
-		
-				lastMovementState=KinectUserActionEnum.STAND.name();
-				rightLegUp=false;
-				leftLegUp=false;
-			}else if(currentMovementState.compareTo(KinectUserActionEnum.BACKWARDS.name())==0&&System.currentTimeMillis()-lastStep>1&& lastMovementState.compareTo(KinectUserActionEnum.STAND.name())!=0){		
-				lastMovementState=KinectUserActionEnum.STAND.name();
+				if(!wait){
+					lastMovementState=KinectUserActionEnum.STAND.name();
+					rightLegUp=false;
+					leftLegUp=false;
+				}else{
+					if(System.currentTimeMillis()-lastInProgressEventReceived>150){
+						wait=false;
+					}
+					//System.out.println("Debería parar pero por la mejor no lo hago");
+					
+				}
 				
-				rightLegUp=false;
-				leftLegUp=false;
+			//Moving backwards
+			}else if(currentMovementState.compareTo(KinectUserActionEnum.BACKWARDS.name())==0&&System.currentTimeMillis()-lastStep>1&& lastMovementState.compareTo(KinectUserActionEnum.STAND.name())!=0){		
+				
+					lastMovementState=KinectUserActionEnum.STAND.name();
+					rightLegUp=false;
+					leftLegUp=false;
+					
 			}
 				
-			 if(System.currentTimeMillis()>lastRisedHand){
+			 if(System.currentTimeMillis()>lastRotationPerfomed){
 				 lastRotationState=KinectUserActionEnum.NO_ROTATION.name();
 			 }
 		

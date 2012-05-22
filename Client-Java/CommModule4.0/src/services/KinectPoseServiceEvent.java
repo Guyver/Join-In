@@ -27,11 +27,13 @@ public class KinectPoseServiceEvent implements IEventCommModule  {
 	private int userId;
 	private KinectPoseEnum kinectPose;
 	private boolean posing;
+
 	
 	public KinectPoseServiceEvent(int userId, KinectPoseEnum kinectPose, boolean posing){
 		this.setKinectPose(kinectPose);
 		this.setUserId(userId);
 		this.setPosing(posing);
+	
 	}
 	
 	/**
@@ -72,7 +74,9 @@ public class KinectPoseServiceEvent implements IEventCommModule  {
 	public void setPosing(boolean posing) {
 		this.posing = posing;
 	}
-	
+
+
+
 	
 
 }

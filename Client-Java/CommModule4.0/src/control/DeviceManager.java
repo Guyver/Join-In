@@ -129,6 +129,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 */
 	private static KinectPoseManager kinectPoseManager;
 	
+
 	
 	/**
 	 * 
@@ -1334,7 +1335,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		kinectCounter++;
 
 		kpl = new KinectPoseLauncher(userId, kinectPose);
-	
+		
 	
 		
 		
@@ -1420,5 +1421,8 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	public void setMaximumNumberOfKinectUsers(int maximumNumberOfKinectUsers) {
 		this.maximumNumberOfKinectUsers = maximumNumberOfKinectUsers;
 	}
+	
+	
 
+	
 }

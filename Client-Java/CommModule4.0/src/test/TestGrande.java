@@ -84,7 +84,7 @@ public class TestGrande
     	int maximumNumberOfKinectUsers =1;
     	
     	//DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
-    	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.166", 7540,maximumNumberOfKinectUsers);
+    	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.158", 7540,maximumNumberOfKinectUsers);
     	//DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.153", 7540,maximumNumberOfKinectUsers);
     	
     	//dm.adjustKinectForTheBestTilt(theUserIWant);

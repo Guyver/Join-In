@@ -56,6 +56,16 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	 */
 	private KinectSkeletonLauncher privateKinectSkeletonLauncher;
 	
+	private double lastRightLegY;
+	
+	private double lastLeftLegY;
+	
+	private boolean rightLegMovingUp;
+	private boolean leftLegMovingUp;
+	private boolean leftLegMovingDown;
+	private boolean rightLegMovingDown;
+	
+	
 	/**
 	 * This constructor creates a new KinectPoseLauncher which will detect the pose kinectPose from the user whose ID label is userId.
 	 * @param userId The ID label of the user that we want to get the pose from.
@@ -65,7 +75,12 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 		this.setKinectPose(kinectPose);
 		this.setUserId(userId);
 		lastTimePosingState=false;
-	
+		setLastRightLegY(0.0);
+		setLastLeftLegY(0.0);
+		rightLegMovingUp=false;
+		leftLegMovingUp=false;
+		leftLegMovingDown=false;
+		rightLegMovingDown=false;
 	}
 
 	/**
@@ -96,7 +111,7 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	}
 
 	/**
-	 * @param userId the userId to set
+	 * @param userId the userId to setKinectPoseServiceEvent
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
@@ -109,7 +124,7 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	}
 
 	/**
-	 * @param kinectPose the kinectPose to set
+	 * @param kinectPose the kinectPlastRightLegYose to set
 	 */
 	public void setKinectPose(KinectPoseEnum kinectPose) {
 		this.kinectPose = kinectPose;
@@ -121,6 +136,7 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	public void kinectUpdate(KinectSkeletonServiceEvent ke) {
 		
 			boolean posing;
+
 			
 			posing= performPoseLogic(ke,this.getKinectPose());
 			if(posing){
@@ -130,15 +146,16 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 						this.getKinectPose().name().compareTo(KinectPoseEnum.WALK_RIGHT_LEG_UP.name())==0)
 						&&lastTimePosingState==false){ 
 					lastTimePosingState=true;
+					
 					KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),posing);		
 					Iterator<IListenerCommModule> it = super.listenersList.iterator();
 					while(it.hasNext()){
 						IKinectPoseService l = (IKinectPoseService)it.next();
 						l.kinectPoseUpdate(se);
 					}		
-				}else if (this.getKinectPose().name().compareTo(KinectPoseEnum.RISED_LEFT_HAND.name())==0||
-						this.getKinectPose().name().compareTo(KinectPoseEnum.RISED_RIGHT_HAND.name())==0||
-						this.getKinectPose().name().compareTo(KinectPoseEnum.HANDS_BACK.name())==0||
+				}else if (this.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_BACK.name())==0||
+						this.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_BACK.name())==0||
+						this.getKinectPose().name().compareTo(KinectPoseEnum.BOTH_HANDS_BACK.name())==0||
 						this.getKinectPose().name().compareTo(KinectPoseEnum.OPENED_HUG.name())==0||
 						this.getKinectPose().name().compareTo(KinectPoseEnum.CLOSED_HUG.name())==0){
 					KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),posing);		
@@ -151,7 +168,20 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 				else{
 					
 				}
-			}else{
+			}else{//No estoy posando, así que voy a ver si tengo que enviar un el moveMentInProgress
+				
+				boolean movementInProgress= performMovementInProgressLogic(ke,this.getKinectPose());
+				
+				if (movementInProgress){
+					KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),false);		
+					Iterator<IListenerCommModule> it = super.listenersList.iterator();
+					while(it.hasNext()){
+						IKinectPoseService l = (IKinectPoseService)it.next();
+						l.kinectPoseUpdate(se);
+					}		
+				}
+				
+				
 				if(lastTimePosingState==true){
 					lastTimePosingState=false;
 					//System.out.println("Has dejado de posar");
@@ -159,7 +189,63 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 					//No decir nada porque no estoy posando
 				}
 			}
+			setLastRightLegY(ke.getRightKnee().getY());
+			setLastLeftLegY(ke.getLeftKnee().getY());
 	}
+	
+	
+	public boolean performMovementInProgressLogic(KinectSkeletonServiceEvent ksse, KinectPoseEnum poseToMatch){
+		
+		
+		if(poseToMatch.name()=="WALK_LEFT_LEG_UP"){
+			
+			if(ksse.getRightKnee().getY()-lastRightLegY>1){
+				rightLegMovingUp=true;
+			}else{
+				rightLegMovingUp=false;
+			}
+			if(lastLeftLegY-ksse.getLeftKnee().getY()>1){
+				leftLegMovingDown=true;
+			}else{
+				leftLegMovingDown=false;
+			}
+			
+			lastRightLegY=ksse.getRightKnee().getY();
+			lastLeftLegY=ksse.getLeftKnee().getY();
+			
+			if(rightLegMovingUp||leftLegMovingDown){
+				return true;
+			}
+			
+		}else if(poseToMatch.name()=="WALK_RIGHT_LEG_UP"){
+			if(ksse.getLeftKnee().getY()-lastLeftLegY>2){
+				leftLegMovingUp=true;
+			}else{
+				leftLegMovingUp=false;
+			}
+			if(lastRightLegY-ksse.getRightKnee().getY()>1){
+				rightLegMovingDown=true;
+			}else{
+				rightLegMovingDown=false;
+			}
+			
+			lastRightLegY=ksse.getRightKnee().getY();
+			lastLeftLegY=ksse.getLeftKnee().getY();
+			
+			if(leftLegMovingUp||rightLegMovingDown){
+				return true;
+			}
+		}
+		
+		
+		return false;
+		
+	
+	}
+	
+	
+	
+	
 	/**
 	 * This function selects the algorithm to apply to the KinectSkeletonServiceEvent depending on the chosen pose.
 	 * @param ksse The KinectSkeletonServiceEvent containing the Skeleton data of the user.
@@ -173,12 +259,12 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 			return isPoseWalkingLeftLegUp(ksse);
 		}else if(poseToMatch.name()=="WALK_RIGHT_LEG_UP"){
 			return isPoseWalkingRightLegUp(ksse);
-		}else if(poseToMatch.name()=="RISED_LEFT_HAND"){
-			return isRisedLeftHand(ksse);
-		}else if(poseToMatch.name()=="RISED_RIGHT_HAND"){
-			return isRisedRightHand(ksse);
-		}else if(poseToMatch.name()=="HANDS_BACK"){
-			return isHandsBack(ksse);
+		}else if(poseToMatch.name()=="LEFT_HAND_BACK"){
+			return isLeftHandBack(ksse);
+		}else if(poseToMatch.name()=="RIGHT_HAND_BACK"){
+			return isRightHandBack(ksse);
+		}else if(poseToMatch.name()=="BOTH_HANDS_BACK"){
+			return areBothHandsBack(ksse);
 		}else if(poseToMatch.name()=="OPENED_HUG"){
 			return isPoseOpenedHug(ksse);
 		}else if(poseToMatch.name()=="CLOSED_HUG"){
@@ -192,38 +278,33 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	
 	
 
-	private boolean isRisedLeftHand(KinectSkeletonServiceEvent ksse) {
-		boolean isTheRequestedPose=false;
-		
-		if(ksse.getLeftHand().getY()>ksse.getNeck().getY()){
-			isTheRequestedPose=true;
-		}
-		
-		return isTheRequestedPose;
-	}
 
-	
-
-	private boolean isRisedRightHand(KinectSkeletonServiceEvent ksse) {
+	private boolean areBothHandsBack(KinectSkeletonServiceEvent ksse) {
 		boolean isTheRequestedPose = false;
 
-		if (ksse.getRightHand().getY() > ksse.getNeck().getY()) {
+		if (ksse.getLeftHand().getZ() - ksse.getLeftHip().getZ()>200 && ksse.getRightHand().getZ() - ksse.getRightHip().getZ()>200) {
 			isTheRequestedPose = true;
 		}
-
+ 
 		return isTheRequestedPose;
 	}
-
-	private boolean isHandsBack(KinectSkeletonServiceEvent ksse) {
+	private boolean isLeftHandBack(KinectSkeletonServiceEvent ksse) {
 		boolean isTheRequestedPose = false;
 
-		if (ksse.getLeftHand().getZ() - ksse.getLeftHip().getZ()>200||ksse.getRightHand().getZ() - ksse.getRightHip().getZ()>200) {
+		if (ksse.getLeftHand().getZ() - ksse.getLeftHip().getZ()>200 && !( ksse.getRightHand().getZ() - ksse.getRightHip().getZ()>200)) {
 			isTheRequestedPose = true;
 		}
+ 
+		return isTheRequestedPose;
+	}private boolean isRightHandBack(KinectSkeletonServiceEvent ksse) {
+		boolean isTheRequestedPose = false;
 
+		if (!(ksse.getLeftHand().getZ() - ksse.getLeftHip().getZ()>200) && ksse.getRightHand().getZ() - ksse.getRightHip().getZ()>200) {
+			isTheRequestedPose = true;
+		}
+ 
 		return isTheRequestedPose;
 	}
-	
 	/**
 	 * Specific algorithm to detect whether the user has his or her left leg up
 	 * (similar to a walk step).
@@ -235,11 +316,14 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	 */
 	private boolean isPoseWalkingLeftLegUp(KinectSkeletonServiceEvent ksse) {
 		boolean isTheRequestedPose = false;
-		double length = 40;
+		double length = 50;
 
 		if (ksse.getLeftKnee().getY() > (ksse.getRightKnee().getY() + length)) {
 			isTheRequestedPose = true;
+			rightLegMovingUp=false; 
+			leftLegMovingDown=false;
 		}
+	
 		return isTheRequestedPose;
 	}
 
@@ -255,12 +339,12 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	private boolean isPoseWalkingRightLegUp(KinectSkeletonServiceEvent ksse) {
 
 		boolean isTheRequestedPose = false;
-		double length = 40;
+		double length = 50;
 
 		if (ksse.getRightKnee().getY() > (ksse.getLeftKnee().getY() + length)) {
 			isTheRequestedPose = true;
 		}
-
+		
 		return isTheRequestedPose;
 	}
 	
@@ -322,6 +406,90 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	public void setPrivateKinectSkeletonLauncher(
 			KinectSkeletonLauncher privateKinectSkeletonLauncher) {
 		this.privateKinectSkeletonLauncher = privateKinectSkeletonLauncher;
+	}
+
+	/**
+	 * @return the lastRightLegY
+	 */
+	public double getLastRightLegY() {
+		return lastRightLegY;
+	}
+
+	/**
+	 * @param lastRightLegY the lastRightLegY to set
+	 */
+	public void setLastRightLegY(double lastRightLegY) {
+		this.lastRightLegY = lastRightLegY;
+	}
+
+	/**
+	 * @return the lastLeftLegY
+	 */
+	public double getLastLeftLegY() {
+		return lastLeftLegY;
+	}
+
+	/**
+	 * @param lastLeftLegY the lastLeftLegY to set
+	 */
+	public void setLastLeftLegY(double lastLeftLegY) {
+		this.lastLeftLegY = lastLeftLegY;
+	}
+
+	/**
+	 * @return the rightLegMovingUp
+	 */
+	public boolean isRightLegMovingUp() {
+		return rightLegMovingUp;
+	}
+
+	/**
+	 * @param rightLegMovingUp the rightLegMovingUp to set
+	 */
+	public void setRightLegMovingUp(boolean rightLegMovingUp) {
+		this.rightLegMovingUp = rightLegMovingUp;
+	}
+
+	/**
+	 * @return the leftLegMovingUp
+	 */
+	public boolean isLeftLegMovingUp() {
+		return leftLegMovingUp;
+	}
+
+	/**
+	 * @param leftLegMovingUp the leftLegMovingUp to set
+	 */
+	public void setLeftLegMovingUp(boolean leftLegMovingUp) {
+		this.leftLegMovingUp = leftLegMovingUp;
+	}
+
+	/**
+	 * @return the rightLegMovingDown
+	 */
+	public boolean isRightLegMovingDown() {
+		return rightLegMovingDown;
+	}
+
+	/**
+	 * @param rightLegMovingDown the rightLegMovingDown to set
+	 */
+	public void setRightLegMovingDown(boolean rightLegMovingDown) {
+		this.rightLegMovingDown = rightLegMovingDown;
+	}
+
+	/**
+	 * @return the leftLegMovingDown
+	 */
+	public boolean isLeftLegMovingDown() {
+		return leftLegMovingDown;
+	}
+
+	/**
+	 * @param leftLegMovingDown the leftLegMovingDown to set
+	 */
+	public void setLeftLegMovingDown(boolean leftLegMovingDown) {
+		this.leftLegMovingDown = leftLegMovingDown;
 	}
 
 }

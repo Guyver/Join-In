@@ -58,10 +58,17 @@ public class StartDevices {
     	Thread t1= new Thread(jiji);
     	t1.start();
     	
+    	TiltingClass tiltingClass= new TiltingClass(dm);
     	
+    	Thread t2 = new Thread(tiltingClass);
+    	t2.start();
   
 		
 	
 	}
+
+
+
+
 
 }

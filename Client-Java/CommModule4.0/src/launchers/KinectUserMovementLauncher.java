@@ -39,8 +39,8 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 	KinectPoseLauncher kplWalkRightLegUp;
 	KinectPoseLauncher kplStand;
 	KinectPoseLauncher kplHandsBack;
-	KinectPoseLauncher kplRisedLeftArm;
-	KinectPoseLauncher kplRisedRightArm;
+	KinectPoseLauncher kplRisedLeftElbow;
+	KinectPoseLauncher kplRisedRightElbow;
 	
 	public KinectPoseLauncher getKinectPoseLauncherWalkLeftLegUp(){
 		return kplWalkLeftLegUp;
@@ -55,10 +55,10 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 		return kplHandsBack;
 	}
 	public KinectPoseLauncher getKinectPoseLauncherRisedLeftArm(){
-		return kplRisedLeftArm;
+		return kplRisedLeftElbow;
 	}
 	public KinectPoseLauncher getKinectPoseLauncherRisedRightArm(){
-		return kplRisedRightArm;
+		return kplRisedRightElbow;
 	}
 	public KinectUserMovementLauncher(int userId){
 		setUserId(userId);
@@ -66,9 +66,9 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 		kplWalkLeftLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_LEFT_LEG_UP);
     	kplWalkRightLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_RIGHT_LEG_UP);
     	kplStand= dm.getKinectPoseLauncher(userId, KinectPoseEnum.STAND);
-    	kplHandsBack = dm.getKinectPoseLauncher(userId, KinectPoseEnum.HANDS_BACK);
-    	kplRisedLeftArm = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RISED_LEFT_HAND);
-    	kplRisedRightArm = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RISED_RIGHT_HAND);
+    	kplHandsBack = dm.getKinectPoseLauncher(userId, KinectPoseEnum.BOTH_HANDS_BACK);
+    	kplRisedLeftElbow = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_BACK);
+    	kplRisedRightElbow = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_BACK);
     	
 	}
 	
@@ -96,8 +96,8 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
     	kplWalkRightLegUp.addListener(l);
     	kplStand.addListener(l);
     	kplHandsBack.addListener(l);
-    	kplRisedLeftArm.addListener(l);
-    	kplRisedRightArm.addListener(l);
+    	kplRisedLeftElbow.addListener(l);
+    	kplRisedRightElbow.addListener(l);
     
 	}
 
