@@ -39,25 +39,31 @@ public class SkeletonManager
         // to recognize when the user is in a specific position
 
   private String calibPose = null;
-
+  
   // Java3D
   private HashMap<Integer, Skeleton3D> userSkels3D;
     // maps user IDs --> a 3D skeleton
 
   private int maximumNumberOfKinectUsers; 
   
-  private List<Integer> idOfUsersWhoAreBeingTracked;
+  private List<Integer> idOfUsersWhoAreBeingWatched;
  
   public IObserver<UserEventArgs> newUserObserver;
+  
+  private LEDStatus switchToLEDColor;
+  
+
   
   public SkeletonManager(UserGenerator userGenerator, int maximumNumberOfKinectUsers)
   {
 	this.maximumNumberOfKinectUsers=maximumNumberOfKinectUsers;
     this.userGenerator = userGenerator;
     configure();
-    idOfUsersWhoAreBeingTracked=new LinkedList<Integer>();
+    idOfUsersWhoAreBeingWatched=new LinkedList<Integer>();
     userSkels3D = new HashMap<Integer, Skeleton3D>();
-
+    switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+    
+    
   } // end of SkelsManager()
   
   
@@ -66,9 +72,11 @@ public class SkeletonManager
   {
     this.userGenerator = userGenerator;
     configure();
-    idOfUsersWhoAreBeingTracked=new LinkedList<Integer>();
+    idOfUsersWhoAreBeingWatched=new LinkedList<Integer>();
     userSkels3D = new HashMap<Integer, Skeleton3D>();
     maximumNumberOfKinectUsers= 1;
+    switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+   
   } // end of SkelsManager()
 
   
@@ -120,8 +128,9 @@ public class SkeletonManager
         int userID = userIDs[i];
         if (skeletonCapability.isSkeletonCalibrating(userID))
           continue;    // test to avoid occasional crashes with isSkeletonTracking()
-        if (skeletonCapability.isSkeletonTracking(userID))
+        if (skeletonCapability.isSkeletonTracking(userID)){
           userSkels3D.get(userID).update();
+        }
       }
     }
     catch (StatusException e) 
@@ -165,37 +174,64 @@ public class SkeletonManager
 
     +  exit --> re-entry of user
        (3D skeleton is made invisible/visible)
-
+null
     +  lose a user  
        (causes the deletion of its userSkels3D entry + scene graph)
   */
  
 
+
+
+	/**
+ * @return the switchToLEDColor
+ */
+public LEDStatus getSwitchToLEDColor() {
+	return switchToLEDColor;
+}
+
+
+
+/**
+ * @param switchToLEDColor the switchToLEDColor to set
+ */
+public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
+	this.switchToLEDColor = switchToLEDColor;
+}
+
+
 	class NewUserObserver implements IObserver<UserEventArgs> {
 	
-		public void update(IObservable<UserEventArgs> observable,
-				UserEventArgs args) {
+		public void update(IObservable<UserEventArgs> observable,UserEventArgs args) {
 				
 		
 					System.out.println("Detected new user " + args.getId());
 					
 					try {  
-						if(idOfUsersWhoAreBeingTracked.size()<maximumNumberOfKinectUsers&&!idOfUsersWhoAreBeingTracked.contains(new Integer(args.getId()))){
-							idOfUsersWhoAreBeingTracked.add(new Integer(args.getId()));
+						if(idOfUsersWhoAreBeingWatched.size()<maximumNumberOfKinectUsers&&!idOfUsersWhoAreBeingWatched.contains(new Integer(args.getId()))){
+							
+							idOfUsersWhoAreBeingWatched.add(new Integer(args.getId()));
+							
+							switchToLEDColor=LEDStatus.LED_ORANGE;
+							
+							if(idOfUsersWhoAreBeingWatched.size()==maximumNumberOfKinectUsers){
+								
+								userGenerator.getNewUserEvent().deleteObserver(newUserObserver);
+							
+								System.out.println("I stop detecting more users");
+							}
+						
 							System.out.println("Taking care of user "+ args.getId());
-					
+								
 							poseDetectionCapability.startPoseDetection(calibPose,args.getId());
+								
+							
+				
+							
+							
 					  
 						}
 						
-						if(idOfUsersWhoAreBeingTracked.size()==maximumNumberOfKinectUsers){
-							
-							userGenerator.getNewUserEvent().deleteObserver(newUserObserver);
 						
-							System.out.println("I stop detecting more users");
-						}else{
-							
-						}
 						// try to detect a pose for the new user
 					
 					} catch (StatusException e) {
@@ -215,23 +251,33 @@ public class SkeletonManager
     	
 	      int userID = args.getId();
 	      System.out.println("Lost track of user " + userID);
-	      if(idOfUsersWhoAreBeingTracked.contains(new Integer(userID))){
-	    	  idOfUsersWhoAreBeingTracked.remove(new Integer(userID));
-	    	  try{
-    		  userGenerator.getNewUserEvent().addObserver(newUserObserver);
-	    	  }catch(StatusException e){
+	      
+	     
+	      
+	      
+	      if(idOfUsersWhoAreBeingWatched.contains(new Integer(userID))){
+	    	  
+	    	  switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+	    	  
+	    	  idOfUsersWhoAreBeingWatched.remove(new Integer(userID));
+	    	  if(idOfUsersWhoAreBeingWatched.size()==maximumNumberOfKinectUsers-1){
+	    		  try{
+	    		  userGenerator.getNewUserEvent().addObserver(newUserObserver);
+	    	  	}catch(StatusException e){
 	    		  e.printStackTrace();
+	    	  	}
 	    	  }
-    		  
+    		  // delete skeleton from userSkels3D and the scene graph
+	    	  
     	  }
 	   	      
-	      // delete skeleton from userSkels3D and the scene graph
+	      
 	      Skeleton3D skel = userSkels3D.remove(userID);
 	      
 	      
-	      
-	      if (skel == null)
+	      if (skel == null){
 	        return;
+	      }
 	      skel.delete();
 	     
     }
@@ -246,10 +292,12 @@ public class SkeletonManager
 				int userID = args.getId();
 				System.out.println("Exit of user " + userID);
 				 Skeleton3D skel ;
-				
+				 switchToLEDColor=LEDStatus.LED_ORANGE;
 				// make 3D skeleton invisible when user exits
 				 skel = userSkels3D.get(userID);
 				
+				
+				 
 				if (skel == null)
 					return;
     	
@@ -265,7 +313,8 @@ public class SkeletonManager
     	
       int userID = args.getId();
       System.out.println("Reentry of user " + userID);
-    
+ 
+      switchToLEDColor=LEDStatus.LED_GREEN;
       // make 3D skeleton visible when user re-enters
       Skeleton3D skel = userSkels3D.get(userID);
       if (skel == null)
@@ -285,6 +334,8 @@ public class SkeletonManager
       int userID = args.getUser();
      
 	      System.out.println(args.getPose() + " pose detected for user " + userID);
+	  
+	     
 	      try {
 	        // finished pose detection; switch to skeleton calibration
 	    	
@@ -303,9 +354,12 @@ public class SkeletonManager
   class CalibrationStartObserver implements IObserver<CalibrationStartEventArgs>
   {
 	 
-    public void update(IObservable<CalibrationStartEventArgs> observable,
-                                        CalibrationStartEventArgs args)
-    { System.out.println("Calibration started for user " + args.getUser());  }
+    public void update(IObservable<CalibrationStartEventArgs> observable, CalibrationStartEventArgs args)
+    {
+    	switchToLEDColor=LEDStatus.LED_BLINK_GREEN;
+    	System.out.println("Calibration started for user " + args.getUser()); 
+  
+    }
   }  // end of CalibrationStartObserver inner class
 
 
@@ -324,10 +378,11 @@ public class SkeletonManager
           System.out.println("Starting tracking user " + userID);
           skeletonCapability.startTracking(userID);
 
+          switchToLEDColor=LEDStatus.LED_GREEN;
+          
           // create skeleton3D in userSkels3D, and add to scene
           Skeleton3D skel = new Skeleton3D(userID, skeletonCapability, false);
           userSkels3D.put(userID, skel);
-      
       
         } 
         else   // calibration failed; return to pose detection

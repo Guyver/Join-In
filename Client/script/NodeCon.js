@@ -9,7 +9,7 @@
 
 // Connect to the ip of the server. 
 // This will change according to the network.
-var socket = io.connect('193.156.105.166:7541');
+var socket = io.connect('193.156.105.162:7541');
 // A map of the kinect joints as vector3's
 var kinectMap = {};
 // Has the server recieved any kinect data.

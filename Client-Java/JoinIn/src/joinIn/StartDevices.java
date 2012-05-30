@@ -15,7 +15,9 @@ public class StartDevices {
 	{		
 		System.setProperty("bluecove.jsr82.psm_minimum_off", "true");
 		try{
-			new StartDevices();
+			String serverIP= args[0];
+			short serverPort= Short.parseShort(args[1]);
+			new StartDevices(serverIP, serverPort);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -23,12 +25,11 @@ public class StartDevices {
 
 
 
-	public StartDevices() throws Exception
+	public StartDevices(String serverIP, short serverPort) throws Exception
 	{    	
 		int theUserIWant=1;
     	int maximumNumberOfKinectUsers =1;
-     	//DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
-    	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.158", 7540,maximumNumberOfKinectUsers);
+    	DeviceManager dm = DeviceManager.getDeviceManager(serverIP, serverPort,maximumNumberOfKinectUsers);
     	 
     	 
     	

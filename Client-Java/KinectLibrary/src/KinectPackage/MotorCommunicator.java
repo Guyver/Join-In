@@ -47,15 +47,17 @@ public class MotorCommunicator
 
   private Device dev = null;   // used to communicate with the USB device
 
+  private LEDStatus ledStatus;
 
 
   public MotorCommunicator()
   { 
     //System.out.println("Looking for device: (vendor: " + toHexString(VENDOR_ID) + "; product: " + toHexString(PRODUCT_ID) + ")");
     dev = USB.getDevice(VENDOR_ID, PRODUCT_ID);
-    if (dev == null)
+    if (dev == null){
       System.out.println("Device not found");
-
+    }
+    ledStatus=LEDStatus.LED_BLINK_RED_ORANGE;
     //System.out.println("Max packet size: " +
     //             dev.getDeviceDescriptor().getBMaxPacketSize0());
     try {
@@ -147,8 +149,13 @@ public class MotorCommunicator
 
   public void setLED(LEDStatus status)
   {
+	ledStatus= status;
     System.out.println("Setting LED to " + status);
     sendMessage(0x40, 0x06, status.getCode(),  new byte[1], 0);
+  }  // end of setLED()
+  public LEDStatus getLED()
+  {
+	  return ledStatus;
   }  // end of setLED()
 
 

@@ -28,8 +28,7 @@ import java.util.concurrent.Semaphore;
 
 public class KinectManager implements Runnable {
 
-
-
+	
 	// OpenNI
 	private Context context;
 	private UserGenerator userGenerator;
@@ -178,6 +177,7 @@ public class KinectManager implements Runnable {
 	public KinectManager() {
 		this.maximumNumberOfKinectUsers=1;
 		setMotorCommunicator(new MotorCommunicator());
+		
 		configOpenNI();
 		sem = new Semaphore(1,true);
 	}
@@ -188,6 +188,7 @@ public class KinectManager implements Runnable {
 	public KinectManager(int maximumNumberOfKinectUsers) {
 		this.maximumNumberOfKinectUsers=maximumNumberOfKinectUsers;
 		setMotorCommunicator(new MotorCommunicator());
+		
 		configOpenNI();
 		sem = new Semaphore(1,true);
 	}
@@ -216,7 +217,7 @@ public class KinectManager implements Runnable {
 	 */
 	private void activate() {
 		(new Thread(this)).start();
-
+	
 	}
 
 	// ------------------------OpenNI ---------------
@@ -249,6 +250,9 @@ public class KinectManager implements Runnable {
 		}
 	} // end of configOpenNI()
 
+	
+
+	
 	/**
 	 * Disconnects the Kinect.
 	 */
@@ -301,6 +305,7 @@ public class KinectManager implements Runnable {
 
 		isRunning = true;
 		while (isRunning) {
+			
 			try {
 				context.waitAnyUpdateAll();
 			} catch (StatusException e) {
@@ -309,14 +314,18 @@ public class KinectManager implements Runnable {
 			}
 			skeletonManager.update(); // get the skeletons manager to carry out
 										// the updates
-
+			if(skeletonManager.getSwitchToLEDColor()!=motorCommunicator.getLED()){
+				motorCommunicator.setLED(skeletonManager.getSwitchToLEDColor());
+			}
+			
 			for (int i = 0; i < userGenerator.getNumberOfUsers(); i++) {
 
-				KinectEvent ke = new KinectEvent(i, new KinectData(
-						motorCommunicator, skeletonManager));
+				KinectEvent ke = new KinectEvent(i, new KinectData(motorCommunicator, skeletonManager));
 				fireKinectEvent(ke);
 			}
-
+			
+			
+		
 		}
 		// close down
 		try {
