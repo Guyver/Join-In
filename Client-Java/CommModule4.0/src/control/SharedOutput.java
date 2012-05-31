@@ -16,8 +16,8 @@
 
 package control;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 import kinectThreads.KinectUserActionEnum;
@@ -65,8 +65,8 @@ public class SharedOutput {
 	private KinectUserActionEnum lastRotation; 
 
 	
-	static Map<Object, Object> actionMap; 
-	static Map<Object, Object> lastMovementMap; 
+	static ConcurrentHashMap<Object, Object> actionMap; 
+	static ConcurrentHashMap<Object, Object> lastMovementMap; 
 	
 	/**
 	 * 
@@ -80,8 +80,8 @@ public class SharedOutput {
 	        if (rc == null) {
 	            rc = new SharedOutput();
 	            sem= new Semaphore(1, true);
-	            actionMap= new HashMap<Object, Object>();
-	            lastMovementMap= new HashMap<Object, Object>();
+	            actionMap= new ConcurrentHashMap<Object, Object>();
+	            lastMovementMap= new ConcurrentHashMap<Object, Object>();
 	            lastMovementMap.put("standStill","true");
 	            lastMovementMap.put("walk", "false");
 	            lastMovementMap.put("run", "false");

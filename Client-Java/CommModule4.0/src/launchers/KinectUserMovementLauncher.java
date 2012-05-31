@@ -39,8 +39,8 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 	KinectPoseLauncher kplWalkRightLegUp;
 	KinectPoseLauncher kplStand;
 	KinectPoseLauncher kplHandsBack;
-	KinectPoseLauncher kplRisedLeftElbow;
-	KinectPoseLauncher kplRisedRightElbow;
+	KinectPoseLauncher kplRightShoulderCloserToTheKinectThanTheLeftShoulder;
+	KinectPoseLauncher kplLeftShoulderCloserToTheKinectThanTheRightShoulder;
 	
 	public KinectPoseLauncher getKinectPoseLauncherWalkLeftLegUp(){
 		return kplWalkLeftLegUp;
@@ -55,10 +55,10 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 		return kplHandsBack;
 	}
 	public KinectPoseLauncher getKinectPoseLauncherRisedLeftArm(){
-		return kplRisedLeftElbow;
+		return kplRightShoulderCloserToTheKinectThanTheLeftShoulder;
 	}
 	public KinectPoseLauncher getKinectPoseLauncherRisedRightArm(){
-		return kplRisedRightElbow;
+		return kplLeftShoulderCloserToTheKinectThanTheRightShoulder;
 	}
 	public KinectUserMovementLauncher(int userId){
 		setUserId(userId);
@@ -67,8 +67,8 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
     	kplWalkRightLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_RIGHT_LEG_UP);
     	kplStand= dm.getKinectPoseLauncher(userId, KinectPoseEnum.STAND);
     	kplHandsBack = dm.getKinectPoseLauncher(userId, KinectPoseEnum.BOTH_HANDS_BACK);
-    	kplRisedLeftElbow = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_BACK);
-    	kplRisedRightElbow = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_BACK);
+    	kplRightShoulderCloserToTheKinectThanTheLeftShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_SHOULDER_CLOSER_TO_THE_KINECT_THAN_THE_LEFT_SHOULDER);
+    	kplLeftShoulderCloserToTheKinectThanTheRightShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_SHOULDER_CLOSER_TO_THE_KINECT_THAN_THE_RIGHT_SHOULDER);
     	
 	}
 	
@@ -96,8 +96,8 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
     	kplWalkRightLegUp.addListener(l);
     	kplStand.addListener(l);
     	kplHandsBack.addListener(l);
-    	kplRisedLeftElbow.addListener(l);
-    	kplRisedRightElbow.addListener(l);
+    	kplRightShoulderCloserToTheKinectThanTheLeftShoulder.addListener(l);
+    	kplLeftShoulderCloserToTheKinectThanTheRightShoulder.addListener(l);
     
 	}
 
