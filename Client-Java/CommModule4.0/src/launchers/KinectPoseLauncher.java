@@ -316,7 +316,7 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	 */
 	private boolean isPoseWalkingLeftLegUp(KinectSkeletonServiceEvent ksse) {
 		boolean isTheRequestedPose = false;
-		double length = 15;
+		double length = 25;
 
 		if ( (ksse.getRightKnee().getZ() - length) >  ksse.getLeftKnee().getZ() ) {
 			isTheRequestedPose = true;
@@ -339,7 +339,7 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	private boolean isPoseWalkingRightLegUp(KinectSkeletonServiceEvent ksse) {
 
 		boolean isTheRequestedPose = false;
-		double length = 15;
+		double length = 25;
 
 		if ( (ksse.getLeftKnee().getZ() - length) >  ksse.getRightKnee().getZ() ) {
 			isTheRequestedPose = true;
