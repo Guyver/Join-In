@@ -30,12 +30,11 @@ import control.LauncherWrapper;
  * @author Santiago Hors Fraile
  */
 public class KinectUserHugLauncher extends LauncherWrapper {
-	
+
 	/**
 	 * This field represents the the ID label of the users we want to get the poses of.
 	 */
 	private int userId;
-
 	KinectPoseLauncher kplOpenedHug;
 	KinectPoseLauncher kplClosedHug;
 	
@@ -57,7 +56,6 @@ public class KinectUserHugLauncher extends LauncherWrapper {
 	
 	
 	
-
 	/**
 	 * @return the userId
 	 */
@@ -71,7 +69,6 @@ public class KinectUserHugLauncher extends LauncherWrapper {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-
 
 	public void addListener (IKinectPoseService l) throws Exception{	
 		

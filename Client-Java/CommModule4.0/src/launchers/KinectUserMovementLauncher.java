@@ -30,7 +30,6 @@ import control.LauncherWrapper;
  * @author Santiago Hors Fraile
  */
 public class KinectUserMovementLauncher extends LauncherWrapper {
-	
 	/**
 	 * This field represents the the ID label of the users we want to get the poses of.
 	 */
@@ -38,9 +37,8 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 	KinectPoseLauncher kplWalkLeftLegUp;
 	KinectPoseLauncher kplWalkRightLegUp;
 	KinectPoseLauncher kplStand;
-	KinectPoseLauncher kplHandsBack;
-	KinectPoseLauncher kplRightShoulderCloserToTheKinectThanTheLeftShoulder;
-	KinectPoseLauncher kplLeftShoulderCloserToTheKinectThanTheRightShoulder;
+	
+
 	
 	public KinectPoseLauncher getKinectPoseLauncherWalkLeftLegUp(){
 		return kplWalkLeftLegUp;
@@ -51,30 +49,18 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 	public KinectPoseLauncher getKinectPoseLauncherStand(){
 		return kplStand;
 	}
-	public KinectPoseLauncher getKinectPoseLauncherHandsBack(){
-		return kplHandsBack;
-	}
-	public KinectPoseLauncher getKinectPoseLauncherRisedLeftArm(){
-		return kplRightShoulderCloserToTheKinectThanTheLeftShoulder;
-	}
-	public KinectPoseLauncher getKinectPoseLauncherRisedRightArm(){
-		return kplLeftShoulderCloserToTheKinectThanTheRightShoulder;
-	}
+	
 	public KinectUserMovementLauncher(int userId){
 		setUserId(userId);
 		DeviceManager dm = DeviceManager.getDeviceManager();
 		kplWalkLeftLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_LEFT_LEG_UP);
     	kplWalkRightLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_RIGHT_LEG_UP);
     	kplStand= dm.getKinectPoseLauncher(userId, KinectPoseEnum.STAND);
-    	kplHandsBack = dm.getKinectPoseLauncher(userId, KinectPoseEnum.BOTH_HANDS_BACK);
-    	kplRightShoulderCloserToTheKinectThanTheLeftShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_SHOULDER_CLOSER_TO_THE_KINECT_THAN_THE_LEFT_SHOULDER);
-    	kplLeftShoulderCloserToTheKinectThanTheRightShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_SHOULDER_CLOSER_TO_THE_KINECT_THAN_THE_RIGHT_SHOULDER);
-    	
+    
+
 	}
 	
 	
-	
-
 	/**
 	 * @return the userId
 	 */
@@ -90,14 +76,14 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 	}
 
 
+
+
 	public void addListener (IKinectPoseService l) throws Exception{	
 		
 		kplWalkLeftLegUp.addListener(l);
     	kplWalkRightLegUp.addListener(l);
     	kplStand.addListener(l);
-    	kplHandsBack.addListener(l);
-    	kplRightShoulderCloserToTheKinectThanTheLeftShoulder.addListener(l);
-    	kplLeftShoulderCloserToTheKinectThanTheRightShoulder.addListener(l);
+
     
 	}
 

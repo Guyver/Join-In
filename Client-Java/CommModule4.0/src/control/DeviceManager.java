@@ -943,23 +943,34 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		}else 	if(kinectLauncher instanceof KinectUserMovementLauncher){
 			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherWalkLeftLegUp().getPrivateKinectSkeletonLauncher());
 			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherWalkRightLegUp().getPrivateKinectSkeletonLauncher());
-			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherStand().getPrivateKinectSkeletonLauncher());
-			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherHandsBack().getPrivateKinectSkeletonLauncher());
-			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherRisedLeftArm().getPrivateKinectSkeletonLauncher());
-			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherRisedRightArm().getPrivateKinectSkeletonLauncher());	
+			kinectManager.removeListener(((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherStand().getPrivateKinectSkeletonLauncher());	
 			((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherWalkLeftLegUp().dropService();
 			((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherWalkRightLegUp().dropService();
 			((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherStand().dropService();
-			((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherHandsBack().dropService();
-			((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherRisedLeftArm().dropService();
-			((KinectUserMovementLauncher)kinectLauncher).getKinectPoseLauncherRisedRightArm().dropService();
 		} else if(kinectLauncher instanceof KinectUserHugLauncher){
 			kinectManager.removeListener(((KinectUserHugLauncher)kinectLauncher).getKinectPoseLauncherOpenedHug().getPrivateKinectSkeletonLauncher());
 			kinectManager.removeListener(((KinectUserHugLauncher)kinectLauncher).getKinectPoseLauncherClosedHug().getPrivateKinectSkeletonLauncher());
 			((KinectUserHugLauncher)kinectLauncher).getKinectPoseLauncherOpenedHug().dropService();
 			((KinectUserHugLauncher)kinectLauncher).getKinectPoseLauncherClosedHug().dropService();
-		} else {
+		} else if(kinectLauncher instanceof KinectUserGameControlLauncher){
+			kinectManager.removeListener(((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherCrossedHands().getPrivateKinectSkeletonLauncher());
+			kinectManager.removeListener(((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherTouchingOppositeShoulder().getPrivateKinectSkeletonLauncher());
+			kinectManager.removeListener(((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherLeftHandBeneathLeftElbowSeparated30CmFromLeftHip().getPrivateKinectSkeletonLauncher());
+			kinectManager.removeListener(((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherRightHandBeneathRightElbowSeparated30CmFromRightHip().getPrivateKinectSkeletonLauncher());
+			kinectManager.removeListener(((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherLeftHandAboveLeftShoulder().getPrivateKinectSkeletonLauncher());
+			kinectManager.removeListener(((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherRightHandAboveRightShoulder().getPrivateKinectSkeletonLauncher());
+	
+			
+			((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherCrossedHands().dropService();
+			((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherTouchingOppositeShoulder().dropService();
+			((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherLeftHandBeneathLeftElbowSeparated30CmFromLeftHip().dropService();
+			((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherRightHandBeneathRightElbowSeparated30CmFromRightHip().dropService();
+			((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherLeftHandAboveLeftShoulder().dropService();
+			((KinectUserGameControlLauncher)kinectLauncher).getKinectPoseLauncherRightHandAboveRightShoulder().dropService();
 			//Nothing
+		} else if(kinectLauncher instanceof KinectUserReachPickUpLauncher){
+			kinectManager.removeListener(((KinectUserReachPickUpLauncher)kinectLauncher).getKinectSkeletonLauncher());
+			((KinectUserReachPickUpLauncher)kinectLauncher).getKinectSkeletonLauncher().dropService();
 		}
 		if (kinectCounter == 0) {
 			kinectManager.disconnect();
@@ -1154,7 +1165,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 *            ready before continuing.
 	 * @param joint
 	 *            The joint of the user we want to make sure that is ready
-	 *            before continuing.
+	 *            before continuing.getKinectPoseLauncherTouchingEar
 	 */
 	public void waitForJointReady(int userId, SkeletonJoint joint) {
 		Vector3d currentPoint = kinectManager.getSkeletonManager().getJoint3D(
@@ -1331,11 +1342,12 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		
 		kinectStartUpKinectIfNeeded();
 
+		
 		dm.waitForUserIsCalibrated(userId);
 		kinectCounter++;
 
 		kpl = new KinectPoseLauncher(userId, kinectPose);
-		
+	
 	
 		
 		
@@ -1352,7 +1364,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 			e.printStackTrace();
 		}
 		
-		
+	
 		kinectPoseManager.addListener(kpl);
 		
 		return kpl;
@@ -1383,30 +1395,73 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		}
 		
 		
-		/**
-		 * 
-		 * @param userId The ID label of the user we want to detect the pose to.
-		 * @return A KinectUserMovementLauncher which will notify its listeners when the user with ID label userId performs a hug. 
-		 */
-			public KinectUserHugLauncher getKinectUserHugLauncher(int userId) { // We
-				// allow
-				// to
-				// exist only
-				// one Kinect
-				// device
-
-				KinectUserHugLauncher kuhl = null;
-				
-				kinectStartUpKinectIfNeeded();
-
-				dm.waitForUserIsCalibrated(userId);
-				
-
-				kuhl = new KinectUserHugLauncher(userId);
+	/**
+	 * 
+	 * @param userId The ID label of the user we want to detect the pose to.
+	 * @return A KinectUserMovementLauncher which will notify its listeners when the user with ID label userId performs a hug. 
+	 */
+		public KinectUserHugLauncher getKinectUserHugLauncher(int userId) { // We
+			// allow
+			// to
+			// exist only
+			// one Kinect
+			// device
+	
+			KinectUserHugLauncher kuhl = null;
 			
-				
-				return kuhl;
-			}
+			kinectStartUpKinectIfNeeded();
+	
+			dm.waitForUserIsCalibrated(userId);
+			
+	
+			kuhl = new KinectUserHugLauncher(userId);
+		
+			
+			return kuhl;
+		}
+			
+			
+	
+	
+	public KinectUserGameControlLauncher getKinectUserGameControlLauncher(int userId){
+		
+		KinectUserGameControlLauncher kuhl = null;
+		
+		kinectStartUpKinectIfNeeded();
+
+		dm.waitForUserIsCalibrated(userId);
+		
+
+		kuhl = new KinectUserGameControlLauncher(userId);
+	
+		
+		return kuhl;
+		
+		
+		
+	}
+	public KinectUserReachPickUpLauncher getKinectUserReachPickUpLauncher(int userId){
+		
+		KinectUserReachPickUpLauncher kurpul = null;
+		
+		kinectStartUpKinectIfNeeded();
+
+		dm.waitForUserIsCalibrated(userId);
+		
+
+		kurpul = new KinectUserReachPickUpLauncher(userId);
+	
+		
+		return kurpul;
+		
+		
+		
+	}
+			
+			
+			
+			
+			
 			
 	/**
 	 * @return the maximumNumberOfKinectUsers

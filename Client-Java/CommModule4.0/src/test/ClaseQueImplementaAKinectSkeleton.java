@@ -16,7 +16,7 @@ public class ClaseQueImplementaAKinectSkeleton implements IKinectSkeletonService
 	@Override
 	public void kinectUpdate(KinectSkeletonServiceEvent se) {
 		lastKinectSkeletonServiceEvent= se;		
-		
+	
 	}
 
 

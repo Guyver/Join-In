@@ -4,27 +4,21 @@ import control.IEventCommModule;
 
 public class KinectUserActionServiceEvent implements IEventCommModule  {
 	
-	private int userId;
+	
 	private String userAction;
+	private int value;
 
 	
-	public KinectUserActionServiceEvent(int userId, String userAction){
+	public KinectUserActionServiceEvent(String userAction){
 		this.setUserAction(userAction);
-		this.setUserId(userId);
+		this.setValue(-1);
 	}
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
+	public KinectUserActionServiceEvent(String userAction, int value){
+		this.setUserAction(userAction);
+		this.setValue(value);
 	}
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+	
 	/**
 	 * @return the userAction
 	 */
@@ -36,6 +30,22 @@ public class KinectUserActionServiceEvent implements IEventCommModule  {
 	 */
 	public void setUserAction(String userAction) {
 		this.userAction = userAction;
+	}
+
+
+	/**
+	 * @return the value
+	 */
+	public int getValue() {
+		return value;
+	}
+
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(int value) {
+		this.value = value;
 	}
 
 

@@ -29,9 +29,11 @@ import launchers.KinectAbsoluteSpaceForATimeLauncher;
 import launchers.KinectPoseLauncher;
 import launchers.KinectSkeletonLauncher;
 import launchers.KinectTotalSpaceTravelledForATimeLauncher;
+import launchers.KinectUserGameControlLauncher;
 import launchers.KinectUserHugLauncher;
 import launchers.KinectUserJointReachPointLauncher;
 import launchers.KinectUserMovementLauncher;
+import launchers.KinectUserReachPickUpLauncher;
 import launchers.NoninLauncher;
 import launchers.NunchukAnalogStickLauncher;
 import launchers.NunchukButtonsLauncher;
@@ -83,7 +85,7 @@ public class TestGrande
     	int theUserIWant=1;
     	int maximumNumberOfKinectUsers =1;
     	
-    	DeviceManager dm = DeviceManager.getDeviceManager("127.0.0.1", 7540,maximumNumberOfKinectUsers);
+    	DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.162", 7540,maximumNumberOfKinectUsers);
     	//DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.158", 7540,maximumNumberOfKinectUsers);
     	//DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.153", 7540,maximumNumberOfKinectUsers);
     	
@@ -94,30 +96,27 @@ public class TestGrande
     	
     	KinectUserMovementLauncher kumLauncher;
     	KinectUserHugLauncher kuhLauncher;
+    	KinectUserGameControlLauncher kgcLauncher;
+    	KinectUserReachPickUpLauncher kurpuLauncher;
     	
     	kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant);
     	kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
-      
+    	kgcLauncher= dm.getKinectUserGameControlLauncher(theUserIWant);
+    	kurpuLauncher= dm.getKinectUserReachPickUpLauncher(theUserIWant);
+    	
     	
     	ClaseQueImplementaAPose jiji = new ClaseQueImplementaAPose();
-    	
+    
     	
     	kumLauncher.addListener(jiji);
     	kuhLauncher.addListener(jiji);
-    
+    	kgcLauncher.addListener(jiji);
+    	kurpuLauncher.addListener(jiji);
    
     	Thread t1= new Thread(jiji);
     	t1.start();
-    	
-    	
-    	
-    
-    	ksl= dm.getKinectSkeletonLauncher(theUserIWant);
-		
-		ClaseQueImplementaAKinectSkeleton cqaks= new ClaseQueImplementaAKinectSkeleton();
-		
-		ksl.addListener(cqaks);
-		
+ 
+ 
 	
 		
 		

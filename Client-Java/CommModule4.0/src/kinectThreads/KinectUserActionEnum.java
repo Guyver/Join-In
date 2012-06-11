@@ -24,11 +24,15 @@ public enum KinectUserActionEnum {
 	STAND(0),
 	WALK(1),
 	RUN(2),
-	BACKWARDS(3),
-	TURN_LEFT(4),
-	TURN_RIGHT(5),
-	NO_ROTATION(6),
-	HUG(7);
+	PAUSE(3),
+	RESUME(4),
+	QUIT(5),
+	HUG(6),
+	REACHED(7),
+	PICKED_UP_LEFT(8),
+	PICKED_UP_RIGHT(9),
+	ACCEPT(10),
+	CANCEL(11);
 
 	private int code;
 

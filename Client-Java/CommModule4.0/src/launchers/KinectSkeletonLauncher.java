@@ -95,7 +95,7 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectLi
 	 * Default constructor
 	 */
 	public KinectSkeletonLauncher(){
-		setUserId(0);
+		setUserId(1);
 		kinectEnhacedSkeletonLauncher=null;
 		t1=null;
 	

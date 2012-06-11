@@ -154,24 +154,94 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 			return isPoseWalkingLeftLegUp(ksse);
 		}else if(poseToMatch.name().compareTo(KinectPoseEnum.WALK_RIGHT_LEG_UP.name())==0){
 			return isPoseWalkingRightLegUp(ksse);
-		}else if(poseToMatch.name().compareTo(KinectPoseEnum.RIGHT_SHOULDER_CLOSER_TO_THE_KINECT_THAN_THE_LEFT_SHOULDER.name())==0){
-			return isLeftShoulderCloserToTheKinectThanTheRightShoulder(ksse);
-		}else if(poseToMatch.name().compareTo(KinectPoseEnum.LEFT_SHOULDER_CLOSER_TO_THE_KINECT_THAN_THE_RIGHT_SHOULDER.name())==0){
-			return isRightShoulderCloserToTheKinectThanTheLeftShoulder(ksse);
-		}else if(poseToMatch.name().compareTo(KinectPoseEnum.BOTH_HANDS_BACK.name())==0){
-			return areBothHandsBack(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.TOUCHING_OPPOSITE_SHOULDER.name())==0){
+			return isTouchingOppositeShoulder(ksse);
 		}else if(poseToMatch.name().compareTo(KinectPoseEnum.OPENED_HUG.name())==0){
 			return isPoseOpenedHug(ksse);
 		}else if(poseToMatch.name().compareTo(KinectPoseEnum.CLOSED_HUG.name())==0){
 			return isPoseClosedHug(ksse);
 		}else if(poseToMatch.name().compareTo(KinectPoseEnum.STAND.name())==0){
 			return isPoseStand(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.LEFT_HAND_BACK.name())==0){
+			return isLeftHandBack(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.RIGHT_HAND_BACK.name())==0){
+			return isRightHandBack(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.CROSSED_HANDS_ABOVE_SHOULDERS.name())==0){
+			return areCrossedHandsAboveShoulders(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER.name())==0){
+			return isLeftHandAboveLeftShoulder(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER.name())==0){
+			return isRightHandAboveRightShoulder(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_50_CM_FROM_LEFT_HIP.name())==0){
+			return isLeftHandBeneathLeftElbowSeparated30CmFromLeftHip(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPATED_50_CM_FROM_RIGHT_HIP.name())==0){
+			return isRightHandBeneathRightElbowSeparated30CmFromRightHip(ksse);
 		}else{
 			return false;
 		}
 		
-		
 	}
+	
+	private boolean isLeftHandAboveLeftShoulder(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose=false;
+		
+		if(ksse.getLeftHand().getY()>ksse.getLeftShoulder().getY() && ksse.getLeftHand().getX()<ksse.getLeftShoulder().getX()){
+			isTheRequestedPose=true;
+		}
+				
+		return isTheRequestedPose;
+	}
+	
+	private boolean isRightHandAboveRightShoulder(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose=false;
+		
+		if(ksse.getRightHand().getY()>ksse.getRightShoulder().getY()&& ksse.getRightHand().getX()>ksse.getRightShoulder().getX()){
+			isTheRequestedPose=true;
+		}
+		
+		return isTheRequestedPose;
+	}
+	
+	private boolean isLeftHandBeneathLeftElbowSeparated30CmFromLeftHip(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose=false;
+		
+		if(ksse.getLeftHand().getY()<ksse.getLeftElbow().getY() && ksse.getLeftHand().getX()<ksse.getLeftHip().getX()-500){
+			isTheRequestedPose=true;
+		}
+		return isTheRequestedPose;
+	}
+	
+	private boolean isRightHandBeneathRightElbowSeparated30CmFromRightHip(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose=false;
+		if(ksse.getRightHand().getY()<ksse.getRightElbow().getY() && ksse.getRightHand().getX()>ksse.getRightHip().getX()+500){
+			isTheRequestedPose=true;
+		}
+		return isTheRequestedPose;
+	}
+	
+	private boolean isTouchingOppositeShoulder(KinectSkeletonServiceEvent ksse) {
+		boolean isTheRequestedPose = false;
+	
+		
+		if(ksse.getLeftHand().getX()>ksse.getHead().getX() && ksse.getRightShoulder().getZ()-100<ksse.getLeftHand().getZ() && ksse.getRightShoulder().getY()<ksse.getLeftHand().getY()||
+				ksse.getRightHand().getX()<ksse.getHead().getX() && ksse.getLeftShoulder().getZ()-100<ksse.getRightHand().getZ() && ksse.getLeftShoulder().getY()<ksse.getRightHand().getY()	){
+			isTheRequestedPose=true;
+		}
+
+		return isTheRequestedPose;
+	}
+	private boolean areCrossedHandsAboveShoulders(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose=false;
+		
+		//if(ksse.getRightHand().getX()<ksse.getHead().getX() && ksse.getLeftHand().getX()>ksse.getHead().getX() && ksse.getLeftHand().getY()>ksse.getNeck().getY()&&ksse.getRightHand().getY()>ksse.getNeck().getY()){
+		if(ksse.getRightHand().getX()+100<ksse.getLeftHand().getX() && ksse.getRightHand().getY()>ksse.getRightShoulder().getY()&&ksse.getLeftHand().getY()>ksse.getLeftShoulder().getY()){
+				isTheRequestedPose=true;
+		}
+			
+			
+		return isTheRequestedPose;
+	}
+	
 	
 	private boolean isPoseStand(KinectSkeletonServiceEvent ksse){
 		
@@ -197,33 +267,30 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	}
 	
 
-
-	private boolean areBothHandsBack(KinectSkeletonServiceEvent ksse) {
-		boolean isTheRequestedPose = false;
-
-		if (ksse.getLeftHand().getZ() - ksse.getLeftHip().getZ()>200 && ksse.getRightHand().getZ() - ksse.getRightHip().getZ()>200) {
-			isTheRequestedPose = true;
-		}
- 
-		return isTheRequestedPose;
-	}
-	private boolean isLeftShoulderCloserToTheKinectThanTheRightShoulder(KinectSkeletonServiceEvent ksse) {
-		boolean isTheRequestedPose = false;
-
-		if(ksse.getLeftShoulder().getZ()-ksse.getRightShoulder().getZ()>200){
-		isTheRequestedPose=true;
-	}
+	private boolean isLeftHandBack(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose= false;
 		
-		
-		return isTheRequestedPose;
-	}private boolean isRightShoulderCloserToTheKinectThanTheLeftShoulder(KinectSkeletonServiceEvent ksse) {
-		boolean isTheRequestedPose = false;
-
-		if(ksse.getRightShoulder().getZ()-ksse.getLeftShoulder().getZ()>200){
+		if(ksse.getLeftHand().getZ()>ksse.getTorso().getZ()+150){
+			
 			isTheRequestedPose=true;
 		}
 		return isTheRequestedPose;
+		
 	}
+	
+	private boolean isRightHandBack(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose= false;
+	
+		if(ksse.getRightHand().getZ()>ksse.getTorso().getZ()+150){
+			
+			isTheRequestedPose=true;
+		}
+		return isTheRequestedPose;
+		
+	}
+	
+		
+	
 	/**
 	 * Specific algorithm to detect whether the user has his or her left leg up
 	 * (similar to a walk step).
@@ -299,7 +366,7 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	private boolean isPoseClosedHug(KinectSkeletonServiceEvent ksse){
 		boolean isTheRequestedPose = false;
 		
-		if(ksse.getLeftHand().getX()>ksse.getNeck().getX()&&ksse.getRightHand().getX()<ksse.getNeck().getX()){
+		if(ksse.getLeftHand().getX()>ksse.getRightHip().getX()&&ksse.getRightHand().getX()<ksse.getLeftHip().getX()&&ksse.getRightHand().getY()<ksse.getLeftShoulder().getY()&&ksse.getLeftHand().getY()<ksse.getRightShoulder().getY()){
 			isTheRequestedPose=true;
 		}
 		

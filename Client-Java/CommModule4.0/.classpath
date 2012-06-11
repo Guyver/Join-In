@@ -4,13 +4,9 @@
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/WiiboardSimple2.0.jar"/>
-	<classpathentry kind="lib" path="lib/wii-gee-plugin-wiimote-android_fat.jar"/>
-	<classpathentry kind="lib" path="lib/IRGlanceLibrary.jar"/>
 	<classpathentry kind="lib" path="lib/NoninLibrary.jar"/>
-	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
-	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
-	<classpathentry kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/KinectLibrary.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/IRGlanceLibrary.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
