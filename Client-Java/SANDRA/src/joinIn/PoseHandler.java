@@ -4,10 +4,12 @@ import kinectThreads.KinectPoseEnum;
 import kinectThreads.KinectUserActionEnum;
 import control.SharedOutput;
 import services.KinectPoseServiceEvent;
+import services.KinectSkeletonServiceEvent;
 import services.KinectUserActionServiceEvent;
 import iservices.IKinectPoseService;
+import iservices.IKinectSkeletonService;
 
-public class PoseHandler implements IKinectPoseService, Runnable {
+public class PoseHandler implements IKinectPoseService, IKinectSkeletonService, Runnable {
 
 	boolean leftLegUp;
 	boolean rightLegUp;
@@ -47,7 +49,16 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 	boolean lastAccept;
 	long lastTimeAccept;
 
+	boolean pickedUpFromLeft;
+	boolean lastPickedUpFromLeft;
+	long lastTimePickedUpFromLeft;
 	
+	boolean pickedUpFromRight;
+	boolean lastPickedUpFromRight;
+	long lastTimePickedUpFromRight;
+	
+	long waitingForLyingTheObjectOnTheShelfWhichComesFromLeft;
+	long waitingForLyingTheObjectOnTheShelfWhichComesFromRight;
 
 	public PoseHandler() {
 		leftLegUp=false;
@@ -87,6 +98,12 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 		lastCancel=false;
 		lastTimeCancel=0;
 		
+		pickedUpFromLeft=false;
+		lastPickedUpFromLeft=false;
+		lastTimePickedUpFromLeft=0;
+		
+		waitingForLyingTheObjectOnTheShelfWhichComesFromLeft=-1;
+		waitingForLyingTheObjectOnTheShelfWhichComesFromRight=-1;
 	}
 
 	@Override
@@ -146,15 +163,54 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER.name())==0){
 			accept=true;
 			lastTimeAccept=System.currentTimeMillis();
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_50_CM_FROM_LEFT_HIP.name())==0||
-				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPATED_50_CM_FROM_RIGHT_HIP.name())==0){
+		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_FROM_LEFT_HIP.name())==0||
+				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPARATED_FROM_RIGHT_HIP.name())==0){
 			cancel=true;
 			lastTimeCancel=System.currentTimeMillis();
+		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_SHOULDER_LOWER_AND_CLOSER.name())==0){
+			pickedUpFromRight=true;
+			lastTimePickedUpFromRight=System.currentTimeMillis();
+		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_SHOULDER_LOWER_AND_CLOSER.name())==0){
+		
+			pickedUpFromLeft=true;
+			lastTimePickedUpFromLeft=System.currentTimeMillis();
 		}
 		
 
 	}
 
+	@Override
+	public void kinectUpdate(KinectSkeletonServiceEvent se) {
+		
+
+		
+		double hip = (se.getLeftHip().getY()+se.getRightHip().getY())/2;
+		double step = (se.getHead().getY()-hip+300)/11;
+		
+		if(se.getRightHand().getY()>step*10 && se.getLeftHand().getY()>step*10){
+			reached=10;
+		}else if(se.getRightHand().getY()>step*9 && se.getLeftHand().getY()>step*9){
+			reached=9;
+		}else if (se.getRightHand().getY()>step*8 && se.getLeftHand().getY()>step*8){
+			reached=8;
+		}else if (se.getRightHand().getY()>step*7 && se.getLeftHand().getY()>step*7){
+			reached=7;
+		}else if (se.getRightHand().getY()>step*6 && se.getLeftHand().getY()>step*6){
+			reached=6;
+		}else if (se.getRightHand().getY()>step*5 && se.getLeftHand().getY()>step*5){
+			reached=5;
+		}else if (se.getRightHand().getY()>step*4 && se.getLeftHand().getY()>step*4){
+			reached=4;
+		}else if (se.getRightHand().getY()>step*3 && se.getLeftHand().getY()>step*3){
+			reached=3;
+		}else if (se.getRightHand().getY()>step*2 && se.getLeftHand().getY()>step*2){
+			reached=2;
+		}else if (se.getRightHand().getY()>step*1 && se.getLeftHand().getY()>step*1){
+			reached=1;
+		}else{
+			reached=0;
+		}
+	}
 	
 	@Override
 	public void run() {
@@ -199,7 +255,29 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 				lastAccept=false;
 		
 			}
+			if(pickedUpFromLeft && System.currentTimeMillis()-lastTimePickedUpFromLeft>1000)
+			{
+				pickedUpFromLeft=false;
+				lastPickedUpFromLeft=false;
+		
+			}
+			if(pickedUpFromRight && System.currentTimeMillis()-lastTimePickedUpFromRight>1000)
+			{
+				pickedUpFromRight=false;
+				lastPickedUpFromRight=false;
+		
+			}
 			
+			
+			if(waitingForLyingTheObjectOnTheShelfWhichComesFromLeft!=-1 && reached>5){
+				waitingForLyingTheObjectOnTheShelfWhichComesFromLeft=-1;
+				System.out.println("Object placed successfully");
+				
+			}else if(waitingForLyingTheObjectOnTheShelfWhichComesFromRight!=-1 && reached>5){
+				waitingForLyingTheObjectOnTheShelfWhichComesFromRight=-1;
+				System.out.println("Object placed successfully");
+				
+			}
 			
 			if(reached!=lastReached){
 				lastReached=reached;
@@ -294,12 +372,33 @@ public class PoseHandler implements IKinectPoseService, Runnable {
 				System.out.println("ACCEPT");
 				System.out.println("++++++++++++++++++++");
 			}
+			
+			if(pickedUpFromLeft && lastPickedUpFromLeft==false){
+				pickedUpFromLeft=false;
+				lastPickedUpFromLeft=true;
+				pickedUpFromRight=false;
+				lastPickedUpFromRight=false;
+				waitingForLyingTheObjectOnTheShelfWhichComesFromLeft=System.currentTimeMillis();
+				//KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PICKED_UP_FROM_LEFT.name());
+				//sharedOutput.performTransference(juas);
+				System.out.println("+++++++++++++++++++");
+				System.out.println("PICKED UP FROM LEFT");
+				System.out.println("++++++++++++++++++++");
+			}
+			if(pickedUpFromRight && lastPickedUpFromRight==false){
+				pickedUpFromRight=false;
+				lastPickedUpFromRight=true;
+				pickedUpFromLeft=false;
+				lastPickedUpFromLeft=false;
+				waitingForLyingTheObjectOnTheShelfWhichComesFromRight=System.currentTimeMillis();
+			//	KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PICKED_UP_FROM_RIGHT.name());
+			//	sharedOutput.performTransference(juas);
+				System.out.println("+++++++++++++++++++");
+				System.out.println("PICKED UP FROM RIGHT");
+				System.out.println("++++++++++++++++++++");
+			}
 		}
 		
 	}
-		
-	
-
-
 
 }

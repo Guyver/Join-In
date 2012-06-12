@@ -971,6 +971,12 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		} else if(kinectLauncher instanceof KinectUserReachPickUpLauncher){
 			kinectManager.removeListener(((KinectUserReachPickUpLauncher)kinectLauncher).getKinectSkeletonLauncher());
 			((KinectUserReachPickUpLauncher)kinectLauncher).getKinectSkeletonLauncher().dropService();
+		} else if(kinectLauncher instanceof KinectUserPickedUpFromSidesLauncher){
+			kinectManager.removeListener(((KinectUserPickedUpFromSidesLauncher)kinectLauncher).getKinectPoseLauncherLeftShoulderLowerAndCloser().getPrivateKinectSkeletonLauncher());
+			kinectManager.removeListener(((KinectUserPickedUpFromSidesLauncher)kinectLauncher).getKinectPoseLauncherRightShoulderLowerAndCloser().getPrivateKinectSkeletonLauncher());
+			
+			((KinectUserPickedUpFromSidesLauncher)kinectLauncher).getKinectPoseLauncherLeftShoulderLowerAndCloser().dropService();
+			((KinectUserPickedUpFromSidesLauncher)kinectLauncher).getKinectPoseLauncherRightShoulderLowerAndCloser().dropService();
 		}
 		if (kinectCounter == 0) {
 			kinectManager.disconnect();
@@ -1457,9 +1463,25 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		
 		
 	}
+	
 			
-			
-			
+	public KinectUserPickedUpFromSidesLauncher getKinectUserPickedUpFromSidesLauncher(int userId){
+		
+		KinectUserPickedUpFromSidesLauncher kupufsl = null;
+		
+		kinectStartUpKinectIfNeeded();
+
+		dm.waitForUserIsCalibrated(userId);
+		
+
+		kupufsl = new KinectUserPickedUpFromSidesLauncher(userId);
+	
+		
+		return kupufsl;
+		
+		
+		
+	}
 			
 			
 			

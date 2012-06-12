@@ -33,6 +33,7 @@ import launchers.KinectUserGameControlLauncher;
 import launchers.KinectUserHugLauncher;
 import launchers.KinectUserJointReachPointLauncher;
 import launchers.KinectUserMovementLauncher;
+import launchers.KinectUserPickedUpFromSidesLauncher;
 import launchers.KinectUserReachPickUpLauncher;
 import launchers.NoninLauncher;
 import launchers.NunchukAnalogStickLauncher;
@@ -98,12 +99,13 @@ public class TestGrande
     	KinectUserHugLauncher kuhLauncher;
     	KinectUserGameControlLauncher kgcLauncher;
     	KinectUserReachPickUpLauncher kurpuLauncher;
+    	KinectUserPickedUpFromSidesLauncher kupufsLauncher;
     	
     	kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant);
     	kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
     	kgcLauncher= dm.getKinectUserGameControlLauncher(theUserIWant);
     	kurpuLauncher= dm.getKinectUserReachPickUpLauncher(theUserIWant);
-    	
+    	kupufsLauncher =dm.getKinectUserPickedUpFromSidesLauncher(theUserIWant);
     	
     	ClaseQueImplementaAPose jiji = new ClaseQueImplementaAPose();
     
@@ -112,7 +114,8 @@ public class TestGrande
     	kuhLauncher.addListener(jiji);
     	kgcLauncher.addListener(jiji);
     	kurpuLauncher.addListener(jiji);
-   
+    	kupufsLauncher.addListener(jiji);
+    	
     	Thread t1= new Thread(jiji);
     	t1.start();
  

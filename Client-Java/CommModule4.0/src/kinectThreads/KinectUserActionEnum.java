@@ -32,7 +32,9 @@ public enum KinectUserActionEnum {
 	PICKED_UP_LEFT(8),
 	PICKED_UP_RIGHT(9),
 	ACCEPT(10),
-	CANCEL(11);
+	CANCEL(11),
+	PICKED_UP_FROM_LEFT(12),
+	PICKED_UP_FROM_RIGHT(13);
 
 	private int code;
 

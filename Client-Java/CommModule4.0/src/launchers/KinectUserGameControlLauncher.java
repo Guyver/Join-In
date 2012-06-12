@@ -62,8 +62,8 @@ public class KinectUserGameControlLauncher extends LauncherWrapper {
 		DeviceManager dm = DeviceManager.getDeviceManager();  
 		kplTouchingOppositeShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.TOUCHING_OPPOSITE_SHOULDER);
 		kplCrossedHandsAboveShoulders = dm.getKinectPoseLauncher(userId, KinectPoseEnum.CROSSED_HANDS_ABOVE_SHOULDERS);
-		kplRightHandBeneathRightElbowSeparated30CmFromRightHip = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPATED_50_CM_FROM_RIGHT_HIP);
-		kplLeftHandBeneathLeftElbowSeparated30CmFromLeftHip = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_50_CM_FROM_LEFT_HIP);
+		kplRightHandBeneathRightElbowSeparated30CmFromRightHip = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPARATED_FROM_RIGHT_HIP);
+		kplLeftHandBeneathLeftElbowSeparated30CmFromLeftHip = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_FROM_LEFT_HIP);
 		kplRightHandAboveRightShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER);
 		kplLeftHandAboveLeftShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER);
 	}
