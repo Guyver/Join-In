@@ -30,10 +30,8 @@ import org.OpenNI.*;
 
 public class Joint3D
 {
-  // sphere colours
-  private static final Color3f BLACK = new Color3f(0.0f, 0.0f, 0.0f);
-  private static final Color3f WHITE = new Color3f(0.9f, 0.9f, 0.9f);
-  private static final Color3f BLUE = new Color3f(0.3f, 0.3f, 0.8f);
+
+ 
 
   private static final float RADIUS = 0.15f;
 
@@ -48,7 +46,7 @@ public class Joint3D
   private TransformGroup moveTG;    
   private Transform3D t3d;          // used for accessing a TG's transform
   private Switch visSW;            // for joint visibility
-  private boolean isVisible;
+
 
   private SmoothPosition smoothPosns;
   // private float radius;
@@ -79,12 +77,7 @@ public class Joint3D
 
     Appearance app = new Appearance();
 
-    // assign blue material with lighting
-    Material blueMat= new Material(BLUE, BLACK, BLUE, WHITE, 25.0f);
-       // sets ambient, emissive, diffuse, specular, shininess
-    blueMat.setLightingEnable(true);
-    app.setMaterial(blueMat);
-
+   
     // make the sphere with normals for lighting, and texture support
     Sphere sphere = new Sphere(radius, Sphere.GENERATE_NORMALS, app); 
 
@@ -93,7 +86,7 @@ public class Joint3D
     visSW.setCapability(Switch.ALLOW_SWITCH_WRITE);
     visSW.addChild( sphere );
     visSW.setWhichChild( Switch.CHILD_ALL);   // visible initially
-    isVisible = true;
+
 
 
     // create a transform group for moving the sphere
@@ -168,12 +161,11 @@ public class Joint3D
     // use the average position to translate the joint
     Vector3d sPos = smoothPosns.getPosition();
     if (sPos != null) {
-      setVisibility(true);
+      
       t3d.set(sPos); 
       moveTG.setTransform(t3d); 
     }
-    else   // joint has no position
-      setVisibility(false);
+  
   }  // end of setPos()
 
 
@@ -182,22 +174,7 @@ public class Joint3D
 
 
 
-  private void setVisibility(boolean toVisible)
-  /* toggle the visibility of the joint 
-    (called by a limb connected to this joint) */
-  {  
-    if (toVisible) {
-      visSW.setWhichChild(Switch.CHILD_ALL);   // make visible
-      isVisible = true;
-    }
-    else {   // make invisible
-      visSW.setWhichChild( Switch.CHILD_NONE );   // invisible
-      isVisible = false;
-    }
-  }  // end of setVisibility()
+  
 
-
-  public boolean isVisible()
-  {  return isVisible;  }
 
 }  // end of Joint3D class

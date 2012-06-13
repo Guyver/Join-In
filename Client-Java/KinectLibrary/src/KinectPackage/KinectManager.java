@@ -262,7 +262,7 @@ public class KinectManager implements Runnable {
 		motorCommunicator.close();
 		try {
 			context.stopGeneratingAll();
-			depthGenerator.startGenerating();
+			depthGenerator.stopGenerating();
 			imageGenerator.stopGenerating();
 			skeletonManager.getUserGenerator().stopGenerating();
 		} catch (StatusException e) {

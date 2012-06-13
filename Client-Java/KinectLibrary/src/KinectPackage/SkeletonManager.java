@@ -49,7 +49,14 @@ public class SkeletonManager
   private List<Integer> idOfUsersWhoAreBeingWatched;
  
   public IObserver<UserEventArgs> newUserObserver;
-  
+  public IObserver<UserEventArgs> lostUserObserver;
+  public IObserver<UserEventArgs> exitUserObserver;
+  public IObserver<UserEventArgs> reEnterUserObserver;
+  public IObserver<PoseDetectionEventArgs> poseDetectedObserver;
+  public IObserver<CalibrationStartEventArgs> calibrationStartObserver;
+  public IObserver<CalibrationProgressEventArgs> calibrationCompleteObserver;
+
+   
   private LEDStatus switchToLEDColor;
   
 
@@ -80,40 +87,69 @@ public class SkeletonManager
   } // end of SkelsManager()
 
   
+  private void reset(){
+	  
+
+	      
+      userGenerator.getNewUserEvent().deleteObserver(newUserObserver);  // new user found
+      userGenerator.getLostUserEvent().deleteObserver(lostUserObserver);  // lost a user
+      userGenerator.getUserExitEvent().deleteObserver(exitUserObserver);        // user has exited (but may re-enter)
+      userGenerator.getUserReenterEvent().deleteObserver(reEnterUserObserver);  // user has re-entered
+      
+      poseDetectionCapability.getPoseDetectedEvent().deleteObserver( poseDetectedObserver);    // for when a pose is detected
+      
+      skeletonCapability.getCalibrationStartEvent().deleteObserver(calibrationStartObserver);    // calibration is starting
+      skeletonCapability.getCalibrationCompleteEvent().deleteObserver(calibrationCompleteObserver );   
+       
+  	
+	  configure();
+      idOfUsersWhoAreBeingWatched=new LinkedList<Integer>();
+      userSkels3D = new HashMap<Integer, Skeleton3D>();
+      maximumNumberOfKinectUsers= 1;
+      switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+  }
 
 
   private void configure()
   /* create pose and skeleton detection capabilities for the user generator, 
      and set up observers (listeners)   */
   {
-    try {
-      // setup userGeneratorerator pose and skeleton detection capabilities;
-      // should really check these using ProductionNode.isCapabilitySupported()
-      poseDetectionCapability = userGenerator.getPoseDetectionCapability();
+	  try {
+	      // setup userGeneratorerator pose and skeleton detection capabilities;
+	      // should really check these using ProductionNode.isCapabilitySupported()
+	      poseDetectionCapability = userGenerator.getPoseDetectionCapability();
 
-      skeletonCapability = userGenerator.getSkeletonCapability();
-      calibPose = skeletonCapability.getSkeletonCalibrationPose();   // the 'psi' pose
-      skeletonCapability.setSkeletonProfile(SkeletonProfile.ALL);
-             // other possible values: UPPER_BODY, LOWER_BODY, HEAD_HANDS
+	      skeletonCapability = userGenerator.getSkeletonCapability();
+	      calibPose = skeletonCapability.getSkeletonCalibrationPose();   // the 'psi' pose
+	      skeletonCapability.setSkeletonProfile(SkeletonProfile.ALL);
+	             // other possible values: UPPER_BODY, LOWER_BODY, HEAD_HANDS
 
-      newUserObserver = new NewUserObserver();
-      // set up 7 observers
-      userGenerator.getNewUserEvent().addObserver(newUserObserver);  // new user found
-      userGenerator.getLostUserEvent().addObserver(new LostUserObserver());  // lost a user
-      userGenerator.getUserExitEvent().addObserver(new ExitUserObserver());        // user has exited (but may re-enter)
-      userGenerator.getUserReenterEvent().addObserver(new ReEnterUserObserver());  // user has re-entered
-
-      poseDetectionCapability.getPoseDetectedEvent().addObserver( new PoseDetectedObserver());    // for when a pose is detected
-      
-      skeletonCapability.getCalibrationStartEvent().addObserver( new CalibrationStartObserver());    // calibration is starting
-      skeletonCapability.getCalibrationCompleteEvent().addObserver( new CalibrationCompleteObserver());   
-             // for when skeleton calibration is completed, and tracking starts
-     
-    } 
-    catch (Exception e) {
-      System.out.println(e);
-      System.exit(1);
-    }
+	      newUserObserver = new NewUserObserver();
+	      lostUserObserver = new LostUserObserver();
+	      exitUserObserver = new ExitUserObserver();
+	      reEnterUserObserver= new ReEnterUserObserver();
+	      poseDetectedObserver = new PoseDetectedObserver();
+	      calibrationStartObserver=  new CalibrationStartObserver();
+	      calibrationCompleteObserver= new CalibrationCompleteObserver();
+	      // set up 7 observer
+	        
+	      
+	      userGenerator.getNewUserEvent().addObserver(newUserObserver);  // new user found
+	      userGenerator.getLostUserEvent().addObserver(lostUserObserver);  // lost a user
+	      userGenerator.getUserExitEvent().addObserver(exitUserObserver);        // user has exited (but may re-enter)
+	      userGenerator.getUserReenterEvent().addObserver(reEnterUserObserver);  // user has re-entered
+	      
+	      poseDetectionCapability.getPoseDetectedEvent().addObserver( poseDetectedObserver);    // for when a pose is detected
+	      
+	      skeletonCapability.getCalibrationStartEvent().addObserver(calibrationStartObserver);    // calibration is starting
+	      skeletonCapability.getCalibrationCompleteEvent().addObserver(calibrationCompleteObserver );   
+	             // for when skeleton calibration is completed, and tracking starts
+	     
+	    } 
+	    catch (Exception e) {
+	      System.out.println(e);
+	      System.exit(1);
+	    }
   }  // end of configure()
 
 
@@ -200,47 +236,47 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 
 
 	class NewUserObserver implements IObserver<UserEventArgs> {
-	
-		public void update(IObservable<UserEventArgs> observable,UserEventArgs args) {
+
+		public void update(IObservable<UserEventArgs> observable,
+				UserEventArgs args) {
+
+			System.out.println("Detected new user " + args.getId());
+
+			try {
+				if (idOfUsersWhoAreBeingWatched.size() < maximumNumberOfKinectUsers
+						&& !idOfUsersWhoAreBeingWatched.contains(new Integer(
+								args.getId()))) {
+
+					idOfUsersWhoAreBeingWatched.add(new Integer(args.getId()));
+
+					switchToLEDColor = LEDStatus.LED_ORANGE;
+
+					if (idOfUsersWhoAreBeingWatched.size() == maximumNumberOfKinectUsers) {
+						
+						System.out.println("The number of users is "+userGenerator.getNumberOfUsers());
+						
 				
-		
-					System.out.println("Detected new user " + args.getId());
+						userGenerator.getNewUserEvent().deleteObserver(newUserObserver);
 					
-					try {  
-						if(idOfUsersWhoAreBeingWatched.size()<maximumNumberOfKinectUsers&&!idOfUsersWhoAreBeingWatched.contains(new Integer(args.getId()))){
-							
-							idOfUsersWhoAreBeingWatched.add(new Integer(args.getId()));
-							
-							switchToLEDColor=LEDStatus.LED_ORANGE;
-							
-							if(idOfUsersWhoAreBeingWatched.size()==maximumNumberOfKinectUsers){
-								
-								userGenerator.getNewUserEvent().deleteObserver(newUserObserver);
-							
-								System.out.println("I stop detecting more users");
-							}
-						
-							System.out.println("Taking care of user "+ args.getId());
-								
-							poseDetectionCapability.startPoseDetection(calibPose,args.getId());
-								
-							
-				
-							
-							
-					  
-						}
-						
-						
-						// try to detect a pose for the new user
-					
-					} catch (StatusException e) {
-						e.printStackTrace();
+						System.out.println("I stop detecting more users");
 					}
-				
+					
+					System.out.println("Taking care of user " + args.getId());
+
+					poseDetectionCapability.startPoseDetection(calibPose,
+							args.getId());
+
+				}
+
+				// try to detect a pose for the new user
+
+			} catch (StatusException e) {
+				e.printStackTrace();
+			}
+
 		}
-		
-  }  // end of NewUserObserver inner class
+
+	} // end of NewUserObserver inner class
 
 
 
@@ -260,6 +296,7 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 	    	  switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
 	    	  
 	    	  idOfUsersWhoAreBeingWatched.remove(new Integer(userID));
+	    	  
 	    	  if(idOfUsersWhoAreBeingWatched.size()==maximumNumberOfKinectUsers-1){
 	    		  try{
 	    		  userGenerator.getNewUserEvent().addObserver(newUserObserver);
@@ -274,11 +311,15 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 	      
 	      Skeleton3D skel = userSkels3D.remove(userID);
 	      
+	      System.out.println("-----------------------Reseting-----------------------");
 	      
+	      reset();
 	      if (skel == null){
 	        return;
 	      }
 	      skel.delete();
+	      
+	      
 	     
     }
   } // end of LostUserObserver inner class
