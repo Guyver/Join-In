@@ -22,6 +22,7 @@ package KinectPackage;
 
 import javax.media.j3d.*;
 import com.sun.j3d.utils.geometry.*;
+
 import javax.vecmath.*;
 
 import org.OpenNI.*;
@@ -79,7 +80,7 @@ public class Joint3D
 
    
     // make the sphere with normals for lighting, and texture support
-    Sphere sphere = new Sphere(radius, Sphere.GENERATE_NORMALS, app); 
+    Sphere sphere = new Sphere(radius, Primitive.GENERATE_NORMALS, app); 
 
     // create switch for visibility
     visSW = new Switch();

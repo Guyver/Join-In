@@ -1,0 +1,37 @@
+package services;
+
+import control.IEventCommModule;
+
+import edu.unsw.cse.wiiboard.event.WiiBoardButtonEvent;
+
+/**
+ * Defines the WiiBoard button events.
+ * @author Santiago Hors Fraile
+ */
+public class WiiBoardServiceButtonEvent implements IEventCommModule{
+
+	
+	/**
+	 * True if the button is currently pushed down.
+	 */
+	public boolean isPressed;
+	
+	/**
+	 * Determines if the button is released after being pressed down.
+	 * Note: If the button is in the pressed down state when the board is connecting,
+	 * the first button event that is expected to report a release might not.
+	 * 
+	 * True if the button was pressed down and now is not pressed down
+	 */
+	public boolean isReleased;
+
+	/**
+	 * Sets the fields of this class with the given parameter.
+	 * @param buttonEvent The new button event.
+	 */
+	public WiiBoardServiceButtonEvent(WiiBoardButtonEvent buttonEvent) {
+		this.isPressed = buttonEvent.isPressed();
+		this.isReleased = buttonEvent.isReleased();
+	}
+
+}

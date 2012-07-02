@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
-public class KinectManager implements Runnable {
+public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 
 	
 	// OpenNI
@@ -47,7 +47,11 @@ public class KinectManager implements Runnable {
 	/**
 	 * Contains all Kinect listeners.
 	 */
-	List<IKinectListener> listenersList = new CopyOnWriteArrayList<IKinectListener>();
+	List<IKinectDataListener> listenersList = new CopyOnWriteArrayList<IKinectDataListener>();
+	/**
+	 * Contains all KinectUserOutOfScope listeners.
+	 */
+	List<IKinectUserOutOfScopeListener> kinectUserOutOfScopeListenersList = new CopyOnWriteArrayList<IKinectUserOutOfScopeListener>();
 	/**
 	 * Represents whether the Kinect is running or not.
 	 */
@@ -157,20 +161,36 @@ public class KinectManager implements Runnable {
 	 * @param li
 	 *            The new listener to be add.
 	 */
-	public void addListener(IKinectListener li) {
+	public void addKinectDataListener(IKinectDataListener li) {
 		this.listenersList.add(li);
 	}
-
+	/**
+	 * Adds a new KinectUserOutOfScopeListener to the listeners list.
+	 * 
+	 * @param li
+	 *            The new listener to be add.
+	 */
+	public void addKinectUserOutOfScopeListener(IKinectUserOutOfScopeListener li) {
+		this.kinectUserOutOfScopeListenersList.add(li);
+	}
 	/**
 	 * Removes the KinectListener given as parameter.
 	 * 
 	 * @param li
 	 *            The listener to be removed.
 	 */
-	public void removeListener(IKinectListener li) {
+	public void removeKinectDataListener(IKinectDataListener li) {
 		this.listenersList.remove(li);
 	}
-
+	/**
+	 * Removes the KinectUserOutOfScopeListener given as parameter.
+	 * 
+	 * @param li
+	 *            The listener to be removed.
+	 */
+	public void removeKinectUserOutOfScopeListener(IKinectUserOutOfScopeListener li) {
+		this.kinectUserOutOfScopeListenersList.remove(li);
+	}
 	/**
 	 * Default constructor. It sets the maximum number of users that can be tracked by the Kinect at the same time to 1.
 	 */
@@ -180,6 +200,8 @@ public class KinectManager implements Runnable {
 		
 		configOpenNI();
 		sem = new Semaphore(1,true);
+		
+		skeletonManager.addKinectUserOutOfScopeListener(this);
 	}
 	/**
 	 * This constructor creates a new KinectManager and sets the maximum number of users that can be tracked by the Kinect at the same time with the given parameter.
@@ -191,6 +213,8 @@ public class KinectManager implements Runnable {
 		
 		configOpenNI();
 		sem = new Semaphore(1,true);
+		
+		skeletonManager.addKinectUserOutOfScopeListener(this);
 	}
 
 	/**
@@ -278,15 +302,15 @@ public class KinectManager implements Runnable {
 	 * @param keout
 	 *            The new KinectEvent
 	 */
-	private void fireKinectEvent(KinectEvent ke) {
+	private void fireKinectEvent(KinectDataEvent ke) {
 		try{
 			sem.acquire();
 			
-			Iterator<IKinectListener> it = listenersList.iterator();
+			Iterator<IKinectDataListener> it = listenersList.iterator();
 	
 			while (it.hasNext()) {
 	
-				IKinectListener kl = ((IKinectListener) it.next());
+				IKinectDataListener kl = it.next();
 	
 				(new Thread(new EventLauncher(kl, ke))).start();
 			}
@@ -297,10 +321,35 @@ public class KinectManager implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Sends a new KinectEvent to the listeners registered in the listenerLists.
+	 * 
+	 * @param keout
+	 *            The new KinectEvent
+	 */
+	private void fireKinectUserOutOfScopeEvent(KinectUserOutOfScopeEvent kuoose) {
+		try{
+			//sem.acquire();
+			
+			Iterator<IKinectUserOutOfScopeListener> it = kinectUserOutOfScopeListenersList.iterator();
+	
+			while (it.hasNext()) {
+	
+				IKinectUserOutOfScopeListener koosl = it.next();
+	
+				(new Thread(new KinectUserOutOfScopeEventLauncher(koosl, kuoose))).start();
+			}
+			//sem.release();
+		}catch(Exception e){
+			
+			System.out.println("Error at firing the Kinect Event in KinectManager");
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Runs the thread.
 	 */
+	@Override
 	public void run() {
 
 		isRunning = true;
@@ -320,7 +369,7 @@ public class KinectManager implements Runnable {
 			
 			for (int i = 0; i < userGenerator.getNumberOfUsers(); i++) {
 
-				KinectEvent ke = new KinectEvent(i, new KinectData(motorCommunicator, skeletonManager));
+				KinectDataEvent ke = new KinectDataEvent(i, new KinectData(motorCommunicator, skeletonManager));
 				fireKinectEvent(ke);
 			}
 			
@@ -395,11 +444,11 @@ public class KinectManager implements Runnable {
 		/**
 		 * Represents the interface of the Kinect listener.
 		 */
-		IKinectListener kl;
+		IKinectDataListener kl;
 		/**
 		 * Represents the Kinect event.
 		 */
-		KinectEvent ke;
+		KinectDataEvent ke;
 
 		/**
 		 * Sets the fields of this inner class with the given parameter.
@@ -409,18 +458,55 @@ public class KinectManager implements Runnable {
 		 * @param ne
 		 *            The new KinectEvent.
 		 */
-		EventLauncher(IKinectListener kl, KinectEvent ke) {
+		EventLauncher(IKinectDataListener kl, KinectDataEvent ke) {
 			this.kl = kl;
 			this.ke = ke;
 		}
 
-		/**
-		 * Calls to noninUpdate while it is running.
-		 */
+		
+		@Override
 		public void run() {
 
 			kl.kinectUpdate(ke);
 		}
 	}
+	/**
+	 * @author Santiago Hors Fraile
+	 */
+	class KinectUserOutOfScopeEventLauncher implements Runnable {
+		/**
+		 * Represents the interface of the KinectUserOutOfScope listener.
+		 */
+		IKinectUserOutOfScopeListener kuoosl;
+		/**
+		 * Represents the KinectUserOutOfScope event.
+		 */
+		KinectUserOutOfScopeEvent kuoose;
 
+		/**
+		 * Sets the fields of this inner class with the given parameter.
+		 * 
+		 * @param kuoosl
+		 *            The new IKinectUserOutOfScopeListener.
+		 * @param kuoose
+		 *            The new KinectUserOutOfScopeEvent.
+		 */
+		KinectUserOutOfScopeEventLauncher(IKinectUserOutOfScopeListener kuoosl, KinectUserOutOfScopeEvent kuoose) {
+			this.kuoosl = kuoosl;
+			this.kuoose = kuoose;
+		}
+
+		
+		@Override
+		public void run() {
+
+			kuoosl.kinectUpdate(kuoose);
+		}
+	}
+	@Override
+	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose) {
+		//Relaunch the KinectOutOfScopeEvent
+		fireKinectUserOutOfScopeEvent(kuoose);
+		
+	}
 }

@@ -1,0 +1,58 @@
+package services;
+
+import org.wiigee.event.RotationSpeedEvent;
+
+import control.IEventCommModule;
+/**
+ * Defines the WiiMote rotation speed events.
+ * @author Santiago Hors Fraile
+ *
+ */
+public class WiiMoteServiceRotationSpeedEvent implements IEventCommModule{
+	
+	/**
+	 * Represents the raw angle velocity of the x axis.
+	 */
+	protected double psi;
+	/**
+	 * Represents the raw angle velocity of the y axis.
+	 */
+    protected double theta;
+	/**
+	 * Represents the raw angle velocity of the z axis.
+	 */
+    protected double phi;
+
+
+    
+    /**
+     * Sets the fields of this class with the information contained in the given parameter.
+     * @param event The new RotationSpeedEvent.
+     */
+    public WiiMoteServiceRotationSpeedEvent(RotationSpeedEvent event) {
+    	this.psi = event.getPsi();
+        this.theta = event.getTheta();
+        this.phi = event.getPhi();
+    }
+	/**
+	 * Gets the current field psi.
+	 * @return double The current psi.
+	 */
+	public double getPsi() {
+        return this.psi;
+    }
+	/**
+	 * Gets the current field theta.
+	 * @return double The current theta.
+	 */
+    public double getTheta() {
+        return this.theta;
+    }
+	/**
+	 * Gets the current field phi.
+	 * @return double The current phi.
+	 */
+    public double getPhi() {
+        return this.phi;
+    }
+}

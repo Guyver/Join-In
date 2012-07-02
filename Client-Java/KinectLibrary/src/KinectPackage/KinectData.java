@@ -27,6 +27,7 @@ public class KinectData {
 	private MotorCommunicator motorCommunicator;
 	private SkeletonManager skeletonManager;
 
+
 	/**
 	 * Creates a new KinecData object and initializes it with the given
 	 * parameters.
@@ -41,7 +42,7 @@ public class KinectData {
 
 		this.setMotorCommunicator(motorCommunicator);
 		this.setSkeletonManager(skeletonManager);
-
+	
 	}
 
 	/**
@@ -73,5 +74,6 @@ public class KinectData {
 	public void setSkeletonManager(SkeletonManager skeletonManager) {
 		this.skeletonManager = skeletonManager;
 	}
+
 
 }

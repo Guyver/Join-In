@@ -1,0 +1,45 @@
+package services;
+
+
+import org.wiigee.event.GestureEvent;
+import org.wiigee.logic.ProcessingUnit;
+
+import control.IEventCommModule;
+
+/**
+ * Defines the WiiMote gesture event.
+ * @author Santiago Hors Fraile.
+ */
+public class WiiMoteServiceGestureEvent implements IEventCommModule {
+
+	  /**
+	   * Represents the gesture identifier.
+	   */
+	  int id;
+	  /**
+	   * Represents if the gesture is valid or not.
+	   */
+	  boolean valid;
+	  /**
+	   * Represents the probability of that the gesture is the one that it is thought.
+	   */
+	  double probability;
+	  /**
+	   * Represents the procesing unit object.
+	   */
+	  ProcessingUnit analyzer;
+	
+	
+	/**
+	 * Sets the fields of this class with the information contained in the given parameter.
+	 * @param event The new gesture event.
+	 */
+
+	public WiiMoteServiceGestureEvent(GestureEvent event) {
+		this.valid = event.isValid();
+		this.id = event.getId();
+		this.probability = event.getProbability();
+		this.analyzer = event.getSource();
+	}
+
+}

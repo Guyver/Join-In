@@ -1,0 +1,18 @@
+package iservices;
+
+import services.WiiMoteServiceIRGlanceEvent;
+
+import control.IListenerCommModule;
+
+/**
+ * Must be implemented by any class which wants to receive IRGlance events from the WiiMote
+ * @author Santiago Hors Fraile
+ */
+public interface IWiiMoteIRGlanceService extends IListenerCommModule{
+	/**
+	 * Must be implemented to manage the WiiMoteServiceIRGlanceEvent received.
+	 * @param se This is the WiiMoteServiceIRGlanceEvent received.
+	 */
+	void iRGlanceReceived(WiiMoteServiceIRGlanceEvent se);
+
+}

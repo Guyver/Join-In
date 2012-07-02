@@ -77,8 +77,8 @@ HashMap<SkeletonJoint, Joint3D> jointsMap = null;
   {
     // skelBG-->visSW-->moveTG-->partsBG
     BranchGroup partsBG = new BranchGroup();
-    partsBG.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
-    partsBG.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+    partsBG.setCapability(Group.ALLOW_CHILDREN_READ);
+    partsBG.setCapability(Group.ALLOW_CHILDREN_WRITE);
 
     Transform3D t3d = new Transform3D();
     t3d.set(new Vector3f(0, Y_OFFSET, Z_OFFSET));   // so feet are on the floor

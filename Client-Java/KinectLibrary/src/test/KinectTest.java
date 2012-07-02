@@ -4,15 +4,17 @@ package test;
 
 import org.OpenNI.SkeletonJoint;
 
-import KinectPackage.IKinectListener;
-import KinectPackage.KinectEvent;
+import KinectPackage.IKinectDataListener;
+import KinectPackage.IKinectUserOutOfScopeListener;
+import KinectPackage.KinectDataEvent;
 import KinectPackage.KinectManager;
+import KinectPackage.KinectUserOutOfScopeEvent;
 
 
 
 
 
-public class KinectTest implements IKinectListener
+public class KinectTest implements IKinectDataListener, IKinectUserOutOfScopeListener
 {
  
 
@@ -29,7 +31,9 @@ public class KinectTest implements IKinectListener
 		
 		KinectTest tes = new KinectTest();
 		km = new KinectManager(1);
-		km.addListener(tes);
+		km.addKinectDataListener(tes);
+		
+		km.addKinectUserOutOfScopeListener(tes);
 		
 		try {
 			km.connect();
@@ -41,7 +45,7 @@ public class KinectTest implements IKinectListener
 	}
 
 	@Override
-	public void kinectUpdate(KinectEvent ke) {
+	public void kinectUpdate(KinectDataEvent ke) {
 		
 
 		
@@ -49,6 +53,12 @@ public class KinectTest implements IKinectListener
 			System.out.println(ke.getKinectData().getSkeletonManager().getJoint3D(1, SkeletonJoint.RIGHT_HAND));
 		}
 	
+	}
+
+	@Override
+	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose) {
+		System.out.println("HAS SALIDO!!!!!!!!! ");
+		
 	}
 
 } 

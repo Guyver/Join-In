@@ -1,0 +1,16 @@
+package iservices;
+
+import control.IListenerCommModule;
+
+/**
+ * Must be implemented by any class which wants to receive the event of calibration finished of a WiiMotionPlus
+ * @author Santiago Hors Fraile
+ */
+public interface ICalibrationFinishedService extends IListenerCommModule {
+
+	/**
+	 * Must be implemented to manage the facts that must be done after the WiiMotionPlus has been calibrated.
+	 */
+	void calibrationFinished();
+
+}

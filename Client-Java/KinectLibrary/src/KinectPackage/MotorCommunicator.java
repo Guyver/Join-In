@@ -202,7 +202,7 @@ public class MotorCommunicator
   public int getSpeed()
   {
     byte[] buf = getMotorInfo();
-    return (int) buf[1];
+    return buf[1];
   }  // end of getSpeed()
 
   
@@ -213,9 +213,9 @@ public class MotorCommunicator
     byte[] buf = getMotorInfo();
     int[] accel = new int[3];   // for x, y, z accelerations counts
     // each acceleration is stored in a byte pair
-    accel[0] = (int) (((short)buf[2] << 8) | buf[3]);  // x
-    accel[1] = (int) (((short)buf[4] << 8) | buf[5]);  // y
-    accel[2] = (int) (((short)buf[6] << 8) | buf[7]);  // z
+    accel[0] = ((buf[2] << 8) | buf[3]);  // x
+    accel[1] = ((buf[4] << 8) | buf[5]);  // y
+    accel[2] = ((buf[6] << 8) | buf[7]);  // z
     return accel;
   }  // end of getAccel()
 
@@ -256,14 +256,14 @@ public class MotorCommunicator
       System.out.println("Angle unavailable since Kinect is moving");
       return buf[8];
     }
-    return ((int)buf[8])/2;   // Kinect returns a value that is 2*the actual angle
+    return buf[8]/2;   // Kinect returns a value that is 2*the actual angle
   }  // end of getAngle()
 
 
   public MotorStatus getStatus()
   {
     byte[] buf = getMotorInfo();
-    int status = (int) buf[9];
+    int status = buf[9];
     return MotorStatus.of(status);
   }  // end of getStatus()
   

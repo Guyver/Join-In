@@ -19,8 +19,10 @@ package KinectPackage;
 
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.OpenNI.*;
+
 
 
 import javax.vecmath.Vector3d;
@@ -56,9 +58,15 @@ public class SkeletonManager
   public IObserver<CalibrationStartEventArgs> calibrationStartObserver;
   public IObserver<CalibrationProgressEventArgs> calibrationCompleteObserver;
 
-   
+
   private LEDStatus switchToLEDColor;
   
+  
+  /**
+	 * Contains all KinectUserOutOfScope listeners.
+	 */
+  List<IKinectUserOutOfScopeListener> kinectUserOutOfScopeListenersList;
+
 
   
   public SkeletonManager(UserGenerator userGenerator, int maximumNumberOfKinectUsers)
@@ -69,7 +77,8 @@ public class SkeletonManager
     idOfUsersWhoAreBeingWatched=new LinkedList<Integer>();
     userSkels3D = new HashMap<Integer, Skeleton3D>();
     switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
-    
+    kinectUserOutOfScopeListenersList= new CopyOnWriteArrayList<IKinectUserOutOfScopeListener>();
+
     
   } // end of SkelsManager()
   
@@ -83,9 +92,19 @@ public class SkeletonManager
     userSkels3D = new HashMap<Integer, Skeleton3D>();
     maximumNumberOfKinectUsers= 1;
     switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+    kinectUserOutOfScopeListenersList= new CopyOnWriteArrayList<IKinectUserOutOfScopeListener>();
    
   } // end of SkelsManager()
-
+	
+  /**
+	 * Adds a new OutOfScopeListener to the listeners list.
+	 * 
+	 * @param li
+	 *            The new listener to be add.
+	 */
+	public void addKinectUserOutOfScopeListener(IKinectUserOutOfScopeListener li) {
+		this.kinectUserOutOfScopeListenersList.add(li);
+	}
   
   private void reset(){
 	  
@@ -201,7 +220,30 @@ public class SkeletonManager
 	  return userGenerator;
 	  
   }
-  
+  /**
+	 * Sends a new KinectUserOutOfScopeEvent to the listeners registered in the kinectUserOutOfScopeListenersList.
+	 * 
+	 * @param keout
+	 *            The new KinectEvent
+	 */
+	private void fireKinectUserOutOfScopeEvent(KinectUserOutOfScopeEvent kuoose) {
+		try{
+						
+			Iterator<IKinectUserOutOfScopeListener> it = kinectUserOutOfScopeListenersList.iterator();
+	
+			while (it.hasNext()) {
+	
+				IKinectUserOutOfScopeListener koosl = it.next();
+	
+				(new Thread(new KinectUserOutOfScopeEventLauncher(koosl, kuoose))).start();
+			}
+		
+		}catch(Exception e){
+			
+			System.out.println("Error at firing the kinectUserOutOfScopeListenersList in KinectManager");
+			e.printStackTrace();
+		}
+	}
   
   // ----------------- 7 observers -----------------------
   /*   user detection --> pose detection --> skeleton calibration starts -->
@@ -237,6 +279,7 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 
 	class NewUserObserver implements IObserver<UserEventArgs> {
 
+		@Override
 		public void update(IObservable<UserEventArgs> observable,
 				UserEventArgs args) {
 
@@ -282,7 +325,8 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 
   class LostUserObserver implements IObserver<UserEventArgs>
   {
-    public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
+    @Override
+	public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
     { 
     	
 	      int userID = args.getId();
@@ -304,7 +348,11 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 	    		  e.printStackTrace();
 	    	  	}
 	    	  }
-    		  // delete skeleton from userSkels3D and the scene graph
+   	  
+    		  //Fire KinectUserOutOfScopeEvent 
+	    	  fireKinectUserOutOfScopeEvent(new KinectUserOutOfScopeEvent(userID));
+			 
+
 	    	  
     	  }
 	   	      
@@ -328,7 +376,8 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 
   class ExitUserObserver implements IObserver<UserEventArgs>
   {
-    public void update(IObservable<UserEventArgs> observable, UserEventArgs args) {
+    @Override
+	public void update(IObservable<UserEventArgs> observable, UserEventArgs args) {
     	
 				int userID = args.getId();
 				System.out.println("Exit of user " + userID);
@@ -349,7 +398,8 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 
   class ReEnterUserObserver implements IObserver<UserEventArgs>
   {
-    public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
+    @Override
+	public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
     { 	
     	
       int userID = args.getId();
@@ -368,6 +418,7 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 
   class PoseDetectedObserver implements IObserver<PoseDetectionEventArgs>
   {
+	@Override
 	public void update(IObservable<PoseDetectionEventArgs> observable,
                                                      PoseDetectionEventArgs args)
     {
@@ -395,7 +446,8 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
   class CalibrationStartObserver implements IObserver<CalibrationStartEventArgs>
   {
 	 
-    public void update(IObservable<CalibrationStartEventArgs> observable, CalibrationStartEventArgs args)
+    @Override
+	public void update(IObservable<CalibrationStartEventArgs> observable, CalibrationStartEventArgs args)
     {
     	switchToLEDColor=LEDStatus.LED_BLINK_GREEN;
     	System.out.println("Calibration started for user " + args.getUser()); 
@@ -408,6 +460,7 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
   class CalibrationCompleteObserver implements IObserver<CalibrationProgressEventArgs>
   {
   
+	@Override
 	public void update(IObservable<CalibrationProgressEventArgs> observable,
                                                     CalibrationProgressEventArgs args)
     {
@@ -437,6 +490,40 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
   }  // end of CalibrationCompleteObserver inner class
 
  
-  
+  /**
+	 * @author Santiago Hors Fraile
+	 */
+	class KinectUserOutOfScopeEventLauncher implements Runnable {
+		/**
+		 * Represents the interface of the KinectUserOutOfScope listener.
+		 */
+		IKinectUserOutOfScopeListener kuoosl;
+		/**
+		 * Represents the KinectUserOutOfScope event.
+		 */
+		KinectUserOutOfScopeEvent kuoose;
+
+		/**
+		 * Sets the fields of this inner class with the given parameter.
+		 * 
+		 * @param kuoosl
+		 *            The new IKinectUserOutOfScopeListener.
+		 * @param kuoose
+		 *            The new KinectUserOutOfScopeEvent.
+		 */
+		KinectUserOutOfScopeEventLauncher(IKinectUserOutOfScopeListener kuoosl, KinectUserOutOfScopeEvent kuoose) {
+			this.kuoosl = kuoosl;
+			this.kuoose = kuoose;
+		}
+
+		/**
+		 * Calls to noninUpdate while it is running.
+		 */
+		@Override
+		public void run() {
+
+			kuoosl.kinectUpdate(kuoose);
+		}
+	}
 } // end of SkelsManager class
 
