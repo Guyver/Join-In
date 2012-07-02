@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
+    </contributor>
+    <created>2012-06-19T17:09:27</created>
+    <modified>2012-06-19T17:09:27</modified>
+    <unit name="inch" meter="0.0254"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_cameras>
+    <camera id="Camera-camera" name="Camera">
+      <optics>
+        <technique_common>
+          <perspective>
+            <xfov sid="xfov">49.13434</xfov>
+            <aspect_ratio>1.333333</aspect_ratio>
+            <znear sid="znear">0.1</znear>
+            <zfar sid="zfar">100</zfar>
+          </perspective>
+        </technique_common>
+      </optics>
+    </camera>
+  </library_cameras>
+  <library_lights>
+    <light id="VisualSceneNode-light" name="Ambient">
+      <technique_common>
+        <ambient>
+          <color>0.486275 0.486275 0.486275</color>
+        </ambient>
+      </technique_common>
+      <extra>
+        <technique profile="blender">
+          <adapt_thresh>0.000999987</adapt_thresh>
+          <area_shape>0</area_shape>
+          <area_size>1</area_size>
+          <area_sizey>1</area_sizey>
+          <area_sizez>1</area_sizez>
+          <atm_distance_factor>1</atm_distance_factor>
+          <atm_extinction_factor>1</atm_extinction_factor>
+          <atm_turbidity>2</atm_turbidity>
+          <att1>0</att1>
+          <att2>1</att2>
+          <backscattered_light>1</backscattered_light>
+          <bias>1</bias>
+          <blue>0.486275</blue>
+          <buffers>1</buffers>
+          <bufflag>0</bufflag>
+          <bufsize>512</bufsize>
+          <buftype>2</buftype>
+          <clipend>40</clipend>
+          <clipsta>0.5</clipsta>
+          <compressthresh>0.04999995</compressthresh>
+          <dist sid="blender_dist">984.252</dist>
+          <energy sid="blender_energy">1</energy>
+          <falloff_type>2</falloff_type>
+          <filtertype>0</filtertype>
+          <flag>0</flag>
+          <gamma sid="blender_gamma">1</gamma>
+          <green>0.486275</green>
+          <halo_intensity sid="blnder_halo_intensity">1</halo_intensity>
+          <horizon_brightness>1</horizon_brightness>
+          <mode>1</mode>
+          <ray_samp>1</ray_samp>
+          <ray_samp_method>1</ray_samp_method>
+          <ray_samp_type>0</ray_samp_type>
+          <ray_sampy>1</ray_sampy>
+          <ray_sampz>1</ray_sampz>
+          <red>0.486275</red>
+          <samp>3</samp>
+          <shadhalostep>0</shadhalostep>
+          <shadow_b sid="blender_shadow_b">0</shadow_b>
+          <shadow_g sid="blender_shadow_g">0</shadow_g>
+          <shadow_r sid="blender_shadow_r">0</shadow_r>
+          <shadspotsize>45</shadspotsize>
+          <sky_colorspace>2</sky_colorspace>
+          <sky_exposure>1</sky_exposure>
+          <skyblendfac>1</skyblendfac>
+          <skyblendtype>1</skyblendtype>
+          <soft>3</soft>
+          <spotblend>0.15</spotblend>
+          <spotsize>45</spotsize>
+          <spread>1</spread>
+          <sun_brightness>1</sun_brightness>
+          <sun_effect_type>0</sun_effect_type>
+          <sun_intensity>1</sun_intensity>
+          <sun_size>1</sun_size>
+          <type>3</type>
+        </technique>
+      </extra>
+    </light>
+    <light id="Lamp-light" name="Spot">
+      <technique_common>
+        <point>
+          <color sid="color">1 1 1</color>
+          <constant_attenuation>1</constant_attenuation>
+          <linear_attenuation>0.0333333</linear_attenuation>
+          <quadratic_attenuation>0</quadratic_attenuation>
+        </point>
+      </technique_common>
+      <extra>
+        <technique profile="blender">
+          <adapt_thresh>0.000999987</adapt_thresh>
+          <area_shape>0</area_shape>
+          <area_size>1</area_size>
+          <area_sizey>1</area_sizey>
+          <area_sizez>1</area_sizez>
+          <atm_distance_factor>1</atm_distance_factor>
+          <atm_extinction_factor>1</atm_extinction_factor>
+          <atm_turbidity>2</atm_turbidity>
+          <att1>0</att1>
+          <att2>1</att2>
+          <backscattered_light>1</backscattered_light>
+          <bias>1</bias>
+          <blue>1</blue>
+          <buffers>1</buffers>
+          <bufflag>0</bufflag>
+          <bufsize>2880</bufsize>
+          <buftype>0</buftype>
+          <clipend>30.002</clipend>
+          <clipsta>1.000799</clipsta>
+          <compressthresh>0.04999995</compressthresh>
+          <dist sid="blender_dist">29.99998</dist>
+          <energy sid="blender_energy">1</energy>
+          <falloff_type>1</falloff_type>
+          <filtertype>0</filtertype>
+          <flag>0</flag>
+          <gamma sid="blender_gamma">1</gamma>
+          <green>1</green>
+          <halo_intensity sid="blnder_halo_intensity">1</halo_intensity>
+          <horizon_brightness>1</horizon_brightness>
+          <mode>8192</mode>
+          <ray_samp>1</ray_samp>
+          <ray_samp_method>1</ray_samp_method>
+          <ray_samp_type>0</ray_samp_type>
+          <ray_sampy>1</ray_sampy>
+          <ray_sampz>1</ray_sampz>
+          <red>1</red>
+          <samp>3</samp>
+          <shadhalostep>0</shadhalostep>
+          <shadow_b sid="blender_shadow_b">0</shadow_b>
+          <shadow_g sid="blender_shadow_g">0</shadow_g>
+          <shadow_r sid="blender_shadow_r">0</shadow_r>
+          <shadspotsize>45</shadspotsize>
+          <sky_colorspace>0</sky_colorspace>
+          <sky_exposure>1</sky_exposure>
+          <skyblendfac>1</skyblendfac>
+          <skyblendtype>1</skyblendtype>
+          <soft>3</soft>
+          <spotblend>0.15</spotblend>
+          <spotsize>75</spotsize>
+          <spread>1</spread>
+          <sun_brightness>1</sun_brightness>
+          <sun_effect_type>0</sun_effect_type>
+          <sun_intensity>1</sun_intensity>
+          <sun_size>1</sun_size>
+          <type>0</type>
+        </technique>
+      </extra>
+    </light>
+  </library_lights>
+  <library_geometries>
+    <geometry id="Cylinder_004-mesh" name="Cylinder.004">
+      <mesh>
+        <source id="Cylinder_004-mesh-positions">
+          <float_array id="Cylinder_004-mesh-positions-array" count="192">0 1 -1 0 1 1 0.1950903 0.9807853 -1 0.1950903 0.9807853 1 0.3826835 0.9238795 -1 0.3826835 0.9238795 1 0.5555703 0.8314696 -1 0.5555703 0.8314696 1 0.7071068 0.7071068 -1 0.7071068 0.7071068 1 0.8314697 0.5555702 -1 0.8314697 0.5555702 1 0.9238795 0.3826834 -1 0.9238795 0.3826834 1 0.9807853 0.1950903 -1 0.9807853 0.1950903 1 1 0 -1 1 0 1 0.9807853 -0.1950902 -1 0.9807853 -0.1950902 1 0.9238796 -0.3826833 -1 0.9238796 -0.3826833 1 0.8314697 -0.5555702 -1 0.8314697 -0.5555702 1 0.7071068 -0.7071068 -1 0.7071068 -0.7071068 1 0.5555702 -0.8314697 -1 0.5555702 -0.8314697 1 0.3826833 -0.9238796 -1 0.3826833 -0.9238796 1 0.1950901 -0.9807853 -1 0.1950901 -0.9807853 1 -3.25841e-7 -1 -1 -3.25841e-7 -1 1 -0.1950907 -0.9807852 -1 -0.1950907 -0.9807852 1 -0.3826839 -0.9238793 -1 -0.3826839 -0.9238793 1 -0.5555707 -0.8314693 -1 -0.5555707 -0.8314693 1 -0.7071073 -0.7071064 -1 -0.7071073 -0.7071064 1 -0.83147 -0.5555697 -1 -0.83147 -0.5555697 1 -0.9238799 -0.3826827 -1 -0.9238799 -0.3826827 1 -0.9807854 -0.1950894 -1 -0.9807854 -0.1950894 1 -1 9.65599e-7 -1 -1 9.65599e-7 1 -0.9807851 0.1950913 -1 -0.9807851 0.1950913 1 -0.9238791 0.3826845 -1 -0.9238791 0.3826845 1 -0.8314689 0.5555713 -1 -0.8314689 0.5555713 1 -0.7071059 0.7071077 -1 -0.7071059 0.7071077 1 -0.5555691 0.8314704 -1 -0.5555691 0.8314704 1 -0.3826821 0.9238801 -1 -0.3826821 0.9238801 1 -0.1950888 0.9807856 -1 -0.1950888 0.9807856 1</float_array>
+          <technique_common>
+            <accessor source="#Cylinder_004-mesh-positions-array" count="64" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Cylinder_004-mesh-normals">
+          <float_array id="Cylinder_004-mesh-normals-array" count="276">0.09801727 0.9951847 0 0.2902846 0.9569404 0 0.4713967 0.8819213 0 0.6343933 0.7730104 0 0.7730104 0.6343933 0 0.8819214 0.4713965 0 0.9569403 0.2902847 0 0.9951847 0.09801727 0 0.9951847 -0.09801697 0 0.9569403 -0.2902847 0 0.8819214 -0.4713965 0 0.7730104 -0.6343933 0 0.6343933 -0.7730104 0 0.4713967 -0.8819213 0 0.2902843 -0.9569405 0 0.09801691 -0.9951847 0 -0.09801751 -0.9951847 0 -0.2902852 -0.9569402 0 -0.4713971 -0.8819211 0 -0.6343937 -0.7730101 0 -0.7730109 -0.6343927 0 -0.8819216 -0.4713961 0 -0.9569407 -0.2902837 0 -0.9951848 -0.09801632 0 -0.9951846 0.09801816 0 -0.95694 0.2902858 0 -0.8819208 0.4713976 0 -0.7730096 0.6343944 0 -0.6343924 0.7730112 0 -0.4713955 0.881922 0 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 -0.0980165 0.9951848 0 -0.290283 0.9569408 0 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1</float_array>
+          <technique_common>
+            <accessor source="#Cylinder_004-mesh-normals-array" count="92" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Cylinder_004-mesh-vertices">
+          <input semantic="POSITION" source="#Cylinder_004-mesh-positions"/>
+        </vertices>
+        <polylist count="92">
+          <input semantic="VERTEX" source="#Cylinder_004-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Cylinder_004-mesh-normals" offset="1"/>
+          <vcount>4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 4 4 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>0 0 1 0 3 0 2 0 2 1 3 1 5 1 4 1 4 2 5 2 7 2 6 2 6 3 7 3 9 3 8 3 8 4 9 4 11 4 10 4 10 5 11 5 13 5 12 5 12 6 13 6 15 6 14 6 14 7 15 7 17 7 16 7 16 8 17 8 19 8 18 8 18 9 19 9 21 9 20 9 20 10 21 10 23 10 22 10 22 11 23 11 25 11 24 11 24 12 25 12 27 12 26 12 26 13 27 13 29 13 28 13 28 14 29 14 31 14 30 14 30 15 31 15 33 15 32 15 32 16 33 16 35 16 34 16 34 17 35 17 37 17 36 17 36 18 37 18 39 18 38 18 38 19 39 19 41 19 40 19 40 20 41 20 43 20 42 20 42 21 43 21 45 21 44 21 44 22 45 22 47 22 46 22 46 23 47 23 49 23 48 23 48 24 49 24 51 24 50 24 50 25 51 25 53 25 52 25 52 26 53 26 55 26 54 26 54 27 55 27 57 27 56 27 56 28 57 28 59 28 58 28 58 29 59 29 61 29 60 29 3 30 1 30 63 30 3 31 63 31 61 31 3 32 61 32 5 32 61 33 59 33 5 33 59 34 7 34 5 34 59 35 57 35 7 35 57 36 9 36 7 36 57 37 55 37 9 37 55 38 11 38 9 38 55 39 53 39 11 39 53 40 13 40 11 40 53 41 51 41 13 41 51 42 15 42 13 42 51 43 49 43 15 43 49 44 17 44 15 44 49 45 47 45 17 45 47 46 19 46 17 46 47 47 45 47 19 47 45 48 21 48 19 48 45 49 43 49 21 49 43 50 23 50 21 50 43 51 41 51 23 51 41 52 25 52 23 52 41 53 39 53 25 53 39 54 27 54 25 54 39 55 37 55 27 55 37 56 29 56 27 56 37 57 35 57 29 57 35 58 31 58 29 58 35 59 33 59 31 59 1 60 0 60 62 60 63 60 60 61 61 61 63 61 62 61 0 62 2 62 62 62 2 63 60 63 62 63 2 64 4 64 60 64 4 65 58 65 60 65 4 66 6 66 58 66 6 67 56 67 58 67 6 68 8 68 56 68 8 69 54 69 56 69 8 70 10 70 54 70 10 71 52 71 54 71 10 72 12 72 52 72 12 73 50 73 52 73 12 74 14 74 50 74 14 75 48 75 50 75 14 76 16 76 48 76 16 77 46 77 48 77 16 78 18 78 46 78 18 79 44 79 46 79 18 80 20 80 44 80 20 81 42 81 44 81 20 82 22 82 42 82 22 83 40 83 42 83 22 84 24 84 40 84 24 85 38 85 40 85 24 86 26 86 38 86 26 87 36 87 38 87 26 88 28 88 36 88 28 89 34 89 36 89 28 90 30 90 34 90 30 91 32 91 34 91</p>
+        </polylist>
+      </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+  </library_geometries>
+  <library_animations>
+    <animation id="Armature_001_forearm_R_pose_matrix">
+      <source id="Armature_001_forearm_R_pose_matrix-input">
+        <float_array id="Armature_001_forearm_R_pose_matrix-input-array" count="7">0 0.4 0.8 1.2 1.6 2 2.6</float_array>
+        <technique_common>
+          <accessor source="#Armature_001_forearm_R_pose_matrix-input-array" count="7" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Armature_001_forearm_R_pose_matrix-output">
+        <float_array id="Armature_001_forearm_R_pose_matrix-output-array" count="112">-0.1730849 0.9822072 0.07287406 0 -0.8798521 -0.1209482 -0.4595999 0.2885099 -0.4426082 -0.1436682 0.8851312 0 0 0 0 1 -0.1730849 0.9822072 0.07287406 0 -0.8798521 -0.1209482 -0.4595999 0.2885099 -0.4426082 -0.1436682 0.8851312 0 0 0 0 1 0.9295306 -0.3686754 -0.007163166 0 0.3422067 0.8697066 -0.3556757 0.2885099 0.1373587 0.3281602 0.9345819 0 0 0 0 1 0.09713959 0.9920779 0.07965737 0 -0.8891327 0.1224659 -0.4409595 0.2885099 -0.4472215 -0.02799129 0.8939851 0 0 0 0 1 0.995388 -0.09466701 0.01551967 0 0.09396314 0.9295306 -0.3565728 0.2885099 0.0193296 0.3563865 0.9341386 0 0 0 0 1 -0.07741844 0.9941034 0.0759263 0 -0.8907469 -0.03475767 -0.4531691 0.2885099 -0.4478579 -0.1027147 0.8881852 0 0 0 0 1 -0.08147877 -0.9936128 -0.07806897 0 0.9094679 -0.04207873 -0.4136395 0.2885099 0.4077124 -0.1047041 0.9070874 0 0 0 0 1</float_array>
+        <technique_common>
+          <accessor source="#Armature_001_forearm_R_pose_matrix-output-array" count="7" stride="16">
+            <param name="TRANSFORM" type="float4x4"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Armature_001_forearm_R_pose_matrix-interpolation">
+        <Name_array id="Armature_001_forearm_R_pose_matrix-interpolation-array" count="7">LINEAR LINEAR LINEAR LINEAR LINEAR LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#Armature_001_forearm_R_pose_matrix-interpolation-array" count="7" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Armature_001_forearm_R_pose_matrix-sampler">
+        <input semantic="INPUT" source="#Armature_001_forearm_R_pose_matrix-input"/>
+        <input semantic="OUTPUT" source="#Armature_001_forearm_R_pose_matrix-output"/>
+        <input semantic="INTERPOLATION" source="#Armature_001_forearm_R_pose_matrix-interpolation"/>
+      </sampler>
+      <channel source="#Armature_001_forearm_R_pose_matrix-sampler" target="forearm_R/transform"/>
+    </animation>
+    <animation id="Armature_001_shin_R_pose_matrix">
+      <source id="Armature_001_shin_R_pose_matrix-input">
+        <float_array id="Armature_001_shin_R_pose_matrix-input-array" count="7">0 0.4 0.8 1.2 1.6 2 2.6</float_array>
+        <technique_common>
+          <accessor source="#Armature_001_shin_R_pose_matrix-input-array" count="7" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Armature_001_shin_R_pose_matrix-output">
+        <float_array id="Armature_001_shin_R_pose_matrix-output-array" count="112">0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1 0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1 0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1 0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1 0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1 0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1 0.9993641 -0.03487753 0.007414042 0 0.03562647 0.9852716 -0.1672445 0.5363694 -0.001471757 0.1674023 0.9858877 0 0 0 0 1</float_array>
+        <technique_common>
+          <accessor source="#Armature_001_shin_R_pose_matrix-output-array" count="7" stride="16">
+            <param name="TRANSFORM" type="float4x4"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Armature_001_shin_R_pose_matrix-interpolation">
+        <Name_array id="Armature_001_shin_R_pose_matrix-interpolation-array" count="7">LINEAR LINEAR LINEAR LINEAR LINEAR LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#Armature_001_shin_R_pose_matrix-interpolation-array" count="7" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Armature_001_shin_R_pose_matrix-sampler">
+        <input semantic="INPUT" source="#Armature_001_shin_R_pose_matrix-input"/>
+        <input semantic="OUTPUT" source="#Armature_001_shin_R_pose_matrix-output"/>
+        <input semantic="INTERPOLATION" source="#Armature_001_shin_R_pose_matrix-interpolation"/>
+      </sampler>
+      <channel source="#Armature_001_shin_R_pose_matrix-sampler" target="shin_R/transform"/>
+    </animation>
+    <animation id="Cylinder_location_X">
+      <source id="Cylinder_location_X-input">
+        <float_array id="Cylinder_location_X-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_X-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_X-output">
+        <float_array id="Cylinder_location_X-output-array" count="1">-231.7306</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_X-output-array" count="1" stride="1">
+            <param name="X" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_X-interpolation">
+        <Name_array id="Cylinder_location_X-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_X-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_X-intangent">
+        <float_array id="Cylinder_location_X-intangent-array" count="2">1.52 -231.7306</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_X-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_X-outtangent">
+        <float_array id="Cylinder_location_X-outtangent-array" count="2">1.6 -231.7306</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_X-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_location_X-sampler">
+        <input semantic="INPUT" source="#Cylinder_location_X-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_location_X-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_location_X-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_location_X-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_location_X-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_location_X-sampler" target="Cylinder/location.X"/>
+    </animation>
+    <animation id="Cylinder_location_Y">
+      <source id="Cylinder_location_Y-input">
+        <float_array id="Cylinder_location_Y-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Y-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Y-output">
+        <float_array id="Cylinder_location_Y-output-array" count="1">-1.495708</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Y-output-array" count="1" stride="1">
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Y-interpolation">
+        <Name_array id="Cylinder_location_Y-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Y-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Y-intangent">
+        <float_array id="Cylinder_location_Y-intangent-array" count="2">1.52 -1.495708</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Y-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Y-outtangent">
+        <float_array id="Cylinder_location_Y-outtangent-array" count="2">1.6 -1.495708</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Y-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_location_Y-sampler">
+        <input semantic="INPUT" source="#Cylinder_location_Y-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_location_Y-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_location_Y-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_location_Y-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_location_Y-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_location_Y-sampler" target="Cylinder/location.Y"/>
+    </animation>
+    <animation id="Cylinder_location_Z">
+      <source id="Cylinder_location_Z-input">
+        <float_array id="Cylinder_location_Z-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Z-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Z-output">
+        <float_array id="Cylinder_location_Z-output-array" count="1">121.2571</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Z-output-array" count="1" stride="1">
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Z-interpolation">
+        <Name_array id="Cylinder_location_Z-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Z-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Z-intangent">
+        <float_array id="Cylinder_location_Z-intangent-array" count="2">1.52 121.2571</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Z-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_location_Z-outtangent">
+        <float_array id="Cylinder_location_Z-outtangent-array" count="2">1.6 121.2571</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_location_Z-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_location_Z-sampler">
+        <input semantic="INPUT" source="#Cylinder_location_Z-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_location_Z-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_location_Z-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_location_Z-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_location_Z-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_location_Z-sampler" target="Cylinder/location.Z"/>
+    </animation>
+    <animation id="Cylinder_rotation_euler_X">
+      <source id="Cylinder_rotation_euler_X-input">
+        <float_array id="Cylinder_rotation_euler_X-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_X-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_X-output">
+        <float_array id="Cylinder_rotation_euler_X-output-array" count="1">-1.408104</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_X-output-array" count="1" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_X-interpolation">
+        <Name_array id="Cylinder_rotation_euler_X-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_X-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_X-intangent">
+        <float_array id="Cylinder_rotation_euler_X-intangent-array" count="2">1.52 -1.408104</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_X-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_X-outtangent">
+        <float_array id="Cylinder_rotation_euler_X-outtangent-array" count="2">1.6 -1.408104</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_X-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_rotation_euler_X-sampler">
+        <input semantic="INPUT" source="#Cylinder_rotation_euler_X-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_rotation_euler_X-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_rotation_euler_X-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_rotation_euler_X-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_rotation_euler_X-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_rotation_euler_X-sampler" target="Cylinder/rotationX.ANGLE"/>
+    </animation>
+    <animation id="Cylinder_rotation_euler_Y">
+      <source id="Cylinder_rotation_euler_Y-input">
+        <float_array id="Cylinder_rotation_euler_Y-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Y-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Y-output">
+        <float_array id="Cylinder_rotation_euler_Y-output-array" count="1">33.40687</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Y-output-array" count="1" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Y-interpolation">
+        <Name_array id="Cylinder_rotation_euler_Y-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Y-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Y-intangent">
+        <float_array id="Cylinder_rotation_euler_Y-intangent-array" count="2">1.52 33.40687</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Y-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Y-outtangent">
+        <float_array id="Cylinder_rotation_euler_Y-outtangent-array" count="2">1.6 33.40687</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Y-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_rotation_euler_Y-sampler">
+        <input semantic="INPUT" source="#Cylinder_rotation_euler_Y-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_rotation_euler_Y-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_rotation_euler_Y-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_rotation_euler_Y-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_rotation_euler_Y-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_rotation_euler_Y-sampler" target="Cylinder/rotationY.ANGLE"/>
+    </animation>
+    <animation id="Cylinder_rotation_euler_Z">
+      <source id="Cylinder_rotation_euler_Z-input">
+        <float_array id="Cylinder_rotation_euler_Z-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Z-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Z-output">
+        <float_array id="Cylinder_rotation_euler_Z-output-array" count="1">-22.81879</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Z-output-array" count="1" stride="1">
+            <param name="ANGLE" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Z-interpolation">
+        <Name_array id="Cylinder_rotation_euler_Z-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Z-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Z-intangent">
+        <float_array id="Cylinder_rotation_euler_Z-intangent-array" count="2">1.52 -22.81879</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Z-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_rotation_euler_Z-outtangent">
+        <float_array id="Cylinder_rotation_euler_Z-outtangent-array" count="2">1.6 -22.81879</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_rotation_euler_Z-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_rotation_euler_Z-sampler">
+        <input semantic="INPUT" source="#Cylinder_rotation_euler_Z-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_rotation_euler_Z-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_rotation_euler_Z-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_rotation_euler_Z-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_rotation_euler_Z-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_rotation_euler_Z-sampler" target="Cylinder/rotationZ.ANGLE"/>
+    </animation>
+    <animation id="Cylinder_scale_X">
+      <source id="Cylinder_scale_X-input">
+        <float_array id="Cylinder_scale_X-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_X-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_X-output">
+        <float_array id="Cylinder_scale_X-output-array" count="1">15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_X-output-array" count="1" stride="1">
+            <param name="X" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_X-interpolation">
+        <Name_array id="Cylinder_scale_X-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_X-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_X-intangent">
+        <float_array id="Cylinder_scale_X-intangent-array" count="2">1.52 15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_X-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_X-outtangent">
+        <float_array id="Cylinder_scale_X-outtangent-array" count="2">1.6 15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_X-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_scale_X-sampler">
+        <input semantic="INPUT" source="#Cylinder_scale_X-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_scale_X-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_scale_X-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_scale_X-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_scale_X-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_scale_X-sampler" target="Cylinder/scale.X"/>
+    </animation>
+    <animation id="Cylinder_scale_Y">
+      <source id="Cylinder_scale_Y-input">
+        <float_array id="Cylinder_scale_Y-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Y-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Y-output">
+        <float_array id="Cylinder_scale_Y-output-array" count="1">15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Y-output-array" count="1" stride="1">
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Y-interpolation">
+        <Name_array id="Cylinder_scale_Y-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Y-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Y-intangent">
+        <float_array id="Cylinder_scale_Y-intangent-array" count="2">1.52 15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Y-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Y-outtangent">
+        <float_array id="Cylinder_scale_Y-outtangent-array" count="2">1.6 15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Y-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_scale_Y-sampler">
+        <input semantic="INPUT" source="#Cylinder_scale_Y-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_scale_Y-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_scale_Y-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_scale_Y-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_scale_Y-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_scale_Y-sampler" target="Cylinder/scale.Y"/>
+    </animation>
+    <animation id="Cylinder_scale_Z">
+      <source id="Cylinder_scale_Z-input">
+        <float_array id="Cylinder_scale_Z-input-array" count="1">1.56</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Z-input-array" count="1" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Z-output">
+        <float_array id="Cylinder_scale_Z-output-array" count="1">15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Z-output-array" count="1" stride="1">
+            <param name="Z" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Z-interpolation">
+        <Name_array id="Cylinder_scale_Z-interpolation-array" count="1">BEZIER</Name_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Z-interpolation-array" count="1" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Z-intangent">
+        <float_array id="Cylinder_scale_Z-intangent-array" count="2">1.52 15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Z-intangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="Cylinder_scale_Z-outtangent">
+        <float_array id="Cylinder_scale_Z-outtangent-array" count="2">1.6 15.5719</float_array>
+        <technique_common>
+          <accessor source="#Cylinder_scale_Z-outtangent-array" count="1" stride="2">
+            <param name="X" type="float"/>
+            <param name="Y" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="Cylinder_scale_Z-sampler">
+        <input semantic="INPUT" source="#Cylinder_scale_Z-input"/>
+        <input semantic="OUTPUT" source="#Cylinder_scale_Z-output"/>
+        <input semantic="INTERPOLATION" source="#Cylinder_scale_Z-interpolation"/>
+        <input semantic="IN_TANGENT" source="#Cylinder_scale_Z-intangent"/>
+        <input semantic="OUT_TANGENT" source="#Cylinder_scale_Z-outtangent"/>
+      </sampler>
+      <channel source="#Cylinder_scale_Z-sampler" target="Cylinder/scale.Z"/>
+    </animation>
+    <animation id="PlayBones_Bone_L_006_pose_matrix">
+      <source id="PlayBones_Bone_L_006_pose_matrix-input">
+        <float_array id="PlayBones_Bone_L_006_pose_matrix-input-array" count="5">0.03999996 0.44 0.84 1.24 1.64</float_array>
+        <technique_common>
+          <accessor source="#PlayBones_Bone_L_006_pose_matrix-input-array" count="5" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="PlayBones_Bone_L_006_pose_matrix-output">
+        <float_array id="PlayBones_Bone_L_006_pose_matrix-output-array" count="80">-0.9415754 0.2689539 0.20273 0 0.2493745 0.9613004 -0.1171044 0.4122723 -0.2263802 -0.05970692 -0.9722073 0 0 0 0 1 -0.9415754 0.2689539 0.20273 0 0.2493745 0.9613004 -0.1171044 0.4122723 -0.2263802 -0.05970692 -0.9722073 0 0 0 0 1 -0.9415754 0.2689539 0.20273 0 0.2493745 0.9613004 -0.1171044 0.4122723 -0.2263802 -0.05970692 -0.9722073 0 0 0 0 1 -0.9415754 0.2689539 0.20273 0 0.2493745 0.9613004 -0.1171044 0.4122723 -0.2263802 -0.05970692 -0.9722073 0 0 0 0 1 -0.9415754 0.2689539 0.20273 0 0.2493745 0.9613004 -0.1171044 0.4122723 -0.2263802 -0.05970692 -0.9722073 0 0 0 0 1</float_array>
+        <technique_common>
+          <accessor source="#PlayBones_Bone_L_006_pose_matrix-output-array" count="5" stride="16">
+            <param name="TRANSFORM" type="float4x4"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="PlayBones_Bone_L_006_pose_matrix-interpolation">
+        <Name_array id="PlayBones_Bone_L_006_pose_matrix-interpolation-array" count="5">LINEAR LINEAR LINEAR LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#PlayBones_Bone_L_006_pose_matrix-interpolation-array" count="5" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="PlayBones_Bone_L_006_pose_matrix-sampler">
+        <input semantic="INPUT" source="#PlayBones_Bone_L_006_pose_matrix-input"/>
+        <input semantic="OUTPUT" source="#PlayBones_Bone_L_006_pose_matrix-output"/>
+        <input semantic="INTERPOLATION" source="#PlayBones_Bone_L_006_pose_matrix-interpolation"/>
+      </sampler>
+      <channel source="#PlayBones_Bone_L_006_pose_matrix-sampler" target="Bone_L_006/transform"/>
+    </animation>
+    <animation id="PlayBones_Bone_R_006_pose_matrix">
+      <source id="PlayBones_Bone_R_006_pose_matrix-input">
+        <float_array id="PlayBones_Bone_R_006_pose_matrix-input-array" count="5">0.03999996 0.44 0.84 1.24 1.64</float_array>
+        <technique_common>
+          <accessor source="#PlayBones_Bone_R_006_pose_matrix-input-array" count="5" stride="1">
+            <param name="TIME" type="float"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="PlayBones_Bone_R_006_pose_matrix-output">
+        <float_array id="PlayBones_Bone_R_006_pose_matrix-output-array" count="80">-0.9415754 -0.2689538 -0.20273 0 -0.2493744 0.9613004 -0.1171045 0.4122723 0.2263802 -0.05970704 -0.9722074 0 0 0 0 1 -0.9415754 -0.2689538 -0.20273 0 -0.2493744 0.9613004 -0.1171045 0.4122723 0.2263802 -0.05970704 -0.9722074 0 0 0 0 1 -0.9415754 -0.2689538 -0.20273 0 -0.2493744 0.9613004 -0.1171045 0.4122723 0.2263802 -0.05970704 -0.9722074 0 0 0 0 1 -0.9415754 -0.2689538 -0.20273 0 -0.2493744 0.9613004 -0.1171045 0.4122723 0.2263802 -0.05970704 -0.9722074 0 0 0 0 1 -0.9415754 -0.2689538 -0.20273 0 -0.2493744 0.9613004 -0.1171045 0.4122723 0.2263802 -0.05970704 -0.9722074 0 0 0 0 1</float_array>
+        <technique_common>
+          <accessor source="#PlayBones_Bone_R_006_pose_matrix-output-array" count="5" stride="16">
+            <param name="TRANSFORM" type="float4x4"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <source id="PlayBones_Bone_R_006_pose_matrix-interpolation">
+        <Name_array id="PlayBones_Bone_R_006_pose_matrix-interpolation-array" count="5">LINEAR LINEAR LINEAR LINEAR LINEAR</Name_array>
+        <technique_common>
+          <accessor source="#PlayBones_Bone_R_006_pose_matrix-interpolation-array" count="5" stride="1">
+            <param name="INTERPOLATION" type="name"/>
+          </accessor>
+        </technique_common>
+      </source>
+      <sampler id="PlayBones_Bone_R_006_pose_matrix-sampler">
+        <input semantic="INPUT" source="#PlayBones_Bone_R_006_pose_matrix-input"/>
+        <input semantic="OUTPUT" source="#PlayBones_Bone_R_006_pose_matrix-output"/>
+        <input semantic="INTERPOLATION" source="#PlayBones_Bone_R_006_pose_matrix-interpolation"/>
+      </sampler>
+      <channel source="#PlayBones_Bone_R_006_pose_matrix-sampler" target="Bone_R_006/transform"/>
+    </animation>
+  </library_animations>
+  <library_controllers>
+    <controller id="Armature_001_Cylinder-skin" name="Armature.001">
+      <skin source="#Cylinder_004-mesh">
+        <bind_shape_matrix>11.98177 5.843043 8.048602 -231.7306 -5.041299 14.43056 -2.971279 -1.495707 -8.573592 -0.3194353 12.99521 121.2571 0 0 0 1</bind_shape_matrix>
+        <source id="Armature_001_Cylinder-skin-joints">
+          <Name_array id="Armature_001_Cylinder-skin-joints-array" count="63">hips spine ribs neck head shoulder_L upper_arm_L forearm_L hand_L palm_01_L finger_index_01_L finger_index_02_L finger_index_03_L thumb_01_L thumb_02_L thumb_03_L palm_02_L finger_middle_01_L finger_middle_02_L finger_middle_03_L palm_03_L finger_ring_01_L finger_ring_02_L finger_ring_03_L palm_04_L finger_pinky_01_L finger_pinky_02_L finger_pinky_03_L shoulder_R upper_arm_R forearm_R hand_R palm_01_R finger_index_01_R finger_index_02_R finger_index_03_R thumb_01_R thumb_02_R thumb_03_R palm_02_R finger_middle_01_R finger_middle_02_R finger_middle_03_R palm_03_R finger_ring_01_R finger_ring_02_R finger_ring_03_R palm_04_R finger_pinky_01_R finger_pinky_02_R finger_pinky_03_R thigh_L shin_L foot_L toe_L heel_L heel_02_L thigh_R shin_R foot_R toe_R heel_R heel_02_R</Name_array>
+          <technique_common>
+            <accessor source="#Armature_001_Cylinder-skin-joints-array" count="63" stride="1">
+              <param name="JOINT" type="name"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_001_Cylinder-skin-bind_poses">
+          <float_array id="Armature_001_Cylinder-skin-bind_poses-array" count="1008">0.009853482 0 0 1.702309 0 -0.00210464 0.00962609 -0.9814512 0 -0.00962609 -0.00210464 0.1202529 0 0 0 1 0.009853482 0 0 1.702309 0 -0.001041173 0.009798347 -1.165555 0 -0.009798347 -0.001041173 -0.007035434 0 0 0 1 0.009853482 0 0 1.702309 0 3.42363e-4 0.009847581 -1.310486 0 -0.009847581 3.42363e-4 -0.1926062 0 0 0 1 0.009853482 0 0 1.702309 0 -0.002772808 0.009455323 -1.605063 0 -0.009455323 -0.002772808 0.3290144 0 0 0 1 0.009853482 0 0 1.702309 0 0 0.009853482 -1.755886 0 -0.009853482 0 -0.172057 0 0 0 1 0.004996657 -0.008492648 -7.26897e-7 0.6681106 0.008492648 0.004996657 -5.62146e-6 1.561741 5.21376e-6 2.22423e-6 0.009853482 -1.578747 0 0 0 1 -0.004731595 -3.15715e-5 -0.008643031 0.6436024 0.008439242 0.00211066 -0.004627704 2.048833 0.001866161 -0.009624719 -9.86495e-4 0.3236643 0 0 0 1 -0.005431056 -7.36816e-5 -0.008221268 0.4929784 0.008135139 -0.001473307 -0.00536096 1.805975 -0.001189172 -0.009742438 8.72905e-4 -0.3363689 0 0 0 1 8.3316e-4 0.00980401 -5.27523e-4 0.2544099 0.007866978 -9.83374e-4 -0.005851089 1.583337 -0.005874335 7.35648e-5 -0.007910609 0.4071511 0 0 0 1 0.002052187 0.009543597 -0.0013417 0.5033748 0.007684588 -0.00244826 -0.005660831 1.482263 -0.005816102 1.3259e-4 -0.007952749 0.4245898 0 0 0 1 0.001606583 0.0097211 1.0454e-4 0.283233 0.005556821 -8.31336e-4 -0.008094608 1.531587 -0.007976949 0.001378774 -0.005617678 -0.05682247 0 0 0 1 0.001467227 0.009743213 9.10092e-5 0.2720311 0.004259288 -5.58602e-4 -0.0088678 1.46111 -0.008763372 0.00135982 -0.004294812 -0.29056 0 0 0 1 0.001107037 0.009769141 6.55362e-4 0.1723886 0.002245426 3.88638e-4 -0.009586393 1.34402 -0.009530127 0.001226365 -0.002182543 -0.6127671 0 0 0 1 0.008131504 -0.002296805 0.005069017 0.1799077 0.003587841 -0.004697203 -0.007883846 1.314497 0.004254162 0.008351743 -0.003040015 0.9373883 0 0 0 1 0.007468223 -0.001678526 0.006204783 -0.01941043 0.005862653 -0.00212115 -0.007630288 1.51432 0.002635478 0.009474933 -6.0899e-4 0.4872569 0 0 0 1 0.006946444 -0.001550018 0.00681436 -0.1437622 0.006540358 -0.001943111 -0.007109105 1.489294 0.002462148 0.009534835 -3.41024e-4 0.4383125 0 0 0 1 0.001293838 0.00971961 -9.73192e-4 0.3636625 0.007918953 -0.001618444 -0.005635738 1.512096 -0.005719006 -4.20775e-5 -0.008023858 0.4439513 0 0 0 1 0.001116394 0.009783923 -3.45689e-4 0.2694239 0.004853069 -8.55264e-4 -0.008532702 1.51708 -0.008502483 7.96527e-4 -0.004915773 -0.200234 0 0 0 1 3.52604e-4 0.009838759 -4.07891e-4 0.2057739 0.002723813 -4.89677e-4 -0.009456872 1.382719 -0.009463012 2.25658e-4 -0.002737224 -0.5586593 0 0 0 1 -1.20037e-4 0.00985217 -1.07793e-4 0.1269411 0.001605749 -8.67976e-5 -0.009721398 1.282442 -0.00972104 -1.35994e-4 -0.001604497 -0.7194349 0 0 0 1 6.16118e-5 0.009840011 -5.11762e-4 0.1645634 0.008145689 -3.38815e-4 -0.005533933 1.537215 -0.005543947 -3.88459e-4 -0.00813663 0.4724163 0 0 0 1 -1.35079e-4 0.009835362 -5.82565e-4 0.1543751 0.003847599 -4.83699e-4 -0.009058356 1.48973 -0.009070217 -3.51658e-4 -0.00383383 -0.4005571 0 0 0 1 -6.55107e-4 0.009826242 -3.27548e-4 0.0745806 0.002447783 -1.54925e-4 -0.009543359 1.374096 -0.00952214 -7.15856e-4 -0.002430737 -0.6151012 0 0 0 1 -0.001527547 0.009729206 3.177e-4 -0.08345919 -6.90534e-4 2.12474e-4 -0.009826958 1.085124 -0.009709835 -0.001545667 6.48881e-4 -1.000603 0 0 0 1 -7.72232e-4 0.009813368 4.40023e-4 -0.05801111 0.007890462 8.82577e-4 -0.005835473 1.562481 -0.005851149 -1.04976e-4 -0.007927477 0.4148398 0 0 0 1 -0.001769483 0.00968784 -3.25608e-4 -0.06042486 0.002156138 7.06943e-5 -0.009614467 1.396136 -0.009450435 -0.001797795 -0.002132594 -0.6601526 0 0 0 1 -0.002029597 0.009642064 -4.75376e-5 -0.1192445 0.00126481 2.18072e-4 -0.009769558 1.302713 -0.009558916 -0.002018392 -0.001282572 -0.7747946 0 0 0 1 -0.002331197 0.009570837 2.36403e-4 -0.1821895 -4.59289e-4 1.31229e-4 -0.009841918 1.123512 -0.00956273 -0.002339422 4.15067e-4 -0.9786524 0 0 0 1 0.004996657 0.008492648 7.26897e-7 1.058354 -0.008492648 0.004996657 -5.62053e-6 -1.372666 -5.21309e-6 2.22346e-6 0.009853482 -1.580548 0 0 0 1 -0.004731595 3.15717e-5 0.008643031 -2.278487 -0.008439242 0.00211066 -0.004627704 -0.8671209 -0.001866161 -0.009624719 -9.86495e-4 -0.3211545 0 0 0 1 -0.005431056 7.36816e-5 0.008221268 -2.369539 -0.008135139 -0.001473307 -0.00536096 -1.004916 0.001189172 -0.009742438 8.72905e-4 0.07452249 0 0 0 1 8.3316e-4 -0.00980401 5.27523e-4 0.03346568 -0.007866978 -9.83374e-4 -0.005851089 -1.134892 0.005874335 7.35648e-5 -0.007910609 2.436876 0 0 0 1 0.002052187 -0.009543597 0.0013417 0.2057078 -0.007684588 -0.00244826 -0.005660831 -1.172935 0.005816102 1.3259e-4 -0.007952749 2.434203 0 0 0 1 0.001618742 -0.009719252 -8.68138e-5 0.2727414 -0.005555748 -8.53051e-4 -0.008093059 -0.3886643 0.00797522 0.001378476 -0.005620181 2.699291 0 0 0 1 0.001452326 -0.009745121 -1.22088e-4 0.2348129 -0.004260122 -5.2379e-4 -0.008869528 -0.0100758 0.008765459 0.001360058 -0.004290461 2.737413 0 0 0 1 0.001107037 -0.009769141 -6.55363e-4 0.2101263 -0.002245426 3.88639e-4 -0.009586393 0.5681588 0.009530127 0.001226365 -0.002182543 2.680126 0 0 0 1 0.008131504 0.002296805 -0.005069017 2.62971 -0.003587841 -0.004697203 -0.007883846 0.07480996 -0.004254162 0.008351743 -0.003040015 -0.532525 0 0 0 1 0.007468223 0.001678526 -0.006204783 2.599867 -0.005862653 -0.00212115 -0.007630288 -0.5113686 -0.002635478 0.009474933 -6.0899e-4 -0.4233762 0 0 0 1 0.006946444 0.001550018 -0.00681436 2.543922 -0.006540358 -0.001943111 -0.007109105 -0.7705556 -0.002462148 0.009534835 -3.41025e-4 -0.4124151 0 0 0 1 0.001293838 -0.00971961 9.73192e-4 0.08340501 -0.007918953 -0.001618444 -0.005635738 -1.224096 0.005719006 -4.20775e-5 -0.008023858 2.42001 0 0 0 1 0.00112611 -0.009782195 3.62786e-4 0.1166505 -0.004852235 -8.74999e-4 -0.008531212 -0.1599977 0.008501708 7.96386e-4 -0.004917144 2.737552 0 0 0 1 3.44155e-4 -0.00984019 3.78556e-4 -0.08267074 -0.00272423 -4.59141e-4 -0.009458303 0.4420216 0.009463191 2.25691e-4 -0.002736568 2.710995 0 0 0 1 -1.20037e-4 -0.00985217 1.07793e-4 -0.1684166 -0.001605749 -8.67974e-5 -0.009721398 0.7276098 0.00972104 -1.35994e-4 -0.001604497 2.639414 0 0 0 1 4.99569e-5 -0.009840488 5.03843e-4 -0.1452024 -0.008146047 -3.24713e-4 -0.005534231 -1.277238 0.005543529 -3.88476e-4 -0.008136928 2.387919 0 0 0 1 -1.3508e-4 -0.009835362 5.82564e-4 -0.2010481 -0.003847599 -4.83698e-4 -0.009058356 0.1602959 0.009070217 -3.51658e-4 -0.00383383 2.733427 0 0 0 1 -6.55107e-4 -0.009826242 3.27547e-4 -0.3009347 -0.002447783 -1.54924e-4 -0.009543359 0.528319 0.00952214 -7.15856e-4 -0.002430737 2.675013 0 0 0 1 -0.001527547 -0.009729206 -3.177e-4 -0.4443494 6.90533e-4 2.12475e-4 -0.009826958 1.323719 0.009709835 -0.001545667 6.4888e-4 2.35438 0 0 0 1 -7.72232e-4 -0.009813368 -4.40023e-4 -0.2088124 -0.007890462 8.82577e-4 -0.005835473 -1.163859 0.005851149 -1.04976e-4 -0.007927477 2.436546 0 0 0 1 -0.001769483 -0.00968784 3.25608e-4 -0.550985 -0.002156138 7.06943e-5 -0.009614467 0.6511242 0.009450435 -0.001797795 -0.002132594 2.605205 0 0 0 1 -0.002029597 -0.009642064 4.75376e-5 -0.5820366 -0.00126481 2.18073e-4 -0.009769558 0.8656908 0.009558916 -0.002018392 -0.001282572 2.528028 0 0 0 1 -0.002331197 -0.009570837 -2.36403e-4 -0.6232933 4.59288e-4 1.3123e-4 -0.009841918 1.282207 0.00956273 -0.002339422 4.15067e-4 2.325502 0 0 0 1 0.009853482 0 0 1.604309 0 -7.53201e-4 -0.009824693 1.033209 0 0.009824693 -7.53201e-4 0.2145627 0 0 0 1 0.009853482 0 0 1.604309 0 9.71873e-4 -0.00980544 0.5266463 0 0.00980544 9.71874e-4 0.1246201 0 0 0 1 0.009853482 0 0 1.604309 0 -0.008355736 -0.00522232 -0.07953357 0 0.00522232 -0.008355736 0.120212 0 0 0 1 -0.009853482 0 0 -1.604309 0 -0.009853482 0 -0.2407565 0 0 0.009853482 0.008713245 0 0 0 1 -0.009853482 0 0 -1.60431 0 0.006360054 -0.00752604 0.1303212 0 -0.00752604 -0.006360054 -0.06157493 0 0 0 1 0 -0.009853482 0 -0.1473565 0.009853482 0 0 1.642309 0 0 0.009853482 0.02541303 0 0 0 1 0.009853482 0 0 1.800309 0 -7.53201e-4 -0.009824693 1.033209 0 0.009824693 -7.53201e-4 0.2145627 0 0 0 1 0.009853482 0 0 1.800309 0 9.71873e-4 -0.00980544 0.5266463 0 0.00980544 9.71874e-4 0.1246201 0 0 0 1 0.009853482 0 0 1.800309 0 -0.008355736 -0.00522232 -0.07953357 0 0.00522232 -0.008355736 0.120212 0 0 0 1 -0.009853482 0 0 -1.800309 0 -0.009853482 0 -0.2407565 0 0 0.009853482 0.008713245 0 0 0 1 -0.009853482 0 0 -1.800309 0 0.006360054 -0.00752604 0.1303212 0 -0.00752604 -0.006360054 -0.06159979 0 0 0 1 0 0.009853482 0 0.1473566 -0.009853482 0 0 -1.762309 0 0 0.009853482 0.02541333 0 0 0 1</float_array>
+          <technique_common>
+            <accessor source="#Armature_001_Cylinder-skin-bind_poses-array" count="63" stride="16">
+              <param name="TRANSFORM" type="float4x4"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Armature_001_Cylinder-skin-weights">
+          <float_array id="Armature_001_Cylinder-skin-weights-array" count="191">0.1994896 0.04845345 0.008147895 0.06635624 0.6775527 0.8753926 0.1246074 0.2031901 0.05977171 0.02005213 0.05562824 0.6613577 0.8734859 0.1265141 0.2050933 0.0712729 0.03369212 0.0421285 0.647813 0.8741217 0.1258783 0.205006 0.08481103 0.04960799 0.02668392 0.6338909 0.8770178 0.1229822 0.2041922 0.1014629 0.06024795 0.01346582 0.6206311 0.8817818 0.1182182 0.2018386 0.1216435 0.07215583 0.002055048 0.602307 0.8879516 0.1120485 0.1966981 0.1452581 0.08607602 0.5719677 0.895032 0.104968 0.1906127 0.1742926 0.1031786 0.531916 0.9025221 0.09747791 0.1834951 0.2099589 0.124171 0.003547132 0.4788279 0.9099256 0.09007441 0.1738622 0.2211915 0.1488375 0.01497346 0.4411351 0.917309 0.08269101 0.1635426 0.2048655 0.1795128 0.02911281 0.4229663 0.923815 0.07618498 0.1523014 0.1598095 0.217575 0.04659676 0.4237172 0.9294152 0.07058471 0.1411297 0.1241772 0.2275872 0.05955952 0.4475463 0.9342887 0.0657112 0.1287937 0.09514391 0.2080627 0.07363486 0.4943646 0.9387831 0.06121677 0.1146359 0.0711683 0.1555191 0.09158951 0.5670872 0.9433687 0.05663114 0.09835022 0.05130475 0.112034 0.0659554 0.6723555 0.9485779 0.05142205 0.08115053 0.01964801 0.07733011 0.03978514 0.7820861 0.9594296 0.04057037 0.06101089 0.04311078 0.003654003 0.8922242 0.9711861 0.02881395 0.02448874 0.9755112 0.9825295 0.01747053 1 0.9886836 0.01131641 1 0.9837443 0.01625567 6.64239e-4 0.01618903 0.9831467 0.9627844 0.0372157 0.0310052 0.07472676 0.894268 0.9352825 0.06471747 0.05842387 0.1367543 0.8048219 0.9220666 0.07793337 0.07798457 0.2239279 0.6980875 0.9159423 0.08405768 0.09736603 0.2373396 0.6652944 0.9159525 0.08404755 0.1170023 0.1910277 0.6919699 0.9111579 0.08884209 0.136342 0.1574535 0.7062044 0.9039482 0.09605175 0.1548588 0.1320486 0.7130926 0.8959399 0.1040601 0.1716679 0.002092599 0.1118148 0.7144246 0.8883488 0.1116511 0.1844114 0.01571846 0.09422343 0.7056467 0.8821179 0.1178821 0.1941855 0.03119844 0.07943463 0.6951813 0.8779458 0.1220542</float_array>
+          <technique_common>
+            <accessor source="#Armature_001_Cylinder-skin-weights-array" count="191" stride="1">
+              <param name="WEIGHT" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <joints>
+          <input semantic="JOINT" source="#Armature_001_Cylinder-skin-joints"/>
+          <input semantic="INV_BIND_MATRIX" source="#Armature_001_Cylinder-skin-bind_poses"/>
+        </joints>
+        <vertex_weights count="64">
+          <input semantic="JOINT" source="#Armature_001_Cylinder-skin-joints" offset="0"/>
+          <input semantic="WEIGHT" source="#Armature_001_Cylinder-skin-weights" offset="1"/>
+          <vcount>5 2 5 2 5 2 5 2 5 2 5 2 4 2 4 2 5 2 5 2 5 2 5 2 5 2 5 2 5 2 5 2 5 2 4 2 2 2 1 2 1 2 3 2 3 2 3 2 3 2 3 2 3 2 3 2 3 2 4 2 4 2 4 2 </vcount>
+          <v>30 0 36 1 37 2 49 3 50 4 30 5 50 6 30 7 36 8 37 9 49 10 50 11 30 12 50 13 30 14 36 15 37 16 49 17 50 18 30 19 50 20 30 21 36 22 37 23 49 24 50 25 30 26 50 27 30 28 36 29 37 30 49 31 50 32 30 33 50 34 30 35 36 36 37 37 49 38 50 39 30 40 50 41 30 42 36 43 37 44 50 45 30 46 50 47 30 48 36 49 37 50 50 51 30 52 50 53 30 54 36 55 37 56 38 57 50 58 30 59 50 60 30 61 36 62 37 63 38 64 50 65 30 66 50 67 30 68 36 69 37 70 38 71 50 72 30 73 50 74 30 75 36 76 37 77 38 78 50 79 30 80 50 81 30 82 36 83 37 84 38 85 50 86 30 87 50 88 30 89 36 90 37 91 38 92 50 93 30 94 50 95 30 96 36 97 37 98 38 99 50 100 30 101 50 102 30 103 36 104 37 105 38 106 50 107 30 108 50 109 30 110 36 111 37 112 38 113 50 114 30 115 50 116 30 117 37 118 38 119 50 120 30 121 50 122 30 123 50 124 30 125 50 126 50 127 30 128 50 129 50 130 30 131 50 132 30 133 49 134 50 135 30 136 50 137 30 138 49 139 50 140 30 141 50 142 30 143 49 144 50 145 30 146 50 147 30 148 49 149 50 150 30 151 50 152 30 153 49 154 50 155 30 156 50 157 30 158 49 159 50 160 30 161 50 162 30 163 49 164 50 165 30 166 50 167 30 168 49 169 50 170 30 171 50 172 30 173 36 174 49 175 50 176 30 177 50 178 30 179 36 180 49 181 50 182 30 183 50 184 30 185 36 186 49 187 50 188 30 189 50 190</v>
+        </vertex_weights>
+      </skin>
+    </controller>
+  </library_controllers>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Armature_001" type="NODE">
+        <translate sid="location">-172.7612 -14.95471 -2.579095</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">101.4864 101.4864 101.4864</scale>
+        <node id="hips" name="hips" sid="hips" type="JOINT">
+          <matrix sid="transform">1 0 0 0 0 -0.2135964 -0.976922 0.0552 0 0.976922 -0.2135964 1.0099 0 0 0 1</matrix>
+          <node id="spine" name="spine" sid="spine" type="JOINT">
+            <matrix sid="transform">1 0 0 0 0 0.9940229 0.1091722 0.1779057 0 -0.1091722 0.9940229 7.26412e-9 0 0 0 1</matrix>
+            <node id="ribs" name="ribs" sid="ribs" type="JOINT">
+              <matrix sid="transform">1 0 0 0 0 0.9901296 0.1401539 0.1589901 0 -0.1401539 0.9901296 4.88212e-9 0 0 0 1</matrix>
+              <node id="neck" name="neck" sid="neck" type="JOINT">
+                <matrix sid="transform">1 0 0 0 0 0.9492317 -0.3145778 0.3165911 0 0.3145778 0.9492317 -1.15103e-9 0 0 0 1</matrix>
+                <node id="head" name="head" sid="head" type="JOINT">
+                  <matrix sid="transform">1 0 0 0 0 0.9595886 0.2814068 0.128284 0 -0.2814068 0.9595886 2.34532e-8 0 0 0 1</matrix>
+                </node>
+              </node>
+              <node id="shoulder_L" name="shoulder.L" sid="shoulder_L" type="JOINT">
+                <matrix sid="transform">0.507095 0.86189 5.29121e-4 0.0183 -0.03002032 0.01704896 0.9994038 0.2607505 0.8613672 -0.5068086 0.03451964 0.07790685 0 0 0 1</matrix>
+                <node id="upper_arm_L" name="upper_arm.L" sid="upper_arm_L" type="JOINT">
+                  <matrix sid="transform">-0.2406788 0.2497258 0.937929 0.007791551 -0.4150007 0.847073 -0.3320271 0.200791 -0.8774099 -0.469153 -0.1002361 -0.02038495 0 0 0 1</matrix>
+                  <node id="forearm_L" name="forearm.L" sid="forearm_L" type="JOINT">
+                    <matrix sid="transform">0.9965554 0.08125445 -0.01658414 7.08673e-8 -0.0818143 0.9306066 -0.3567604 0.2885099 -0.01355505 0.3568883 0.9340487 1.39395e-8 0 0 0 1</matrix>
+                    <node id="hand_L" name="hand.L" sid="hand_L" type="JOINT">
+                      <matrix sid="transform">-0.009376771 0.05612994 0.9983795 6.11371e-8 -0.04983586 0.9971564 -0.05652924 0.2628355 -0.9987134 -0.05028518 -0.00655281 -2.3828e-8 0 0 0 1</matrix>
+                      <node id="palm_01_L" name="palm.01.L" sid="palm_01_L" type="JOINT">
+                        <matrix sid="transform">0.9885838 -0.1505238 0.006688525 -0.02294223 0.1504799 0.9885907 0.006656884 0.03941125 -0.007614247 -0.005574375 0.9999555 -0.00532431 0 0 0 1</matrix>
+                        <node id="finger_index_01_L" name="finger_index.01.L" sid="finger_index_01_L" type="JOINT">
+                          <matrix sid="transform">0.9880435 0.1475985 0.04455132 -2.49254e-8 -0.1240662 0.9327173 -0.3385942 0.06962593 -0.09152976 0.3290184 0.9398772 -1.3134e-7 0 0 0 1</matrix>
+                          <node id="finger_index_02_L" name="finger_index.02.L" sid="finger_index_02_L" type="JOINT">
+                            <matrix sid="transform">0.9998966 0.005004242 -0.01348509 1.9797e-8 -0.007036229 0.9878685 -0.1551322 0.04503999 0.01254516 0.1552111 0.9878017 1.97077e-9 0 0 0 1</matrix>
+                            <node id="finger_index_03_L" name="finger_index.03.L" sid="finger_index_03_L" type="JOINT">
+                              <matrix sid="transform">0.9976882 0.06394842 -0.02299901 -7.92632e-9 -0.06749629 0.9718347 -0.2257909 0.02822344 0.007912284 0.2268213 0.9739043 -6.48094e-8 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                        <node id="thumb_01_L" name="thumb.01.L" sid="thumb_01_L" type="JOINT">
+                          <matrix sid="transform">-0.1239448 -0.2769293 0.9528629 -0.003506393 0.4059615 0.8620755 0.3033497 -0.008324258 -0.9054463 0.4244242 0.005572871 0.02435831 0 0 0 1</matrix>
+                          <node id="thumb_02_L" name="thumb.02.L" sid="thumb_02_L" type="JOINT">
+                            <matrix sid="transform">0.9891231 0.142813 -0.03521245 -2.19253e-8 -0.1466448 0.9388451 -0.3115529 0.04174466 -0.01143476 0.313328 0.9495761 1.19238e-8 0 0 0 1</matrix>
+                            <node id="thumb_03_L" name="thumb.03.L" sid="thumb_03_L" type="JOINT">
+                              <matrix sid="transform">0.996599 0.08235858 0.002753414 -7.90086e-8 -0.08222432 0.9960727 -0.0328362 0.03344637 -0.005446965 0.03249814 0.999457 -3.94039e-9 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                      <node id="palm_02_L" name="palm.02.L" sid="palm_02_L" type="JOINT">
+                        <matrix sid="transform">0.9978473 -0.06485475 -0.009729186 -0.006083977 0.0650439 0.9976702 0.02057989 0.04197361 0.008371811 -0.02116838 0.9997409 -0.007720986 0 0 0 1</matrix>
+                        <node id="finger_middle_01_L" name="finger_middle.01.L" sid="finger_middle_01_L" type="JOINT">
+                          <matrix sid="transform">0.9977888 0.0645837 0.0157026 -5.96343e-9 -0.05197012 0.9053763 -0.4214177 0.06818715 -0.04143347 0.4196698 0.9067308 -1.2156e-8 0 0 0 1</matrix>
+                          <node id="finger_middle_02_L" name="finger_middle.02.L" sid="finger_middle_02_L" type="JOINT">
+                            <matrix sid="transform">0.9969601 0.01564637 -0.07632726 1.65091e-9 -0.03319613 0.971565 -0.2344345 0.04954048 0.07048884 0.2362556 0.9691308 -1.08096e-7 0 0 0 1</matrix>
+                            <node id="finger_middle_03_L" name="finger_middle.03.L" sid="finger_middle_03_L" type="JOINT">
+                              <matrix sid="transform">0.9983848 0.0378764 -0.04234374 4.03804e-9 -0.04255725 0.9923663 -0.115749 0.03219601 0.03763634 0.117364 0.9923756 -4.89098e-8 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                      <node id="palm_03_L" name="palm.03.L" sid="palm_03_L" type="JOINT">
+                        <matrix sid="transform">0.9969265 0.06575417 -0.04259097 0.009394581 -0.06382988 0.9969427 0.04506649 0.04003605 0.04542406 -0.04220937 0.9980757 -0.006946316 0 0 0 1</matrix>
+                        <node id="finger_ring_01_L" name="finger_ring.01.L" sid="finger_ring_01_L" type="JOINT">
+                          <matrix sid="transform">0.9997749 0.001165524 -0.02118745 5.90998e-9 -0.01244978 0.8407909 -0.5412169 0.06979752 0.01718342 0.5413588 0.840616 7.93601e-8 0 0 0 1</matrix>
+                          <node id="finger_ring_02_L" name="finger_ring.02.L" sid="finger_ring_02_L" type="JOINT">
+                            <matrix sid="transform">0.9982719 0.03816224 -0.04468337 2.23954e-9 -0.04435479 0.9881416 -0.147 0.04481665 0.03854365 0.1487279 0.9881267 -1.11581e-8 0 0 0 1</matrix>
+                            <node id="finger_ring_03_L" name="finger_ring.03.L" sid="finger_ring_03_L" type="JOINT">
+                              <matrix sid="transform">0.9938875 0.05931495 -0.09310944 -1.75936e-9 -0.08526373 0.9481695 -0.3061123 0.0318009 0.0701265 0.31218 0.9474314 -6.31741e-8 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                      <node id="palm_04_L" name="palm.04.L" sid="palm_04_L" type="JOINT">
+                        <matrix sid="transform">0.9819064 0.1885349 -0.01773793 0.02414735 -0.1884806 0.9820657 0.004702722 0.03599269 0.01830642 -0.001274342 0.9998317 -0.004565706 0 0 0 1</matrix>
+                        <node id="finger_pinky_01_L" name="finger_pinky.01.L" sid="finger_pinky_01_L" type="JOINT">
+                          <matrix sid="transform">0.9917783 -0.05357713 -0.1162124 6.48477e-11 -0.03617186 0.7537304 -0.6561876 0.07480232 0.1227495 0.6549963 0.7455955 8.30017e-8 0 0 0 1</matrix>
+                          <node id="finger_pinky_02_L" name="finger_pinky.02.L" sid="finger_pinky_02_L" type="JOINT">
+                            <matrix sid="transform">0.9992427 0.03147107 -0.02288543 -1.61797e-8 -0.03334528 0.9956725 -0.08674287 0.02787631 0.02005651 0.0874403 0.9959678 9.76388e-8 0 0 0 1</matrix>
+                            <node id="finger_pinky_03_L" name="finger_pinky.03.L" sid="finger_pinky_03_L" type="JOINT">
+                              <matrix sid="transform">0.9990903 0.02745196 -0.03263326 6.98123e-9 -0.03265928 0.9846264 -0.1715931 0.02259249 0.02742099 0.1725028 0.9846274 7.18288e-9 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                    </node>
+                  </node>
+                </node>
+              </node>
+              <node id="shoulder_R" name="shoulder.R" sid="shoulder_R" type="JOINT">
+                <matrix sid="transform">0.507095 -0.86189 -5.29121e-4 -0.0183 0.03002032 0.01704896 0.9994038 0.2607505 -0.8613672 -0.5068086 0.03451964 0.07790685 0 0 0 1</matrix>
+                <node id="upper_arm_R" name="upper_arm.R" sid="upper_arm_R" type="JOINT">
+                  <matrix sid="transform">-0.2406788 -0.2497258 -0.937929 -0.007791551 0.4150007 0.847073 -0.3320271 0.200791 0.8774099 -0.469153 -0.1002361 -0.02038495 0 0 0 1</matrix>
+                  <node id="forearm_R" name="forearm.R" sid="forearm_R" type="JOINT">
+                    <matrix sid="transform">-0.0814788 -0.9936128 -0.078069 -7.08673e-8 0.9094679 -0.04207874 -0.4136395 0.2885099 0.4077124 -0.1047041 0.9070874 1.39395e-8 0 0 0 1</matrix>
+                    <node id="hand_R" name="hand.R" sid="hand_R" type="JOINT">
+                      <matrix sid="transform">-0.009376802 -0.05612992 -0.9983795 -3.31714e-8 0.04983588 0.9971564 -0.05652928 0.2628354 0.9987134 -0.05028518 -0.006552808 7.34825e-9 0 0 0 1</matrix>
+                      <node id="palm_01_R" name="palm.01.R" sid="palm_01_R" type="JOINT">
+                        <matrix sid="transform">0.9885837 0.1505239 -0.006688545 0.02294219 -0.1504799 0.9885907 0.006656879 0.03941127 0.007614251 -0.005574281 0.9999555 -0.005324256 0 0 0 1</matrix>
+                        <node id="finger_index_01_R" name="finger_index.01.R" sid="finger_index_01_R" type="JOINT">
+                          <matrix sid="transform">0.9883642 -0.1454204 -0.04459682 -2.7854e-9 0.1220232 0.9330919 -0.3383044 0.06962597 0.09080933 0.3289261 0.9399794 2.58081e-8 0 0 0 1</matrix>
+                          <node id="finger_index_02_R" name="finger_index.02.R" sid="finger_index_02_R" type="JOINT">
+                            <matrix sid="transform">0.9998475 -0.01066465 0.01382944 -8.37309e-9 0.01269125 0.9876925 -0.1558921 0.04504862 -0.01199673 0.1560439 0.9876771 -2.24717e-8 0 0 0 1</matrix>
+                            <node id="finger_index_03_R" name="finger_index.03.R" sid="finger_index_03_R" type="JOINT">
+                              <matrix sid="transform">0.9979186 -0.06054235 0.02220847 1.42893e-8 0.06399589 0.9721636 -0.225394 0.02821796 -0.007944401 0.226346 0.9740146 -1.49521e-8 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                        <node id="thumb_01_R" name="thumb.01.R" sid="thumb_01_R" type="JOINT">
+                          <matrix sid="transform">-0.1239448 0.2769293 -0.9528629 0.00350637 -0.4059615 0.8620756 0.3033498 -0.00832426 0.9054464 0.4244243 0.005572874 0.02435848 0 0 0 1</matrix>
+                          <node id="thumb_02_R" name="thumb.02.R" sid="thumb_02_R" type="JOINT">
+                            <matrix sid="transform">0.9891232 -0.142813 0.03521247 -4.17024e-8 0.1466448 0.938845 -0.3115529 0.04174466 0.01143474 0.313328 0.9495763 1.96728e-8 0 0 0 1</matrix>
+                            <node id="thumb_03_R" name="thumb.03.R" sid="thumb_03_R" type="JOINT">
+                              <matrix sid="transform">0.996599 -0.08235858 -0.002753441 9.99663e-9 0.08222435 0.9960728 -0.03283624 0.03344637 0.005446953 0.03249814 0.9994569 -1.49704e-10 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                      <node id="palm_02_R" name="palm.02.R" sid="palm_02_R" type="JOINT">
+                        <matrix sid="transform">0.9978473 0.06485475 0.009729181 0.006083935 -0.06504389 0.9976702 0.0205799 0.04197363 -0.008371798 -0.02116831 0.9997408 -0.007720946 0 0 0 1</matrix>
+                        <node id="finger_middle_01_R" name="finger_middle.01.R" sid="finger_middle_01_R" type="JOINT">
+                          <matrix sid="transform">0.9979162 -0.06258149 -0.01571302 9.67128e-9 0.05015558 0.9055474 -0.4212699 0.0681871 0.04059259 0.4196039 0.9067992 -3.81789e-8 0 0 0 1</matrix>
+                          <node id="finger_middle_02_R" name="finger_middle.02.R" sid="finger_middle_02_R" type="JOINT">
+                            <matrix sid="transform">0.9968322 -0.02067985 0.07679848 -1.93217e-8 0.03821856 0.9713627 -0.2345082 0.04954926 -0.06974958 0.2367004 0.9690757 -2.09197e-8 0 0 0 1</matrix>
+                            <node id="finger_middle_03_R" name="finger_middle.03.R" sid="finger_middle_03_R" type="JOINT">
+                              <matrix sid="transform">0.998512 -0.03479814 0.04198458 -2.18856e-8 0.0394576 0.9924875 -0.115809 0.03219111 -0.03763928 0.1172933 0.9923838 4.70026e-9 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                      <node id="palm_03_R" name="palm.03.R" sid="palm_03_R" type="JOINT">
+                        <matrix sid="transform">0.9968315 -0.06718291 0.04258711 -0.009295116 0.06525628 0.9968479 0.04512279 0.04004603 -0.04548432 -0.04220063 0.9980733 -0.006946986 0 0 0 1</matrix>
+                        <node id="finger_ring_01_R" name="finger_ring.01.R" sid="finger_ring_01_R" type="JOINT">
+                          <matrix sid="transform">0.9997917 3.74272e-5 0.02041314 -2.4274e-9 0.01102033 0.8407612 -0.541294 0.06979399 -0.01718279 0.5414062 0.8405856 3.66327e-8 0 0 0 1</matrix>
+                          <node id="finger_ring_02_R" name="finger_ring.02.R" sid="finger_ring_02_R" type="JOINT">
+                            <matrix sid="transform">0.9982719 -0.03816224 0.04468333 -1.36466e-9 0.04435478 0.9881415 -0.147 0.04481667 -0.03854363 0.1487279 0.9881268 7.29862e-9 0 0 0 1</matrix>
+                            <node id="finger_ring_03_R" name="finger_ring.03.R" sid="finger_ring_03_R" type="JOINT">
+                              <matrix sid="transform">0.9938875 -0.05931496 0.09310938 1.69159e-8 0.08526371 0.9481695 -0.3061123 0.03180094 -0.07012644 0.3121801 0.9474313 2.1145e-8 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                      <node id="palm_04_R" name="palm.04.R" sid="palm_04_R" type="JOINT">
+                        <matrix sid="transform">0.9819064 -0.1885349 0.01773791 -0.0241474 0.1884806 0.9820657 0.004702708 0.0359927 -0.01830637 -0.001274253 0.9998316 -0.004565658 0 0 0 1</matrix>
+                        <node id="finger_pinky_01_R" name="finger_pinky.01.R" sid="finger_pinky_01_R" type="JOINT">
+                          <matrix sid="transform">0.9917783 0.05357708 0.1162125 -2.9233e-8 0.03617188 0.7537302 -0.6561877 0.07480235 -0.1227495 0.6549962 0.7455955 2.06425e-8 0 0 0 1</matrix>
+                          <node id="finger_pinky_02_R" name="finger_pinky.02.R" sid="finger_pinky_02_R" type="JOINT">
+                            <matrix sid="transform">0.9992427 -0.03147107 0.02288546 4.90528e-8 0.03334528 0.9956725 -0.08674286 0.02787632 -0.0200565 0.0874403 0.9959677 -1.50241e-8 0 0 0 1</matrix>
+                            <node id="finger_pinky_03_R" name="finger_pinky.03.R" sid="finger_pinky_03_R" type="JOINT">
+                              <matrix sid="transform">0.9990903 -0.02745196 0.03263331 1.25965e-8 0.03265929 0.9846264 -0.1715931 0.02259249 -0.02742102 0.1725028 0.9846272 -1.89497e-8 0 0 0 1</matrix>
+                            </node>
+                          </node>
+                        </node>
+                      </node>
+                    </node>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node id="thigh_L" name="thigh.L" sid="thigh_L" type="JOINT">
+            <matrix sid="transform">1 0 0 0.098 0 -0.9577365 -0.2876471 0.06980883 0 0.2876471 -0.9577365 0.02854794 0 0 0 1</matrix>
+            <node id="shin_L" name="shin.L" sid="shin_L" type="JOINT">
+              <matrix sid="transform">1 0 0 0 0 0.9846731 -0.1744104 0.5363694 0 0.1744104 0.9846731 -7.71222e-9 0 0 0 1</matrix>
+              <node id="foot_L" name="foot.L" sid="foot_L" type="JOINT">
+                <matrix sid="transform">1 0 0 0 0 0.4437751 0.8961383 0.4542147 0 -0.8961381 0.4437751 -5.89204e-10 0 0 0 1</matrix>
+                <node id="toe_L" name="toe.L" sid="toe_L" type="JOINT">
+                  <matrix sid="transform">-1 1.65753e-15 8.74228e-8 0 -4.6334e-8 0.8479986 -0.5299987 0.1292455 -7.41344e-8 -0.5299988 -0.8479983 1.54044e-10 0 0 0 1</matrix>
+                </node>
+              </node>
+              <node id="heel_L" name="heel.L" sid="heel_L" type="JOINT">
+                <matrix sid="transform">-1 2.83119e-13 7.30355e-6 0 4.14096e-6 0.8237329 0.5669783 0.4542147 -6.01618e-6 0.5669783 -0.8237327 -5.89204e-10 0 0 0 1</matrix>
+                <node id="heel_02_L" name="heel.02.L" sid="heel_02_L" type="JOINT">
+                  <matrix sid="transform">5.5528e-6 -1 -4.62871e-6 0.03800049 -0.6454602 -4.87305e-8 -0.763794 0.05461882 0.7637939 7.22885e-6 -0.6454602 0.06736639 0 0 0 1</matrix>
+                </node>
+              </node>
+            </node>
+          </node>
+          <node id="thigh_R" name="thigh.R" sid="thigh_R" type="JOINT">
+            <matrix sid="transform">1 0 0 -0.098 0 -0.9577365 -0.2876471 0.06980883 0 0.2876471 -0.9577365 0.02854794 0 0 0 1</matrix>
+            <node id="shin_R" name="shin.R" sid="shin_R" type="JOINT">
+              <matrix sid="transform">0.9993641 -0.03487758 0.00741405 0 0.0356265 0.9852716 -0.1672445 0.5363694 -0.00147177 0.1674023 0.9858877 -7.71222e-9 0 0 0 1</matrix>
+              <node id="foot_R" name="foot.R" sid="foot_R" type="JOINT">
+                <matrix sid="transform">1 -1.25522e-9 -4.47598e-10 2.0041e-9 1.11597e-9 0.4437751 0.8961381 0.4542147 5.07505e-10 -0.8961381 0.4437752 2.17955e-9 0 0 0 1</matrix>
+                <node id="toe_R" name="toe.R" sid="toe_R" type="JOINT">
+                  <matrix sid="transform">-1 2.23284e-11 8.50058e-8 -4.59001e-9 -4.69294e-8 0.8479985 -0.5299987 0.1292455 -7.57752e-8 -0.5299988 -0.8479984 9.57995e-9 0 0 0 1</matrix>
+                </node>
+              </node>
+              <node id="heel_R" name="heel.R" sid="heel_R" type="JOINT">
+                <matrix sid="transform">-1 -9.54723e-10 -7.30271e-6 2.0041e-9 -4.14235e-6 0.8237328 0.5669782 0.4542147 6.01581e-6 0.5669783 -0.8237327 2.17955e-9 0 0 0 1</matrix>
+                <node id="heel_02_R" name="heel.02.R" sid="heel_02_R" type="JOINT">
+                  <matrix sid="transform">5.55434e-6 1 4.62505e-6 -0.03800048 0.6454601 -4.907e-8 -0.7637939 0.05461881 -0.763794 7.22808e-6 -0.6454601 0.06736638 0 0 0 1</matrix>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+      <node id="Cylinder" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_controller url="#Armature_001_Cylinder-skin">
+          <skeleton>#hips</skeleton>
+        </instance_controller>
+      </node>
+      <node id="VisualSceneNode" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">0.06648225 0.06648225 0.06648225</scale>
+        <instance_light url="#VisualSceneNode-light"/>
+      </node>
+      <node id="Lamp" type="NODE">
+        <translate sid="location">0 10 8</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_light url="#Lamp-light"/>
+      </node>
+      <node id="Camera" type="NODE">
+        <translate sid="location">0 10 8</translate>
+        <rotate sid="rotationZ">0 0 1 180.0001</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 65.00003</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_camera url="#Camera-camera"/>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>
