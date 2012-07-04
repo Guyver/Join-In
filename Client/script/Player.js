@@ -25,10 +25,11 @@ function Player( name, position ){
 	this._accel = new THREE.Vector3(0,-9.81,0);
 	// The walkspeed, could replace velocity.
 	this._walkSpeed = 100;
-	// The direction of the player.
-	this._direction = new THREE.Vector3(0,0,1);
 	// Move 100 units in the z direction, this is the players orientation.
 	this._sightNode = new THREE.Vector3( 5000 , position.y , 0);
+	// The direction of the player.
+	this._direction = new THREE.Vector3( this._sightNode.x - this._position.x, this._position.y, this._sightNode.z- this._position.z );
+	this._direction.normalize();
 	// Define the up axis on the cartesian plane.
 	this._upAxis = new THREE.Vector3( 0,1,0 );
 	// The unique id, i.p address for Example.
@@ -126,7 +127,10 @@ function Player( name, position ){
 	this._rig = new Model( jointList, this._position );
 	// The items the player has.
 	this._inventory = [];
-
+	
+	this._firstPersonNode = undefined;
+	this._thirdPersonNode = undefined;
+	
 	// The central position of the player. Represented by a sphere for debugging.
 	var radius = 10, segments = 10, rings = 10;
 	var Material = new THREE.MeshLambertMaterial( {color: 0xfffffffff });
@@ -417,19 +421,20 @@ Player.prototype.rotateModelRight = function( ){
 */
 Player.prototype.moveModel = function( direction ){
 	
-	var torso = this._rig._joint[ "torso"].getPosition();
 	// Move in the direction of the sight node.
-	var dir = new THREE.Vector3( this._sightNode.x - torso.x, torso.y, this._sightNode.z- torso.z );
-	dir.normalize();
+	this._direction.x = this._sightNode.x - this._position.x;
+	this._direction.z = this._sightNode.z - this._position.z;
+	this._direction.normalize();
+	
 	var dist = direction * this._walkSpeed;
-	var x = dist * dir.x;
-	var y = 0;// Move on the x z plane.
-	var z = dist * dir.z;
 	
-	var newVec =  new THREE.Vector3( x,y,z )
+	// Offset the player position in the direction of the sight node.
+	this._position.x += dist * this._direction.x;
+	this._position.z += dist * this._direction.z;
 	
-	this._position.addSelf( newVec  );
-	this._sightNode.addSelf( newVec  );
+	// Offset the position of the sight node in the same direction by the same amount.
+	this._sightNode.x += dist * this._direction.x;
+	this._sightNode.z += dist * this._direction.z;
 	
 	// Set the position of the mesh for the player.
 	this._mesh.position = this._position;
@@ -503,6 +508,38 @@ Player.prototype.rotateDown = function( ) {
 	// Update the graphical sight node.
 	this.sight.position = this._sightNode
 	
+};
+
+
+/**	@Name:
+	
+	@Brief:
+
+	
+	@Arguments: N/A
+	
+	@Returns: 
+
+*/
+Player.prototype.getJointPosition = function( jointName ) {
+
+	return ( this._rig.getJointPosition( jointName ) );	
+};
+
+
+/**	@Name:
+	
+	@Brief:
+
+	
+	@Arguments: N/A
+	
+	@Returns: 
+
+*/
+Player.prototype.getDirection = function( ) {
+
+	return ( this._direction );	
 };
 
 

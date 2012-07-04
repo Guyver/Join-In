@@ -27,7 +27,6 @@ function Model( jointNames, playerPos ){
 
 
 
-
 /**	@Name:
 
 	@Brief:
@@ -40,6 +39,17 @@ function Model( jointNames, playerPos ){
 Model.prototype.setJointPosition = function( name, pos ){
 
 	this._joint[ name ].setPosition( pos );
+};
+
+/**	@Name:
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
+Model.prototype.getJointPosition = function( name ){
+	
+	return ( this._joint[ name ].getPosition( ) );
+
 };
 
 /**	@Name:
@@ -162,7 +172,6 @@ Model.prototype.move = function( newPos ){
 };
 
 
-
 /**	@Name:
 	@Brief:	
 	@Arguments:
@@ -176,7 +185,6 @@ Model.prototype.translatePos = function( playerPos, kinectPos ){
 	return ( newPos.add(  playerPos, kinectPos ) );
 			
 };
-
 
 
 /**	@Name:

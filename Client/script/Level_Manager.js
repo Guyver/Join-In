@@ -24,6 +24,8 @@ function Level_Manager(  ){
 	// Handle the Scene.
 	//this._scene_Manager = new Scene_Builder( this._maxLevels, this._currentLevel );
 	this._cameraPosition = undefined;
+	// Camera Type, 1 = 1st, 3 = 3rd.
+	this._cameraType = 1;
 
 };
 
@@ -42,6 +44,7 @@ Level_Manager.prototype.update = function( player, objects, camera ){
 	// Test to see if the players hands are in an object.
 	this.testPickups( player, objects );
 	
+	// Test to see if the players equipped items are colliding with the bin.
 	this.testDrops( player, objects );
 	
 	// Get the collision manager to do its job.
@@ -50,61 +53,35 @@ Level_Manager.prototype.update = function( player, objects, camera ){
 	// Get the Player Manager to update the players.
 	this._player_Manager.update( );
 	
-	// Set the camera to the position of the head joint.
-	if( player._kinectData !== undefined && player._kinectData !== null ){ // If the kinect is initiated, enter
-		
-		if( player._kinectData[ "HEAD" ] != undefined ){// If the head is defined, attach the camera to it.
-			
-			var pos = player._rig._joint[ "HEAD" ].getPosition();			
-			this._cameraPosition = new THREE.Vector3( pos.x , pos.y , pos.z );
-			
-			
-			/*
-			var playerPos = player.getPosition();
-			camera.position.x = playerPos.x +5000;
-			camera.position.y = playerPos.y +5000;
-			camera.position.z = playerPos.z;
-			
-			*/
-			camera.position.x = this._cameraPosition.x;
-			camera.position.y = this._cameraPosition.y;
-			camera.position.z = this._cameraPosition.z;
-			
-		}	
-		else// The kinect isnt initiated, let the camera follow the player position.
-		{
+	switch ( this._cameraType ){
+		case 1:
+			this.firstPersonCamera( player, camera );
+			break;
+		case 3:
+			this.thirdPersonCamera( player, camera );
+			break;
+		default:
+			this.firstPersonCamera( player, camera );
+			break;
+	};
 	
-			var playerPos = player.getPosition();
-			camera.position.x = playerPos.x;
-			camera.position.y = playerPos.y;
-			camera.position.z = playerPos.z;
-		
-		}
-	}
-	else// The kinect isnt initiated, let the camera follow the player position.
-	{
-	
-		var playerPos = player.getPosition();
-		camera.position.x = playerPos.x;
-		camera.position.y = playerPos.y;
-		camera.position.z = playerPos.z;		
-	}
-	
-	var sightVector = player.getSightNode();// - camera.position;
-	camera.lookAt( sightVector );
-	//camera.lookAt( playerPos );
 	
 };
 
 
+/**	@Name:	
+	@Brief:
+	@Arguments:
+	@Returns:
+*/
 Level_Manager.prototype.testPickups = function( player, objects ){
 	
 	if( player._inventory.length > 0 ){
 		// If the player has an item already then forget it.
 		return;
 	}
-	var lHand = player._rig._joint["LEFT_HAND"];
-	var rHand = player._rig._joint["RIGHT_HAND"];
+	var lHand = player._rig._joint["leftHand"];
+	var rHand = player._rig._joint["rightHand"];
 	var obj;
 	for ( index in objects){
 	
@@ -147,6 +124,11 @@ Level_Manager.prototype.testPickups = function( player, objects ){
 };//End function.
 
 
+/**	@Name:	
+	@Brief:
+	@Arguments:
+	@Returns:
+*/
 Level_Manager.prototype.testDrops = function( player, objects ){
 
 	var bin;
@@ -173,7 +155,6 @@ Level_Manager.prototype.testDrops = function( player, objects ){
 };// End test drops.
 
 
-
 /**	@Name: Update
 	@Brief:	
 	Check all objects in the scene to see if any collisions occured.
@@ -189,15 +170,90 @@ Level_Manager.prototype.testCollision = function( objA, scene ){
 	
 	this._collision_Manager.testCollision( objA, scene  );
 };
+
+
 /**	@Name:	Remove Item From Player
 	@Brief:
 	@Arguments:
 	@Returns:
-
 */
 Level_Manager.prototype.removeItemFromPlayer = function( player, object ){
 
 	object.removeFromMesh();
 	player.removeInventory();	
 
+};
+
+
+/**	@Name:
+	@Brief:
+	@Arguments:
+	@Returns:
+*/
+Level_Manager.prototype.firstPersonCamera = function( player, camera){
+
+	camera.position = player.getJointPosition( "head" );
+	
+	var dir = new THREE.Vector3(player._sightNode.x - player.getJointPosition( "head" ).x,
+								player._sightNode.y - player.getJointPosition( "head" ).y,
+								player._sightNode.z - player.getJointPosition( "head" ).z);	
+	dir.normalize();
+	
+	var dist = 150;	
+	// Offset the player position in the direction of the sight node.
+	camera.position.x += dist * dir.x;
+	camera.position.z += dist * dir.z;
+	
+	camera.lookAt( player.getSightNode() );
+};
+
+
+/**	@Name:
+	@Brief:
+	@Arguments:
+	@Returns:
+*/
+Level_Manager.prototype.thirdPersonCamera = function( player, camera ){
+
+	
+	camera.position = player.getJointPosition( "head" );
+	camera.position.y += 500;
+	
+	var dir = new THREE.Vector3(player._sightNode.x - player.getJointPosition( "head" ).x,
+								player._sightNode.y - player.getJointPosition( "head" ).y,
+								player._sightNode.z - player.getJointPosition( "head" ).z);	
+	dir.normalize();
+	
+	var dist = 1000
+	// Offset the player position in the direction of the sight node.
+	camera.position.x -= dist * dir.x;
+	camera.position.z -= dist * dir.z;
+	
+	camera.lookAt( player.getSightNode() );
+	
+	//
+	// Set the transparancy of the model to half so we can see in front of ourselves.
+	//
+	
+};
+
+/**	@Name:
+	@Brief:
+	@Arguments:
+	@Returns:
+*/
+Level_Manager.prototype.setCameraType = function( cameraCode ){
+	
+	switch ( cameraCode ){
+		case 1:
+			this._cameraType = 1;
+			break;
+		case 3:
+			this._cameraType = 3;
+			break;
+		default:
+			this._cameraType = 1;
+			break;
+	};
+	
 };

@@ -1,9 +1,3 @@
-
-
-// Cast 6 rays from the player. Left right and center in forward and backward direction 
-// Get what they intersect with...
-
-
 /**	@Name:	Collision_Manager Class
 
 	@Author: James Browne
@@ -21,15 +15,10 @@ function Collision_Manager(  ){
 };
 
 
-
 /**	@Name: Test Collision
-
-	@Brief:
-	
+	@Brief:	
 	@Arguments:
-	
 	@Returns:
-
 */
 Collision_Manager.prototype.testCollision = function( objA, scene ){
 	
@@ -88,21 +77,14 @@ Collision_Manager.prototype.testCollision = function( objA, scene ){
 			var collision = true;
 			console.log( "Someones hands have collided with object %i", moveableObjects[ index ].id );
 		}
-	}
-	
-	
+	}	
 };//End sphere collision.
 
 
-
 /**	@Name: Sphere - Sphere Collision
-
-	@Brief:
-	
-	@Arguments:
-	
+	@Brief:	
+	@Arguments:	
 	@Returns:
-
 */
 Collision_Manager.prototype.sphereSphereCollision = function( objA, objB ){
 
@@ -116,21 +98,13 @@ Collision_Manager.prototype.sphereSphereCollision = function( objA, objB ){
 		return true;
 	}
 	
-	return false;
-
-	
+	return false;	
 };//End sphere collision.
 
 
-
-
 /**	@Name:	Cube - Cube Collision
-
-	@Brief:	
-	Axis Aligned Bounding Boxes
-	
+	@Brief:	Axis Aligned Bounding Boxes
 	@Arguments:
-	
 	@Returns:
 */
 Collision_Manager.prototype.cubeCubeCollision = function( objA, objB ){
@@ -139,27 +113,20 @@ Collision_Manager.prototype.cubeCubeCollision = function( objA, objB ){
 };//End cube collision
 
 
-
-
 /**	@Name:	Plane - Sphere Collision
-	@Brief:	
-	Point - line collision detection.
+	@Brief:	Point - line collision detection.
 	@Arguments:
 	@Returns:
-
 */
 Collision_Manager.prototype.planeSphereCollision = function( objA, plane ){
 
 };
 
 
-
-
 /**	@Name: Distance
 	@Brief:	
 	@Arguments:
 	@Returns:
-
 */
 Collision_Manager.prototype.getDistance = function( objA, objB ){
 
@@ -181,12 +148,10 @@ Collision_Manager.prototype.getDistance = function( objA, objB ){
 };
 
 
-
 /**	@Name: S.A.T 
 	@Brief:	Seperating axis Therom. Convex polygons
 	@Arguments:
 	@Returns:
-
 */
 Collision_Manager.prototype.SAT = function( objA, objB ){
 	
@@ -208,8 +173,6 @@ Collision_Manager.prototype.SAT = function( objA, objB ){
 	 return false;
 		
 };
-
-
 
 
 Collision_Manager.prototype.ballWall = function( ball, wall ){
@@ -239,14 +202,10 @@ Collision_Manager.prototype.ballWall = function( ball, wall ){
 };// end ball wall collision
 
 
-
 /**	@Name: Check Boundng
 	@Brief:	Check if an objects bounding sphere is inside anothers.
-	@Arguments: 
-	objA - Three.mesh
-	objB - Three.mesh
+	@Arguments: objA - Three.mesh, objB - Three.mesh
 	@Returns:
-
 */
 Collision_Manager.prototype.checkBounding = function( objA, objB ){
 	
@@ -258,22 +217,15 @@ Collision_Manager.prototype.checkBounding = function( objA, objB ){
 	if( dist < (rad1 + rad2) ){
 	
 		return true;
-	}
-	
+	}	
 	return false;
-
 };
 
 
-
 /**	@Name: Update
-	@Brief:	
-	Check all objects in the scene to see if any collisions occured.
-	@Arguments:
-	N/A
-	@Returns:
-	N/A
-
+	@Brief:	Check all objects in the scene to see if any collisions occured.
+	@Arguments:	N/A
+	@Returns:N/A
 */
 Collision_Manager.prototype.update = function(  ){
 

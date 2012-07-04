@@ -1,4 +1,4 @@
-/**
+/** TODO: Document, tidy, optamise.
 	@Author: James Browne
 	
 	@Brief:
@@ -87,10 +87,8 @@ function Joint( name ){
 */
 Joint.prototype.getPosition = function(  ){
 
-	return ( this._mesh.position );
-	
+	return ( this._mesh.position );	
 };
-
 
 
 /**	@Name:

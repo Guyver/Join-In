@@ -21,7 +21,7 @@ function ImageManager() {
     this._cache = {};            // Store them here so we can get them for use. Pass url as a key...sounds gay so might change after test!
     this._downloadQueue = [];	// The queue of images to be processed.
     this._imagesLoaded = false;
-}
+};
 
 
 /**				QUEUE DOWNLOAD()
@@ -98,7 +98,7 @@ ImageManager.prototype.downloadAll = function( downloadCallback ) {
         img.src = path;
         this._cache[path] = img;
     }
-}
+};
 
 
 /**				GET ASSET()
@@ -132,21 +132,14 @@ ImageManager.prototype.isDone = function() {
 function loadResources(){
 
 	// Add images to be downloaded by the manager!
-	imageManager.queueDownload( 'img/target_blue.png' );
-	imageManager.queueDownload( 'img/target_red.png' );
-	imageManager.queueDownload( 'img/target_green.png' );	
-	imageManager.queueDownload( 'img/Proxy_Grass.png' );
 	imageManager.queueDownload( 'img/grassTile01.png' );
-	imageManager.queueDownload( 'img/metallica.png' );
 	imageManager.queueDownload( 'img/wallTexture.png' );
-	imageManager.queueDownload( 'img/Reaching.png' );
-	imageManager.queueDownload( 'img/Right_Arm_Raised.png' );/**/
 	imageManager.queueDownload( 'img/ground_plane.png' );
 	imageManager.queueDownload( 'img/floor.png' );
 	imageManager.queueDownload( 'img/Tree1.png' );
 	imageManager.downloadAll( onImagesComplete );
 
-}
+};
 
 
 /**				ON IMAGES COMPLETE()
@@ -158,7 +151,7 @@ function onImagesComplete(){
 
 	_imagesLoaded = true;
 	//var img = imageManager.getAsset( 'img/target_blue.png' );
-}
+};
 
 // Implementation!
 

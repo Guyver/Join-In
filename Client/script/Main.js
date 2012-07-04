@@ -1,7 +1,5 @@
 /**	@Name:	Main
-
 	@Author: James Browne
-	
 	@Brief:
 	Where the game logic is controlled.
 	
@@ -9,17 +7,10 @@
 	* Will collision detection be done client side or server side?
 	* Will the timing events be server side or client side?
 	* Will the game flow logic be client or server side?
-
 */
 
 // Connect to the server.
 var socket = io.connect('193.156.105.166:7541');
-
-// Connect to Sandra.
-//var local = io.connect('127.0.0.0.1:7540');
-
-// Connect to the social media Api. 
-//var socket = io.connect('127.0.0.0.1:7541');
 
 // Variables for the sugary goodness!
 var gui, param, varNum, interval;
@@ -31,7 +22,7 @@ var scene, renderer, mesh, geometry, material;
 var camera, nearClip, farClip, aspectRatio, fov;
 
 // remember these initial values
-var tanFOV ;
+var tanFOV;
 var windowHeight = window.innerHeight;
 
 // Kinect data
@@ -43,23 +34,20 @@ var player, players;
 // The time since last frame.
 var deltaTime, last, current;
 
+// The level manager.
 var level_Manager = new Level_Manager();
 
+// Game objects.
 var objects = [];
 
-// The fat model...
+// An array of all the limbs used for the model.
 var jointModels = [];
+
+// The various joints.
 var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upperLegL, upperLegR, lowerLegL, lowerLegR, footL, footR;
 
-var imgContainer;
-
+// The scene builder.
 var architect;
-// Debugging Variables.
-var skin,skin2,model2;
-var test;
-var loop = 0;
-var server =0;
-
 
 /**	@Name:	Init
 	@Brief:	Initalise objects we need.
@@ -67,12 +55,6 @@ var server =0;
 	@Returns:N/A
 */
 function init(){
-	
-	// Loop until the image manager is finished loading.
-	while( !imageManager.isDone() ){
-		
-		test = 0;
-	}
 	
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
@@ -106,12 +88,14 @@ function init(){
 	sendData();
 	// Test code is stuffed in here.
 	ExampleCode();
+	
+	gameLoop();
+	/*
 	// Initalise the game loop to 60fps. Anim frame pffft
 	interval = setInterval( 'gameLoop()', 1000 / 60 );
+	*/
 
 }
-
-
 
 
 /**	@Name:	Init Camera
@@ -120,8 +104,6 @@ function init(){
 	@Returns:N/A
 */
 function initCamera(){
-	
-	
 	nearClip = 1;
 	farClip = 100000;
 	fov = 70;
@@ -132,9 +114,7 @@ function initCamera(){
 	// Will be used to rescale the view frustrum on window resize...
 	tanFOV = Math.tan( ( ( Math.PI / 180 ) * camera.fov / 2 ) );
 	scene.add( camera );
-}
-
-
+};
 
 
 /**	@Name:	Init Scene
@@ -143,12 +123,9 @@ function initCamera(){
 	@Returns:N/A
 */
 function initScene(){
-	
 	// the scene contains all the 3D object data
 	scene = new THREE.Scene();	
-}
-
-
+};
 
 
 /**	@Name:	Init Render
@@ -157,9 +134,7 @@ function initScene(){
 	@Returns:N/A
 */
 function initRenderer(){
-	
-	/*renderer = new THREE.CanvasRenderer();*/
-	
+
 	renderer = new THREE.WebGLRenderer({
 			antialias: true,
 			canvas: document.createElement( 'canvas' ),
@@ -175,9 +150,7 @@ function initRenderer(){
 	
 	// The renderer's canvas domElement is added to the body.
 	document.body.appendChild( renderer.domElement );
-}
-
-
+};
 
 
 /**	@Name:	Setup Lights
@@ -186,24 +159,21 @@ function initRenderer(){
 	@Returns:N/A
 */
 function setupLights(){
-	
-	
 	var ambient = new THREE.AmbientLight( 0xffffff );
-				scene.add( ambient );
+	scene.add( ambient );
 
-				directionalLight = new THREE.DirectionalLight( 0xffffff );
-				directionalLight.position.y = -70;
-				directionalLight.position.z = 100;
-				directionalLight.position.normalize();
-				scene.add( directionalLight );
+	directionalLight = new THREE.DirectionalLight( 0xffffff );
+	directionalLight.position.y = -70;
+	directionalLight.position.z = 100;
+	directionalLight.position.normalize();
+	scene.add( directionalLight );
 
-				pointLight = new THREE.PointLight( 0xffaa00 );
-				pointLight.position.x = 0;
-				pointLight.position.y = 0;
-				pointLight.position.z = 0;
-				scene.add( pointLight );
+	pointLight = new THREE.PointLight( 0xffaa00 );
+	pointLight.position.x = 0;
+	pointLight.position.y = 0;
+	pointLight.position.z = 0;
+	scene.add( pointLight );
 				
-
 	// Directional
 	var directionalLight = new THREE.DirectionalLight( 0xffffff );
 	directionalLight.position.x = 500;
@@ -221,9 +191,7 @@ function setupLights(){
 	directionalLight.position.normalize();
 	// Add to the scene.
 	scene.add( directionalLight );/**/
-}
-
-
+};
 
 
 /**	@Name:	Create Objects.
@@ -232,8 +200,6 @@ function setupLights(){
 	@Returns:N/A
 */
 function createObjects(){
-	
-
 		jointList = [ 'head',
 				'leftElbow',
 				'leftFoot',
@@ -277,16 +243,15 @@ function createObjects(){
 	
 	for ( var i = 0; i < 5; i++ ){
 	
-		//objects.push( new Object( new THREE.Vector3( 1000*i, 1500, 5000 ), "Object" ) );	
+		objects.push( new Object( new THREE.Vector3( 1000*i, 1500, 5000 ), "Object" ) );	
 	}		
 	
 	for ( var i = 0; i < 2; i++ ){
 	
-		//objects.push( new Object( new THREE.Vector3( 2000*i, 250, 2000 ), "Bin" ) );	
+		objects.push( new Object( new THREE.Vector3( 2000*i, 250, 2000 ), "Bin" ) );	
 	}	
-}
+};
 
-var attached = false;
 var needsScale = true;
 var scaleX,scaleY,scaleZ = 50;
 
@@ -297,6 +262,7 @@ var scaleX,scaleY,scaleZ = 50;
 */
 function gameLoop(){
 	
+	requestAnimationFrame( gameLoop, renderer.domElement );
 	player.update();
 	
 	// Update all the players.
@@ -312,18 +278,16 @@ function gameLoop(){
 	}
 	
 	// Test player wall collisions...
-	//level_Manager.testCollision( player._mesh, scene );
+	level_Manager.testCollision( player._mesh, scene );
 	
 	level_Manager.update( player, objects, camera );
-	
+	/*
 	// Set the camera Z to the gui for debugging!
 	camera.position.x = param['camera_X'];
 	camera.position.y = param['camera_Y'];
 	camera.position.z = param['camera_Z'];
-	
-	// Look at the Player.
-	this.camera.lookAt( player.getPosition()  );	
-	
+	*/
+
 	//
 	// Do the scaling before the positioning otherwise it will be off.
 	//	
@@ -340,22 +304,22 @@ function gameLoop(){
 	// 
 	// Set the positions of the models each frame.
 	//	
-	if ( player._kinectData != undefined && player._kinectData != null ){
+	if ( player._kinectData != undefined && player._kinectData != null && jointModels.length == 14 ){
 	
-		head.position 		= 	player._rig._joint["neck"].getPosition();
-		torso.position 		= 	player._rig._joint["torso"].getPosition();
-		upperArmL.position 	= 	player._rig._joint["leftShoulder"].getPosition();
-		upperArmR.position 	= 	player._rig._joint["rightShoulder"].getPosition();
-		lowerArmL.position 	= 	player._rig._joint["leftElbow"].getPosition();
-		lowerArmR.position 	= 	player._rig._joint["rightElbow"].getPosition();
-		handL.position 		= 	player._rig._joint["leftHand"].getPosition();
-		handR.position     	= 	player._rig._joint["rightHand"].getPosition();
-		upperLegL.position 	= 	player._rig._joint["leftHip"].getPosition();
-		upperLegR.position 	= 	player._rig._joint["rightHip"].getPosition();
-		lowerLegL.position 	= 	player._rig._joint["leftKnee"].getPosition();
-		lowerLegR.position 	= 	player._rig._joint["rightKnee"].getPosition();
-		footL.position 		= 	player._rig._joint["leftFoot"].getPosition();
-		footR.position 		= 	player._rig._joint["rightFoot"].getPosition();
+		head.position 		= 	player.getJointPosition( "neck" );
+		torso.position 		= 	player.getJointPosition( "torso" );
+		upperArmL.position 	= 	player.getJointPosition( "leftShoulder" );
+		upperArmR.position 	= 	player.getJointPosition( "rightShoulder" );
+		lowerArmL.position 	= 	player.getJointPosition( "leftElbow" );
+		lowerArmR.position 	= 	player.getJointPosition( "rightElbow" );
+		handL.position 		= 	player.getJointPosition( "leftHand" );
+		handR.position     	= 	player.getJointPosition( "rightHand" );
+		upperLegL.position 	= 	player.getJointPosition( "leftHip" );
+		upperLegR.position 	= 	player.getJointPosition( "rightHip" );
+		lowerLegL.position 	= 	player.getJointPosition( "leftKnee" );
+		lowerLegR.position 	= 	player.getJointPosition( "rightKnee" );
+		footL.position 		= 	player.getJointPosition( "leftFoot" );
+		footR.position 		= 	player.getJointPosition( "rightFoot" );
 		
 		
 		//
@@ -367,14 +331,14 @@ function gameLoop(){
 		footR.lookAt( player.getSightNode() );
 		handL.lookAt( player.getSightNode() );
 		handR.lookAt( player.getSightNode() );
-		upperArmL.lookAt( player._rig._joint["leftElbow"].getPosition() );
-		upperArmR.lookAt( player._rig._joint["rightElbow"].getPosition() );
-		lowerArmL.lookAt( player._rig._joint["leftHand"].getPosition() );
-		lowerArmR.lookAt( player._rig._joint["rightHand"].getPosition() );
-		upperLegL.lookAt( player._rig._joint["leftKnee"].getPosition() );
-		upperLegR.lookAt( player._rig._joint["rightKnee"].getPosition() );
-		lowerLegL.lookAt( player._rig._joint["leftFoot"].getPosition() );
-		lowerLegR.lookAt( player._rig._joint["rightFoot"].getPosition() );
+		upperArmL.lookAt( player.getJointPosition( "leftElbow") );
+		upperArmR.lookAt( player.getJointPosition( "rightElbow") );
+		lowerArmL.lookAt( player.getJointPosition( "leftHand") );
+		lowerArmR.lookAt( player.getJointPosition( "rightHand") );
+		upperLegL.lookAt( player.getJointPosition( "leftKnee") );
+		upperLegR.lookAt( player.getJointPosition( "rightKnee") );
+		lowerLegL.lookAt( player.getJointPosition( "leftFoot") );
+		lowerLegR.lookAt( player.getJointPosition( "rightFoot") );
 	}
 	
 	// Initalise last for the 1st iteration.
@@ -387,17 +351,14 @@ function gameLoop(){
 	deltaTime = current.getTime() - last.getTime();
 	
 	// reset the last time to time this frame for the next.
-	last = current;					
+	last = current;	
+	
 	// Render the scene.
 	render();
 	
-	// 
-	//player._sightNode.y = player._rig._joint["torso"].getPosition();
-	
 	// Get the kinect data for the next frame.
 	socket.emit( 'updateKinect' );
-}
-
+};
 
 
 /**	@Name:	Render 
@@ -409,12 +370,9 @@ function render(){
 
 	var x = document.getElementById('string');
 	x.value =  1000 / deltaTime + " fps " ;
-	//x.value =  camera.position.z;
 	
 	renderer.render( scene, camera );
 }
-
-
 
 
 /**	@Name:	Setup Gui
@@ -739,7 +697,6 @@ function setupGui(){
 }
 
 
-
 /**	@Name:	Setup Enviornment 
 	@Brief:	Initalise terrain and game art.
 	@Arguments:N/A
@@ -841,10 +798,7 @@ function Skybox(){
 		scene.add( tree );
 	
 	}
-	
- 
  };
- 
  
  
  function addLionMale( collada ){
@@ -885,13 +839,6 @@ function Skybox(){
  var offsetX =8000;
  var offsetY = 500;
  var offsetZ =8000;
- 
- /*
- // The fat model...
-var jointModels = [];
-var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upperLegL, upperLegR, lowerLegL, lowerLegR, footL, footR;
- 
-*/
 
  function head( collada ){
  
@@ -901,11 +848,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	head.name = "HEAD";
 	head.scale.set(50,50,50);
-	head.position = player._rig._joint["HEAD"].getPosition();
+	head.position = player.getJointPosition( "head");
 
 	jointModels.push( head );
+ };
  
- }
  
  function torso( collada ){
  
@@ -915,11 +862,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	torso.name = "TORSO";
 	torso.scale.set(20,20,20);
-	torso.position = player._rig._joint["TORSO"].getPosition();
+	torso.position = player.getJointPosition( "torso");
 	
-	jointModels.push( torso );
+	jointModels.push( torso ); 
+ };
  
- }
  
  function armUpperL( collada ){
  
@@ -929,10 +876,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	upperArmL.name = "ARM_UPPER_L";
 	upperArmL.scale.set(50,50,50);
-	upperArmL.position = player._rig._joint["LEFT_SHOULDER"].getPosition();
+	upperArmL.position = player.getJointPosition( "leftShoulder");
 	
 	jointModels.push( upperArmL );
- }
+ };
+ 
  
  function armUpperR ( collada ){
  
@@ -942,12 +890,12 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	upperArmR.name = "ARM_UPPER_R";
 	upperArmR.scale.set(50,50,50);
-	upperArmR.position = player._rig._joint["RIGHT_SHOULDER"].getPosition();
+	upperArmR.position = player.getJointPosition( "rightShoulder");
 	
 	jointModels.push( upperArmR );
- 
- }
+ };
 
+ 
  function footL( collada ){
 	
 	footL = collada.scene;
@@ -956,11 +904,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	footL.name = "FOOT_L";
 	footL.scale.set(50,50,50);
-	footL.position = player._rig._joint["LEFT_FOOT"].getPosition();
+	footL.position = player.getJointPosition( "leftFoot");
 	
 	jointModels.push( footL );
+ };
  
- }
  
  function footR( collada ){
  
@@ -970,12 +918,12 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	footR.name = "FOOT_R";
 	footR.scale.set(50,50,50);
-	footR.position = player._rig._joint["RIGHT_FOOT"].getPosition();
+	footR.position = player.getJointPosition( "rightFoot");
 	
 	jointModels.push( footR );
- 
- }
+ };
 
+ 
  function foreArmL( collada ){
  
 	lowerArmL = collada.scene;
@@ -984,11 +932,12 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	lowerArmL.name = "FOREARM_L";
 	lowerArmL.scale.set(50,50,50);
-	lowerArmL.position = player._rig._joint["LEFT_ELBOW"].getPosition();
+	lowerArmL.position = player.getJointPosition( "leftElbow");
 	
 	jointModels.push( lowerArmL );
  
- }
+ };
+ 
  
  function foreArmR( collada ){
  
@@ -998,11 +947,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	lowerArmR.name = "FOREARM_R";
 	lowerArmR.scale.set(50,50,50);
-	lowerArmR.position = player._rig._joint["RIGHT_ELBOW"].getPosition();
+	lowerArmR.position = player.getJointPosition( "rightElbow");
 	
 	jointModels.push( lowerArmR );
+ };
  
- }
  
  function legUpperL( collada ){
  
@@ -1012,11 +961,12 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	upperLegL.name = "LEG_UPPER_L";
 	upperLegL.scale.set(50,50,50);
-	upperLegL.position = player._rig._joint["LEFT_HIP"].getPosition();
+	upperLegL.position = player.getJointPosition( "leftHip");
 	
 	jointModels.push( upperLegL );
  
- }
+ };
+ 
  
  function legUpperR( collada ){
  
@@ -1026,11 +976,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	upperLegR.name = "LEG_UPPER_R";
 	upperLegR.scale.set(50,50,50);
-	upperLegR.position = player._rig._joint["RIGHT_HIP"].getPosition();
+	upperLegR.position = player.getJointPosition( "rightHip");
 	
 	jointModels.push( upperLegR );
+ };
  
- }
  
  function legLowerR( collada ){
  
@@ -1040,10 +990,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	lowerLegR.name = "LEG_LOWER_R";
 	lowerLegR.scale.set(50,50,50);
-	lowerLegR.position = player._rig._joint["RIGHT_KNEE"].getPosition();
+	lowerLegR.position = player.getJointPosition( "rightKnee");
 	
 	jointModels.push( lowerLegR );
- }
+};
+ 
  
  function legLowerL( collada ){
  
@@ -1053,11 +1004,12 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	lowerLegL.name = "LEG_LOWER_L";
 	lowerLegL.scale.set(50,50,50);
-	lowerLegL.position = player._rig._joint["LEFT_KNEE"].getPosition();
+	lowerLegL.position = player.getJointPosition( "leftKnee");
 	
 	jointModels.push( lowerLegL );
  
- }
+ };
+ 
  
  function handR( collada ){
  
@@ -1067,10 +1019,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	handR.name = "HAND_R";
 	handR.scale.set(50,50,50);
-	handR.position = player._rig._joint["RIGHT_HAND"].getPosition();
+	handR.position = player.getJointPosition( "rightHand");
 	
 	jointModels.push( handR );
- }
+};
+ 
  
  function handL( collada ){
  
@@ -1080,11 +1033,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
 	handL.name = "HAND_L";
 	handL.scale.set(50,50,50);
-	handL.position = player._rig._joint["LEFT_HAND"].getPosition();
+	handL.position = player.getJointPosition( "leftHand");
 	
-	jointModels.push( handL );
- 
- }
+	jointModels.push( handL ); 
+};
+  
   
  function addModels( collada ){
  
@@ -1212,14 +1165,11 @@ var head, torso, upperArmL, upperArmR, lowerArmL, lowerArmR, handL, handR, upper
 	
  }
 
- 
 
 function getPlayers() {  
 	// Request all the players registered in the server.
 	socket.emit( 'getPlayers' );
 }  
-
-
 
 
 function createPlayers( data ) {  
@@ -1233,9 +1183,7 @@ function createPlayers( data ) {
 		players[ data[ index ].ip ]._ip = data[ index ].ip;
 		players[ data[ index ].ip ]._kinectData = data[ index ].kinect;
 	}
-}  
-
-
+};
 
 
 function updatePlayers( data ) {  
@@ -1258,8 +1206,6 @@ function updatePlayers( data ) {
 } //end func. 
 
 
-
-
 function sendData(  ) {  
 		// Send a template to the server to store. This is fine.
 	socket.emit('registerMeInServer', { 
@@ -1275,8 +1221,6 @@ function sendData(  ) {
 } //end func. 
 
 
-
-
 function addUser( user ){
 
 	// Create and add the new user.
@@ -1285,16 +1229,12 @@ function addUser( user ){
 }
 
 
-
-
 function removeUser( user ){
 
 	// Delete the user...
 	delete players[ user.ip ];
 
 }
-
-
 
 
 /**	@Name:	Load
@@ -1307,8 +1247,6 @@ function load() {
 }  
 
 
-
-
 /**	@Name:	Random Range
 	@Brief:	A helper function to get a value between the arguments.
 	@Arguments: int min, int max
@@ -1317,7 +1255,6 @@ function load() {
 function randomRange(min, max) {
 	return Math.random()*(max-min) + min;
 }
-
 
 
 /**	@Name:	Handle Key Events.
@@ -1371,8 +1308,15 @@ function handleKeyEvents( event ) {
 		// Fps
 			player.removeInventory();
 	  		break;
-		case 90:
-		// Top down.
+		case 97:
+		// Num pad 1. First Person.
+			var cameraType = 1;
+			level_Manager.setCameraType( cameraType );
+	  		break;
+		case 99:
+		// Num pad 3. Third Person.
+			var cameraType = 3;
+			level_Manager.setCameraType( cameraType );
 	  		break;
 		default:
 			update = false;
@@ -1391,19 +1335,16 @@ function handleKeyEvents( event ) {
 }
 
 
-
 socket.on( 'heresPlayersFromServer', function( data ) {
 
 	createPlayers( data )
 });
 
 
-
 socket.on( 'playersDataFromServer',function( data ){
 
 	updatePlayers( data )
 });
-
 
 
 socket.on( 'registerSelf', function( data ){
@@ -1424,12 +1365,10 @@ socket.on( 'registerSelf', function( data ){
 });
 
 
-
 socket.on( 'RegisterNewUser', function( data ){
 
 	addUser( data );
 });
-
 
 
 socket.on( 'updateHim', function( data ){
@@ -1441,7 +1380,6 @@ socket.on( 'updateHim', function( data ){
 	}
 
 });
-
 
 
 socket.on('syncKinect', function( users ){
@@ -1459,7 +1397,6 @@ socket.on('syncKinect', function( users ){
 		}	
 	}
 });
-
 
 
 socket.on( 'deleteHim', function( data ){
@@ -1494,7 +1431,8 @@ function resize(){
 	
     // Redraw 
     render();
-}
+};
+
 
 window.addEventListener('resize', resize, false);
 window.addEventListener('orientationchange', resize, false);

@@ -1,7 +1,6 @@
 /**
 
-	TODO
-	The object class...duh
+	TODO: Document, tidy, optamise.
 
 
 */
