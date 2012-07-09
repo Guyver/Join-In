@@ -1,0 +1,99 @@
+<!--
+	@Author: Santiago Hors Fraile
+-->
+<html>
+<head>
+
+	<title> JoinIn </title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	
+	
+	
+	
+</head>
+
+<body >
+		<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+	<script>
+
+		var socket= io.connect('193.156.105.162:7541');
+		
+		function readCookie(fieldName)
+		{
+		   var allcookies = document.cookie;
+		
+
+		   // Get all the cookies pairs in an array
+		   cookiearray  = allcookies.split(';');
+
+		   // Now take key value pair out of this array
+		   for(var i=0; i<cookiearray.length; i++){
+		      name = cookiearray[i].split('=')[0];
+		      value = cookiearray[i].split('=')[1];
+		      if(name==fieldName){
+				return value;
+			}
+		   }
+		}
+		var userKey= readCookie("userKey");
+		console.log("La user key es: "+userKey);
+		socket.emit('giveMeUserPictures',userKey);	
+				
+
+
+
+		//Callback functions
+		
+		
+
+		
+		socket.on('sendingUserPictures',function(images) {	
+			
+			var parsedImages=images;			
+			for(index in images){
+				document.write("<img src=\""+parsedImages[index].image+"\" type=\"image\" id=\""
++parsedImages[index].userKey+"\" title=\"Image of the user "+parsedImages[index].userKey+"\" width=\"100\" height=\"85\"\\/\\>");
+			}
+		
+			
+		});
+
+		socket.on('updateNewUser',function(user) {
+			var parsedUser=JSON.parse(user);
+		
+			document.getElementById(parsedUser.userKey).src=parsedUser.connectedImageUrl;
+			
+					
+		});
+
+	
+		socket.on('deleteHim',function(player){
+			
+			//To avoid the double call.			
+			if(player!=null){
+				document.getElementById(player.userKey).src=player.disconnectedImageUrl;	
+			}else{
+				console.log("Controlled error...");			
+			}	
+		});
+
+
+
+	</script>
+	
+	
+	
+	
+	
+</body>
+
+</html>

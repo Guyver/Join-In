@@ -1,0 +1,45 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+	<head>
+	
+	<title> JoinIn </title>
+	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+	<script>
+			var socket= io.connect('193.156.105.162:7541');
+		
+			function sendId(){
+			
+				var tmp= document.getElementById("userKey").value;
+				socket.emit("storeId",tmp);
+				socket.emit("registerMeInServerFirstPage",tmp);
+				document.cookie="userKey="+tmp;
+				socket.disconnect('193.156.105.162:7541');
+			
+			}
+		
+			
+	
+		</script>
+	</head>
+	<body>
+
+		
+		<form action="psipose.html" onSubmit="sendId()" method="post"  >
+		
+		<div id="div_submit">
+			<p>
+				Type your userKey <input type="text" id="userKey" name="userKey" value="1" />
+				
+				<p><input type="submit" value="Send it!"/></p>
+				<!--<button onclick="sendId()">Click</button>-->
+			</p>
+		</div>
+
+		
+
+		</form>
+	</body>
+
+</html>
