@@ -271,6 +271,7 @@ javaServer.on('close', function () {
 javaServer.on('connection', function ( javaSocket ) {
 
 	var remote_address = javaSocket.remoteAddress;
+	
 	for( var i = 0; i< 1000; i++)
 	console.log( "An interface connected to stream traffic on : "+ remote_address );
 	
@@ -278,12 +279,12 @@ javaServer.on('connection', function ( javaSocket ) {
 	
 	for( index in users ){
 		
-		//if( users[ index ].ip == remote_address ){
-		if( true ){
+		if( users[ index ].ip == remote_address ){
+		//if( true ){
 		
 			console.log(" We found the corresponding client, %s .",users[ index ].ip );
 			// We're ready to stream. When the library gets a '\n' it begins to send the data...
-			javaSocket.write( kinectDemands );
+			javaSocket.write( "{continue:true}\n" );
 			break;
 		}
 		else
@@ -303,7 +304,7 @@ javaServer.on('connection', function ( javaSocket ) {
 		if( newlineIndex == -1){
 		
 			// Send next packet.
-			javaSocket.write( 'continue' );
+			javaSocket.write( "{continue:true}\n" );
 			return;// If there was no end of package in the data return.
 		}
 		// Store the kinect data locally on the server.
@@ -311,7 +312,7 @@ javaServer.on('connection', function ( javaSocket ) {
 		users[ javaSocket.remoteAddress ].visible = true;
 
         dataBuffer = dataBuffer.slice(newlineIndex + 1);	
-		javaSocket.write( 'continue' );
+		javaSocket.write( "{continue:true}\n" );
 		
 	});// End of on.Data
 

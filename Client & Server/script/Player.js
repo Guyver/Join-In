@@ -210,7 +210,7 @@ Player.prototype.update = function( ){
 		this._rig.move( this._position );
 	}
 	
-	if( this._angle < 0 || this._angle > 360 ) this._angle = 0;
+	//if( this._angle < 0 || this._angle > 360 ) this._angle = 0;
 };//End update
 
 
@@ -272,9 +272,23 @@ Player.prototype.addInventory = function( item ) {
 */
 Player.prototype.removeInventory = function( ) {
 	
-	this._inventory[0].removeFromMesh();
-	this._inventory.pop();
+	if( this._inventory[0] != undefined )
+	{
+		this._inventory[0].removeFromMesh();
+		this._inventory.pop();
+	}
+};
 
+
+/**	@Name:	Check Inventory
+	@Brief:	
+	@Arguments: N/A	
+	@Returns: 
+*/
+Player.prototype.checkInventory = function( ) {
+	
+	 var equipped = this._inventory[0] != undefined ? true : false ;
+	 return equipped;	
 };
 
 
@@ -359,7 +373,7 @@ Player.prototype.rotateModelLeft = function( ){
 	var torso = this._rig._joint[ "torso"].getPosition();
 
 	// Translate...to the origin to get the sight node vector!
-	this._sightNode.subSelf( torso );
+	this._sightNode.subSelf( this._position );
 
 	// The axis we want to rotate about.
 	var axis = new THREE.Vector3( 0, 1, 0 );
@@ -371,8 +385,9 @@ Player.prototype.rotateModelLeft = function( ){
 	matrix.multiplyVector3( this._sightNode );
 	
 	// Translate...back again.
-	this._sightNode.addSelf( torso );
+	this._sightNode.addSelf( this._position );
 
+	this._angle += theta;
 	// Update the graphical sight node.
 	this.sight.position = this._sightNode
 	
@@ -404,7 +419,7 @@ Player.prototype.rotateSightByAngle = function( angle ){
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
 
-	this._angle -= angle;
+	this._angle += angle;
 	// Update the graphical sight node.
 	this.sight.position = this._sightNode
 	
@@ -438,6 +453,7 @@ Player.prototype.rotateModelRight = function( ){
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
 	
+	this._angle += theta;
 	// Update the graphical sight node.
 	this.sight.position = this._sightNode
 };
@@ -450,6 +466,7 @@ Player.prototype.rotateModelRight = function( ){
 */
 Player.prototype.moveInDirection = function( direction ){
 	
+	direction.normalize();
 	// Offset the player position in the direction of the sight node.
 	this._position.x += this._walkSpeed * direction.x;
 	this._position.z += this._walkSpeed * direction.z;
@@ -561,19 +578,26 @@ Player.prototype.rotateDown = function( ) {
 };
 
 
-/**	@Name:  
-	
-	@Brief:
-
-	
-	@Arguments: N/A
-	
+/**	@Name: 	
+	@Brief:	
+	@Arguments: N/A	
 	@Returns: 
 
 */
 Player.prototype.getJointPosition = function( jointName ) {
 
 	return ( this._rig.getJointPosition( jointName ) );	
+};
+
+
+/**	@Name:  	
+	@Brief:	
+	@Arguments: N/A	
+	@Returns: 
+*/
+Player.prototype.getJoint = function( jointName ) {
+
+	return ( this._rig.getJoint( jointName ) );	
 };
 
 

@@ -9,7 +9,7 @@
 	* Will the game flow logic be client or server side?
 */
 // Connect to the server.
-var socket = io.connect('193.156.105.166:7541');
+var socket = io.connect('193.156.105.142:7541');
 
 // Variables for the sugary goodness!
 var gui, param, varNum, interval;
@@ -79,7 +79,7 @@ function init(){
 	// Send the server your data.
 	sendData();
 	// Test code is stuffed in here.
-	//ExampleCode();
+	// ExampleCode();
 	
 	gameLoop();
 	/*
@@ -232,17 +232,7 @@ function createObjects(){
 				] 
 	};
 			
-	architect = new Scene_Builder( my_scene );
-	
-	for ( var i = 0; i < 5; i++ ){
-	
-		objects.push( new Object( new THREE.Vector3( 1000*i, 1500, 5000 ), "Object" ) );	
-	}		
-	
-	for ( var i = 0; i < 2; i++ ){
-	
-		objects.push( new Object( new THREE.Vector3( 2000*i, 250, 2000 ), "Bin" ) );	
-	}	
+	architect = new Scene_Builder( my_scene );	
 };
 
 
@@ -720,7 +710,16 @@ function Skybox(){
 */
  function ExampleCode(){
  	
-	
+	var what = new THREE.ColladaLoader();
+
+	what.load( "/model/room/interior.dae",function( collada ){
+				
+		var model = collada.scene;
+		model.scale.set(50,50,50);
+		model.position = new THREE.Vector3( 0,0,0 );
+		scene.add( model );
+		loading = false;
+	});
  };
 
 
@@ -861,6 +860,9 @@ function handleKeyEvents( event ) {
 		case 97:// Num pad 1. First Person.
 			var cameraType = 1;
 			level_Manager.setCameraType( cameraType );
+	  		break;
+		case 98:// Num pad 2. Test.
+			level_Manager._player_Manager.moveNextPosition();
 	  		break;
 		case 99:// Num pad 3. Third Person.
 			var cameraType = 3;

@@ -130,14 +130,11 @@ Collision_Manager.prototype.planeSphereCollision = function( objA, plane ){
 */
 Collision_Manager.prototype.getDistance = function( objA, objB ){
 
-		var posA = objA.position;
-		var posB = objB.position;
-		
-		var dx,dy,dy,x2,y2,z2,dist;
+		var dx,dy,dz,x2,y2,z2,dist;
 		// Deltas.
-		dx = posA.x - posB.x;
-		dy = posA.y - posB.y;
-		dz = posA.z - posB.z;
+		dx = objA.x - objB .x;
+		dy = objA.y - objB .y;
+		dz = objA.z - objB .z;
 		// Squares.
 		x2 = dx * dx;
 		y2 = dy * dy;

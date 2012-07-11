@@ -129,6 +129,19 @@ Model.prototype.getJointPosition = function( name ){
 };
 
 
+
+/**	@Name:
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
+Model.prototype.getJoint = function( name ){
+	
+	return ( this._joint[ name ] );
+
+};
+
+
 /**	@Name:
 	@Brief:	Orientation will have to be applied in here.
 	The joints must be drawn to face the sight node.

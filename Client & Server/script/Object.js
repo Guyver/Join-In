@@ -21,6 +21,24 @@ function Object( position, type ){
 	this.createMesh();
 };
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
+Object.prototype.setPosition = function( position ){
+	
+	this._position = position;
+	this._mesh.position = this._position;
+};
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
 Object.prototype.createMesh = function(){
 
 	switch( this._type ){
@@ -40,9 +58,10 @@ Object.prototype.createMesh = function(){
 };
 
 
-/*
-	Eventually add in the objects also.
-
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
 */
 Object.prototype.createMoveable = function(){
 
@@ -60,6 +79,12 @@ Object.prototype.createMoveable = function(){
 
 };
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
 Object.prototype.createDropzone = function( ){
 	
 	var radius = 500, segments = 10, rings = 10;
@@ -77,18 +102,36 @@ Object.prototype.createDropzone = function( ){
 
 };
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
 Object.prototype.getPosition = function(){
 
 	return( this._position );
 
 };
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
 Object.prototype.equipToMesh = function( owner ){
 
 	this._owner = owner;
 	this._equipped = true;
 };
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
 Object.prototype.removeFromMesh = function(){
 
 	this._owner = undefined;
@@ -96,10 +139,15 @@ Object.prototype.removeFromMesh = function(){
 	//this._alive = false;
 };
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
 Object.prototype.update = function(){
 
 	// If you run with it, you wil drop it.
-	
 	if( this._equipped ){
 		
 		this._position.x = this._owner.getPosition().x;
@@ -110,5 +158,4 @@ Object.prototype.update = function(){
 		this._position.z += 100;
 		this._mesh.position = this._position;
 	}
-	
 };
