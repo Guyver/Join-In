@@ -1,0 +1,73 @@
+<!--
+	@Author: Santiago Hors Fraile
+-->
+<html>
+<head>
+	<title> JoinIn </title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+
+</head>
+
+<body>
+
+
+	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+	
+	<script type="text/javascript" src="./swfobject/swfobject.js"></script>    
+	
+	<div id="youtubeDiv">
+	You need Flash player 8+ and JavaScript enabled to view this video.
+	</div>
+
+
+	<script type="text/javascript">
+	var numberOfConnectedUsers=0;
+	var params = { allowScriptAccess: "always" };
+	var atts = { id: "homerPlayer" };
+	var ytplayer;
+	var map = [];
+
+	swfobject.embedSWF("http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
+		       "youtubeDiv", "800", "600", "8", null, null, params, atts);
+	 
+	     
+	var socket= io.connect('193.156.105.162:7541');
+	/*
+	socket.on('RegisterNewUser',function(paramNumberOfConnectedUsers, paramInformationMap) {	
+		numberOfConnectedUsers=paramNumberOfConnectedUsers;
+		map=   { "name": paramInformationMap.name,
+			"userKey":paramInformationMap.userKey,
+			"score":paramInformationMap.score,
+			"meshName":data.mesh};
+
+	});
+		
+	*/
+
+	    function onYouTubePlayerReady(playerId) {
+	
+		ytplayer = document.getElementById("homerPlayer");
+		 ytplayer.addEventListener("onStateChange", "onytplayerStateChange");
+	    	ytplayer.playVideo();
+	    
+	    }
+		function onytplayerStateChange(state){
+			
+		    if(state == 0 && numberOfConnectedUsers>2){
+			
+			location.href="./bottomFrame2.htm";	
+				
+		    }
+		}
+	</script>
+</body>
+</frameset>

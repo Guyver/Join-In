@@ -1,0 +1,68 @@
+<!--
+	@Author: Santiago Hors Fraile
+-->
+<html>
+<head>
+	
+	
+	<title> JoinIn </title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	
+	
+	
+	
+</head>
+
+<body >
+	
+	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+	<script>
+		var socket= io.connect('193.156.105.162:7541');
+		function load(){
+			socket.emit('getId');	
+		}
+		load();
+		
+		
+		
+		
+		var g_id;
+	
+		
+		socket.on('sendingStoredId',function(response) {
+			
+			g_id=response;
+			document.write("<p> El resultado es " +g_id);
+			document.write("<p><h1>To start the game do this!</h1><p><img src=\"./img/psipose.gif\" type=\"image\" id=\"psiPose\" title=\"startButton\"\\/\\>");
+
+		});
+		socket.disconnect('193.156.105.162:7541');
+		location.href="./framedPage.htm";
+	
+		socket.on("sandraHasConnected", function(){
+			location.href="./framedPage.htm";	
+		
+		});
+	
+		
+	</script>
+
+	
+	
+	
+	
+	
+	
+</script>
+</body>
+
+</html>
