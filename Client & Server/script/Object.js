@@ -136,7 +136,9 @@ Object.prototype.removeFromMesh = function(){
 
 	this._owner = undefined;
 	this._equipped = false;
-	//this._alive = false;
+	this._alive = true;
+	this._position = new THREE.Vector3( 6000,2000,6000 );
+	this._mesh.position = this._position;
 };
 
 
@@ -158,4 +160,17 @@ Object.prototype.update = function(){
 		this._position.z += 100;
 		this._mesh.position = this._position;
 	}
+};
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
+Object.prototype.isOwned = function(){
+	
+	if( this._equipped )
+	return true;
+	return false;
 };

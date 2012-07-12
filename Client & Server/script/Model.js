@@ -157,15 +157,23 @@ Model.prototype.setAllJoints = function( playerPos, angle, kinectMap ){
 	// The distance of the joint from the torso.
 	var jointFromTorso = new THREE.Vector3(0,0,0);
 	// Torso
-	var torso = new THREE.Vector3( kinectMap[ "torso" ].x, kinectMap[ "torso" ].y, kinectMap[ "torso" ].z );		
-
+	try{
+		var torso = new THREE.Vector3( kinectMap[ "torso" ].x, kinectMap[ "torso" ].y, kinectMap[ "torso" ].z );		
+	}catch(err){
+		var torso = new THREE.Vector3(0,0,0);
+	}
 	// The position of the new joint after being translated from the player position.
 	var translatedPos = new THREE.Vector3(0,0,0);
 	
 	// Cycle through the joints and set the according to the map.
 	for ( i in this._jointNames ){
-		// Get a joint from the kinect map.
-		joint = new THREE.Vector3( kinectMap[ this._jointNames[ i ] ].x , kinectMap[ this._jointNames[ i ] ].y , kinectMap[ this._jointNames[ i ] ].z );
+		try{
+			// Get a joint from the kinect map.
+			joint = new THREE.Vector3( kinectMap[ this._jointNames[ i ] ].x , kinectMap[ this._jointNames[ i ] ].y , kinectMap[ this._jointNames[ i ] ].z );
+		}catch(err){
+		
+		}
+
 		// Get the translation.
 		jointFromTorso.sub( joint , torso);
 		// To set the sight node set the angle initally.
@@ -326,7 +334,7 @@ Model.prototype.head= function( collada ){
 	scene.add( that._head );
 	
 	that._head.name = "HEAD";
-	that._head.scale.set(50,50,50);
+	that._head.scale.set(30,30,30);
 	that._head.position = that.getJointPosition( "head");
 
 	that._jointModels.push( that._head );

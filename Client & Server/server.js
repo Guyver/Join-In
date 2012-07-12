@@ -17,10 +17,8 @@ var game2 = "Walk";
 
 /*
 	Action: start/stop/autoAdjust/changeLed/changeTilt
-	Type : skeleton/motor/pose/movement/hug/gameControl/reachPickUp/pichUpFromSides/all
-	
+	Type : skeleton/motor/pose/movement/hug/gameControl/reachPickUp/pichUpFromSides/all	
 	Types can be started together by not stopping the previous one.
-
 */
 
 // To begin reaching game.
@@ -86,24 +84,24 @@ var server = http.createServer( function ( request , response ) {
      
     path.exists( filePath, function(exists) {// Check to see if the file exists
      
-        if (exists) {// Returned from the callback, checking to see if valid.
+        if ( exists ) {// Returned from the callback, checking to see if valid.
 			// Read file from disk and trigger callback.
             fs.readFile( filePath, function(error, content) {
-                if (error) {
+                if ( error ) {
 					// If there's and error throw 500
-                    response.writeHead(500);
+                    response.writeHead( 500 );
                     response.end();
                 }
                 else {
 					// Otherwise return the file.
-                    response.writeHead(200, { 'Content-Type': contentType });
-                    response.end(content, 'utf-8');
+                    response.writeHead( 200, { 'Content-Type': contentType } );
+                    response.end( content , 'utf-8');
                 }
             });
         }
         else {
 			// Throw 404 if the file isn't there.
-            response.writeHead(404);
+            response.writeHead( 404 );
             response.end();
         }
 	});
@@ -120,7 +118,6 @@ var connected = [];
 
 socket.sockets.on( 'connection', function( client ){
 	
-	
 	connected.push( client.handshake.address.address );
 	
 	//				(1)
@@ -133,7 +130,6 @@ socket.sockets.on( 'connection', function( client ){
 		for ( index in users){
 			count++;
 			test[ count ] = users[ index ];
-		
 		}
 		
 		// Send the new client all the connected users.
@@ -146,8 +142,7 @@ socket.sockets.on( 'connection', function( client ){
 	// STORE ME AS A USER.
 	//	******* Only happens once when the player sends a template for the server to fill in and store him here********
 	client.on('registerMeInServer', function( data ){
-		console.log("Register Me In Server was called on the server.");
-
+	
 		// Construct a map from the new player.
 		var map = { 
 		
@@ -176,14 +171,11 @@ socket.sockets.on( 'connection', function( client ){
 	//***** Called from the onclick function in the game *****		HMM I DUNNO DAVID!
 	client.on( 'updateMe', function( me ) {
 	
-		console.log("Update me was called on the server.");
-		
 		// Find the user in the data structure.
 		if( users[ me.ip ] !== undefined){
 			
 			// If he exists, store my position.
 			users[ me.ip ].pos = me.pos;
-			
 			// Send my new position to everyone else connected, not me.
 			client.broadcast.emit( 'updateHim', users[ me.ip] );
 		}
@@ -206,12 +198,10 @@ socket.sockets.on( 'connection', function( client ){
 		var count=0;
 		for ( index in users){
 			count++;
-			temp[ count ] = users[ index ];
-		
+			temp[ count ] = users[ index ];	
 		}
 		// Return the users kinect data.
-		client.emit('syncKinect', temp );
-			
+		client.emit('syncKinect', temp );		
 	});
 	
 	
@@ -219,9 +209,8 @@ socket.sockets.on( 'connection', function( client ){
 	// TELL EVERYONE I'M OFF AND DELETE ME.
 	//
 	client.on('disconnect', function(){
-		
-		console.log("User disconnected");
-		socket.sockets.emit( 'deleteHim', users[ client.handshake.address.address ] );		// Send to everyone, including me.
+	
+		socket.sockets.emit( 'deleteHim', users[ client.handshake.address.address ] );// Send to everyone, including me.
 		// Tell the users that some one has quit so tey can remve from their scenes.
 		delete users[ client.handshake.address.address ];
 	});
@@ -234,7 +223,6 @@ socket.sockets.on( 'connection', function( client ){
 		for ( index in users){
 			count++;
 			test[ count ] = users[ index ];
-		
 		}
 		socket.sockets.send( 'test', test );
 		socket.sockets.emit( 'test', test );		
@@ -272,24 +260,16 @@ javaServer.on('connection', function ( javaSocket ) {
 
 	var remote_address = javaSocket.remoteAddress;
 	
-	for( var i = 0; i< 1000; i++)
-	console.log( "An interface connected to stream traffic on : "+ remote_address );
-	
-	var interfaceIpAddress = remote_address;
-	
 	for( index in users ){
 		
 		if( users[ index ].ip == remote_address ){
-		//if( true ){
 		
-			console.log(" We found the corresponding client, %s .",users[ index ].ip );
-			// We're ready to stream. When the library gets a '\n' it begins to send the data...
 			javaSocket.write( "{continue:true}\n" );
 			break;
 		}
 		else
 		{
-			console.log(" We did not find the corresponding client to the interface. Not storing data." );		
+			console.log(" We didn't find the corresponding client to the interface. Not storing data." );		
 		}
 	}
 		
@@ -297,9 +277,12 @@ javaServer.on('connection', function ( javaSocket ) {
 	// DATA RECIEVED FROM THE KINECT.
 	//
     javaSocket.on('data', function( data ){
-		dataBuffer += data;
-		
+	
+		// Buffer the data incase its too big for stream and incomplete.
+		dataBuffer += data;		
+		// Get the position in the buffer of \n that signals the end of a full packet.
 		newlineIndex = dataBuffer.indexOf( '\n' );
+		
 		
 		if( newlineIndex == -1){
 		
@@ -309,8 +292,6 @@ javaServer.on('connection', function ( javaSocket ) {
 		}
 		// Store the kinect data locally on the server.
 		users[ javaSocket.remoteAddress ].kinect = JSON.parse( dataBuffer.slice(0, newlineIndex) );
-		users[ javaSocket.remoteAddress ].visible = true;
-
         dataBuffer = dataBuffer.slice(newlineIndex + 1);	
 		javaSocket.write( "{continue:true}\n" );
 		

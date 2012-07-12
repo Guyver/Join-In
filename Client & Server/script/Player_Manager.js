@@ -24,10 +24,23 @@ function Player_Manager( checkpoints ){
 	
 	// The Player in question.
 	this._player = new Player( "Default", this._spawnPosition );
-	this._checkpoints.push( this._spawnPosition );
 	
-	// Debugging.
-	this._autoRotate = true;//false;
+	// Begin the game.
+	this._playGame = false;
+	
+	// The game is over.
+	this._gameOver = false;
+	
+	// Score Multiplier. Can be changed on various logic.
+	this._scoreMultiplier = 1;
+	
+	// Game timer
+	this._lastTime = new Date();
+	this._currentTime = new Date();	
+	this._deltaTime = undefined;
+	
+	// Used to face towards the targets automatically.
+	this._autoRotate = true;
 	
 };
 
@@ -42,40 +55,58 @@ Player_Manager.prototype.update = function(  ){
 
 	// update the player...
 	this._player.update();
-	// The distance of the player to the next checkpoine.
+	// Get direction.
+	var playerPos = this._player.getPosition();
+	// The distance of the player to the next checkpoint.
 	var dist = this.getDistance( this._player.getPosition(), this._checkpoints[0] )
 	
-	if( this._moveNext ){
+	if( this._playGame && !this._gameOver ){	
 	
 		// If the player is within 50 units of the checkpoint.
 		if ( dist < 50 ){
-						
-			if ( this._checkpoints[0] == this._spawnPosition){
-				this._player.setPosition( this._spawnPosition );
-				this._moveNext = false;
-				return;
-			}
-			// Check to see if the player has an object in his inventory.
-			if( this._player.checkInventory() ){
 			
-				// If at the position, push it into the walklist again.
-				this._checkpoints.push( this._checkpoints[0] );
-				// Pop off the so the current goal is the next one.
-				this._checkpoints.shift();
-				// Remove the equipped item from the Player.
-				this._player.removeInventory();	
-				// Move to the next position.
-				this._moveNext = true;
+			if( this._checkpoints[1] != undefined ){
+				// Check to see if the player has an object in his inventory.
+				if( this._player.checkInventory() || true ){
+								
+					// If at the position, push it into the walklist again.
+					//this._checkpoints.push( this._checkpoints[0] );
+					// Pop off the so the current goal is the next one.
+					this._checkpoints.shift();
+					// Remove the equipped item from the Player.
+					this._player.removeInventory();
+						
+					// Take the current time
+					this._currentTime = new Date();
+					// Get the change in time from "last"
+					this._deltaTime = this._currentTime.getTime() - this._lastTime.getTime();
+					// Reset last time to now.
+					this._lastTime = this._currentTime;	
+						
+					// Calculate the multiplier from the time taken.
+					if( this._deltaTime < 3000)
+						this._scoreMultiplier = 5;
+					else if( this._deltaTime < 4000)
+						this._scoreMultiplier = 4;
+					else if( this._deltaTime < 5000)
+						this._scoreMultiplier = 3;
+					else if( this._deltaTime < 6000)
+						this._scoreMultiplier = 2;
+					else if( this._deltaTime < 7000)
+						this._scoreMultiplier = 1.5;
+					else
+						this._scoreMultiplier = 1;
+						
+					// Increment the score of the player.
+					this._player.addScore( 100 * this._scoreMultiplier );
+				}
 			}
 			else{
-				// Stop at the chckpoint and grab an object.
-				this._moveNext = false;
+				this._gameOver = true;
 			}
 		}
 		else{
 			
-			// Get direction.
-			var playerPos = this._player.getPosition();
 			var goalDir = new THREE.Vector3( this._checkpoints[0].x - playerPos.x, 
 								0, 
 								this._checkpoints[0].z - playerPos.z );
@@ -102,15 +133,10 @@ Player_Manager.prototype.update = function(  ){
 				
 					this._player.rotateModelLeft();
 				}
-				//this._player.rotateSightByAngle( angle );
 			}
-			// Store the goal direction.
-			//this._player._goalDirection = goalDir;
-			// move in that direction.
+			// Move in the facing direction.
 			this._player.moveInDirection( goalDir );
-			// Rotate joints towards the goal.
-			//this._player.rotateToVector( goalDir );
-		}
+		}	
 	}
 };
 
@@ -131,9 +157,20 @@ Player_Manager.prototype.getPlayer = function(  ){
 	@Arguments:N/A
 	@Returns:N/A
 */
-Player_Manager.prototype.moveNextPosition = function(  ){
+Player_Manager.prototype.getPlayerScore = function(  ){
 
-	this._moveNext = true;
+	return ( this._player.getScore() );
+};
+
+
+/**	@Name: 
+	@Brief:
+	@Arguments:N/A
+	@Returns:N/A
+*/
+Player_Manager.prototype.playGame = function(  ){
+
+	this._playGame = true;
 };
 
 

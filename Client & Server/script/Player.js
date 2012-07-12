@@ -24,11 +24,13 @@ function Player( name, position ){
 	// The acceleration...
 	this._accel = new THREE.Vector3(0,-9.81,0);
 	// The walkspeed, could replace velocity.
-	this._walkSpeed = 100;
+	this._walkSpeed = 50;
 	// Define the up axis on the cartesian plane.
 	this._upAxis = new THREE.Vector3( 0,1,0 );
 	// The unique id, i.p address for Example.
 	this._ip  = undefined;
+	// The score of the player.
+	this._score = 0;
 	// The local id from the kinect.
 	this._userId = undefined;			
 	// The Kinect data. Hard coded as Lars for debugging.
@@ -123,7 +125,7 @@ function Player( name, position ){
 	// The items the player has.
 	this._inventory = [];
 	// Move 100 units in the z direction, this is the players orientation.
-	this._sightNode = new THREE.Vector3( position.x , this._kinectData["head"].y + 1000 , position.z + 5000 );
+	this._sightNode = new THREE.Vector3( position.x , this._kinectData["head"].y + 1000 , position.z - 5000 );
 	// The direction of the player.
 	this._direction = new THREE.Vector3( this._sightNode.x - this._position.x, this._position.y, this._sightNode.z- this._position.z );
 	this._direction.normalize();
@@ -287,8 +289,9 @@ Player.prototype.removeInventory = function( ) {
 */
 Player.prototype.checkInventory = function( ) {
 	
-	 var equipped = this._inventory[0] != undefined ? true : false ;
-	 return equipped;	
+	 if(this._inventory[0] != undefined)
+	 return true
+	 return false;	
 };
 
 
@@ -587,6 +590,28 @@ Player.prototype.rotateDown = function( ) {
 Player.prototype.getJointPosition = function( jointName ) {
 
 	return ( this._rig.getJointPosition( jointName ) );	
+};
+
+
+/**	@Name:  	
+	@Brief:	
+	@Arguments: N/A	
+	@Returns: 
+*/
+Player.prototype.addScore = function( score ) {
+
+	this._score += score;
+};
+
+
+/**	@Name:  	
+	@Brief:	
+	@Arguments: N/A	
+	@Returns: 
+*/
+Player.prototype.getScore = function(  ) {
+
+	return this._score;
 };
 
 

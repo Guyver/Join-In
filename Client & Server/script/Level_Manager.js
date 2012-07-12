@@ -20,7 +20,7 @@ function Level_Manager(  ){
 	// Handle Collisions.
 	this._collision_Manager = new Collision_Manager();
 	// The objects.
-	var objects = [];
+	this._objects = [];
 	// Handle the Players.
 	this._player_Manager = undefined;
 	// Handle the Scene.
@@ -28,7 +28,13 @@ function Level_Manager(  ){
 	this._cameraPosition = undefined;
 	// Camera Type, 1 = 1st, 3 = 3rd.
 	this._cameraType = 1;
-	
+	// The sounds 
+	this._sounds = [];
+	// The background audio.
+	this._music = [];
+	// The particle effects
+	this._particleEmitter = undefined;
+	// Create all the moveable objects.
 	this.createObjects();
 
 };
@@ -39,13 +45,16 @@ function Level_Manager(  ){
 	@Arguments:	N/A
 	@Returns:	N/A
 */
-Level_Manager.prototype.update = function( objects, camera ){
+Level_Manager.prototype.update = function( scene , camera ){
 
 	// Test to see if the players hands are in an object.
-	this.testPickups( this._player_Manager.getPlayer(), objects );
+	this.testPickups( this._player_Manager.getPlayer(), this._objects );
 	
 	// Test to see if the players equipped items are colliding with the bin.
-	this.testDrops( this._player_Manager.getPlayer() , objects );
+	this.testDrops( this._player_Manager.getPlayer() , this._objects );
+	
+	// Test player wall collisions...
+	this.testCollision( scene );
 	
 	// Get the collision manager to do its job.
 	this._collision_Manager.update( );
@@ -67,13 +76,18 @@ Level_Manager.prototype.update = function( objects, camera ){
 
 	// Update the height of the catchable objects.
 	var head = this._player_Manager.getPlayer().getJointPosition( "head" ).y;
-	var height = head + 500;
-	for ( i in objects ){
+	// Find the maximum reach height using the length of the Arms.
+	//var elbowHand = this._player_Manager.getPlayer().getJointPosition( "elbow" );
+	var height = head + 100;
+	for ( i in this._objects ){
 	
-		var currentPos = objects[ i ].getPosition();
-		objects[i].setPosition( new THREE.Vector3( currentPos.x, height, currentPos.z ) );	
+		if( !this._objects[ i ].isOwned() ){
+		
+			var currentPos = this._objects[ i ].getPosition();
+			this._objects[ i ].setPosition( new THREE.Vector3( currentPos.x, height, currentPos.z ) );	
+		}
+		this._objects[ i ].update();
 	}
-	
 };
 
 
@@ -88,32 +102,40 @@ Level_Manager.prototype.testPickups = function( player, objects ){
 		// If the player has an item already then forget it.
 		return;
 	}
+	// The hand Joints.
 	var lHand = player.getJoint( "leftHand" );
 	var rHand = player.getJoint( "rightHand");
+	// The current object.
 	var obj;
+	
+	// Loop through them all and see if hands collide.
 	for ( index in objects){
 	
+		// Don't test Bin Bin collisions.
 		if( objects[ index ]._type != "Bin" ){		
 		
-			//Test if the meshes collide.
+			// Set the current object.
 			obj = objects[ index ];
+			// Test to see if both hands collide with the object.
 			var coll1 = this._collision_Manager.sphereSphereCollision( lHand._mesh, obj._mesh );
 			var coll2 = this._collision_Manager.sphereSphereCollision( rHand._mesh, obj._mesh );	
 			
-			if( coll1 || coll2 && objects[ index ]._alive ){
+			// If both hands collide and the object is active.
+			if( coll1 && coll2 && objects[ index ]._alive ){
+			
 				// Ok the hands are on/in an object, is it already equipped?
 				if( !objects[ index ]._equipped ){
 
 					player.addInventory( objects[ index ] );	// Add it to the players inventory.
 					objects[ index ].equipToMesh( rHand );		// Equip it to the right hands position.
-					
+					console.log("One or both of the hands are in a moveable object");
 				}//end if object equipped
 			}// end if coll1&2
 			else{//Either the left hand let go or trying to pick up a dead object or you're just not near it.
 			
 				// Hands dont touch this particular object, if he has it equipped drop it.
 				// Make sure you only drop the item you know is not in his inventory.
-				
+				/*
 				for ( index in player._inventory ){
 				
 					var equippedItem = player._inventory[ index ]._mesh;
@@ -124,7 +146,7 @@ Level_Manager.prototype.testPickups = function( player, objects ){
 					}//End if id's are the same.
 					
 				}// End each equipped item.
-					
+				*/	
 			}//End if/else no collision.
 		}
 	}// End for objects.
@@ -292,6 +314,8 @@ Level_Manager.prototype.createObjects = function(  ){
 	this._checkpoint4 =new THREE.Vector3( 2280,0,13600 );
 	*/
 	var checkpoints = [];
+	
+	// 1st to last order checkpoints.
 	checkpoints.push( new THREE.Vector3( 3000, 0, 1360 ) );
 	checkpoints.push( new THREE.Vector3( 6000, 0, 1360 ) );
 	checkpoints.push( new THREE.Vector3( 9000, 0, 1360 ) );	
@@ -302,12 +326,13 @@ Level_Manager.prototype.createObjects = function(  ){
 	checkpoints.push( new THREE.Vector3( 6000, 0, 13800 ) );
 	checkpoints.push( new THREE.Vector3( 3000, 0, 13800 ) );	
 	checkpoints.push( new THREE.Vector3( 1360, 0, 9000 ) );
-	checkpoints.push( new THREE.Vector3( 1360, 0, 3000 ) );
 	checkpoints.push( new THREE.Vector3( 1360, 0, 6000 ) );
+	checkpoints.push( new THREE.Vector3( 1360, 0, 3000 ) );
 	
 	for ( i in checkpoints ){
-		objects.push( new Object( checkpoints[i], "Object" ) );
+		this._objects.push( new Object( checkpoints[i], "Object" ) );
 	}
+	checkpoints.push( new THREE.Vector3( 6000, 0, 6000 ) );
 	this._player_Manager = new Player_Manager( checkpoints );
 };
 

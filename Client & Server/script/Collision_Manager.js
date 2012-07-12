@@ -89,7 +89,7 @@ Collision_Manager.prototype.testCollision = function( scene ){
 Collision_Manager.prototype.sphereSphereCollision = function( objA, objB ){
 
 	var dist,rad1,rad2;
-	dist = this.getDistance( objA, objB );
+	dist = this.getDistance( objA.position, objB.position );
 	rad1 = objA.boundRadius;
 	rad2 = objB.boundRadius;
 	

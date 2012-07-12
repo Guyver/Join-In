@@ -251,17 +251,8 @@ function gameLoop(){
 		players[ each_player ].update();	
 	}
 	
-	// Update the objects.
-	for( each_object in objects ){
-	
-		objects[ each_object ].update();
-	}
-	
-	// Test player wall collisions...
-	level_Manager.testCollision( scene );
-	
 	// Update the level manager.
-	level_Manager.update( objects, camera );
+	level_Manager.update( scene, camera );
 	
 	 /*//Debugging camera
 	// Set the camera Z to the gui for debugging!
@@ -275,7 +266,7 @@ function gameLoop(){
 	
 	// Find time now.
 	current = new Date();
-	
+
 	// Get the change in time, dt.
 	deltaTime = current.getTime() - last.getTime();
 	var x = document.getElementById('string');
@@ -285,7 +276,7 @@ function gameLoop(){
 	var posY = document.getElementById('posY');
 	posY.value =  Math.floor(level_Manager.getPlayer().getPosition().y);
 	var posZ = document.getElementById('posZ');
-	posZ.value =  Math.floor(level_Manager.getPlayer().getPosition().z);
+	posZ.value =  level_Manager.getPlayer().getScore();
 	// reset the last time to time this frame for the next.
 	last = current;	
 	
@@ -862,7 +853,7 @@ function handleKeyEvents( event ) {
 			level_Manager.setCameraType( cameraType );
 	  		break;
 		case 98:// Num pad 2. Test.
-			level_Manager._player_Manager.moveNextPosition();
+			level_Manager._player_Manager.playGame();
 	  		break;
 		case 99:// Num pad 3. Third Person.
 			var cameraType = 3;
