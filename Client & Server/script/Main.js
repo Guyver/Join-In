@@ -79,7 +79,7 @@ function init(){
 	// Send the server your data.
 	sendData();
 	// Test code is stuffed in here.
-	// ExampleCode();
+	//ExampleCode();
 	
 	gameLoop();
 	/*
@@ -670,7 +670,7 @@ function setupEnviornment(){
 */
 function Skybox(){
  	
-	var urlPrefix	= "img/";
+	var urlPrefix	= "../img/";
 	var urls = [ urlPrefix + "x.png", urlPrefix + "-x.png",
 			urlPrefix + "y.png", urlPrefix + "-y.png",
 			urlPrefix + "z.png", urlPrefix + "-z.png" ];
@@ -703,7 +703,7 @@ function Skybox(){
  	
 	var what = new THREE.ColladaLoader();
 
-	what.load( "/model/room/interior.dae",function( collada ){
+	what.load( "../model/room/house.dae",function( collada ){
 				
 		var model = collada.scene;
 		model.scale.set(50,50,50);

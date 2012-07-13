@@ -1,0 +1,20 @@
+Homer: http://i47.tinypic.com/afel2p.jpg
+http://i48.tinypic.com/doxs3n.jpg
+
+Bart: http://i50.tinypic.com/k2pnp.jpg
+http://i47.tinypic.com/al50qo.jpg
+
+Lisa: http://i46.tinypic.com/2wdvn12.jpg
+http://i46.tinypic.com/2d6jwwl.jpg
+
+Marge: http://i50.tinypic.com/ivlrw6.jpg
+http://i50.tinypic.com/2872clz.jpg
+
+homer={userKey:0001, name:"Homer", score:0000, connectedImageUrl:"http://i47.tinypic.com/afel2p.jpg", disconnectedImageUrl:"http://i48.tinypic.com/doxs3n.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined};
+
+bart={userKey:0002, name:"Bart", score:0000, connectedImageUrl:"http://i50.tinypic.com/k2pnp.jpg", disconnectedImageUrl:"http://i47.tinypic.com/al50qo.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined};
+
+lisa={userKey:0003, name:"Lisa", score:0000, connectedImageUrl:"http://i46.tinypic.com/2wdvn12.jpg", disconnectedImageUrl:"http://i46.tinypic.com/2d6jwwl.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined};
+
+marge={userKey:0004, name:"Marge", score:0000, connectedImageUrl:"http://i50.tinypic.com/ivlrw6.jpg", disconnectedImageUrl:"http://i50.tinypic.com/2872clz.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined};
+

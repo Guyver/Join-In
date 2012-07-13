@@ -261,7 +261,7 @@ Model.prototype.createLimbs = function( ){
 
 	// Load all of the models that represent the model.
 
-	var url = 'model/limbs/'
+	var url = '../model/limbs/'
 	var modelNames = [  "head.dae", "torso.dae", "armUpper_l.dae", "armUpper_r.dae",
 						"foot_l.dae", "foot_r.dae", "hand_l.dae","hand_r.dae",
 						"foreArm_l.dae", "foreArm_r.dae", "legLower_r.dae","legLower_l.dae",

@@ -108,7 +108,7 @@ ImageManager.prototype.downloadAll = function( downloadCallback ) {
 */
 ImageManager.prototype.getAsset = function(path) {
 	
-    return this._cache[path];
+    return this._cache['../'+path];
 };
 
 
@@ -132,13 +132,13 @@ ImageManager.prototype.isDone = function() {
 function loadResources(){
 
 	// Add images to be downloaded by the manager!
-	imageManager.queueDownload( 'img/grassTile01.png' );
-	imageManager.queueDownload( 'img/wallTexture.png' );
-	imageManager.queueDownload( 'img/ground_plane.png' );
-	imageManager.queueDownload( 'img/floor.png' );
-	imageManager.queueDownload( 'img/Tree1.png' );
-	imageManager.queueDownload( 'img/popcornCeiling.png' );
-	imageManager.queueDownload( 'img/wallPaper.png' );
+	imageManager.queueDownload( '../img/grassTile01.png' );
+	imageManager.queueDownload( '../img/wallTexture.png' );
+	imageManager.queueDownload( '../img/ground_plane.png' );
+	imageManager.queueDownload( '../img/floor.png' );
+	imageManager.queueDownload( '../img/Tree1.png' );
+	imageManager.queueDownload( '../img/popcornCeiling.png' );
+	imageManager.queueDownload( '../img/wallPaper.png' );
 	imageManager.downloadAll( onImagesComplete );
 
 };

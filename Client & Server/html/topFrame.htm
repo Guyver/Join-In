@@ -1,0 +1,128 @@
+<!--
+	@Author: Santiago Hors Fraile
+-->
+<html>
+<head>
+	<title> JoinIn </title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+			
+</head>
+
+<body>
+
+<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+<script>
+	g_ready=[];
+	var socket= io.connect('193.156.105.162:7541');
+	function getCookie(c_name)
+	{
+	var i,x,y,ARRcookies=document.cookie.split(";");
+	for (i=0;i<ARRcookies.length;i++)
+	  {
+	  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+	  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+	  x=x.replace(/^\s+|\s+$/g,"");
+	  if (x==c_name)
+	    {
+	    return unescape(y);
+	    }
+	  }
+}
+	
+	var userKey= getCookie("userKey");
+	
+	socket.emit('giveMeUserPictures',userKey);	
+
+	//Callback functions
+	socket.on('sendingUserPictures',function(images) {	
+		
+		var parsedImages=images;
+	
+		
+		
+		document.write("<div id=\"container\" style=\"width:464px; margin:auto;\">");			
+	
+		for(index in images){	
+			document.write("<div id=\"div_"+parsedImages[index].userKey+"\" style=\"background-color:grey; width:100px;height:100px; float:left; border:solid; margin:5px;\"> ");
+			document.write("<img src=\""+parsedImages[index].image+"\" type=\"image\" id=\""+parsedImages[index].userKey+"\" title=\"Image of the user "+parsedImages[index].userKey+"\" width=\"100\" height=\"85\"\\/\\>");
+			document.write("</div>");
+		
+		}
+	
+		document.write("</div>");
+		
+	});
+
+	socket.on('updateNewUser',function(user) {
+		var frames = window.parent.frames;
+		var parsedUser=JSON.parse(user);
+		document.getElementById(parsedUser.userKey).src=parsedUser.connectedImageUrl;
+		if(g_ready[parsedUser.userKey]==true){
+			var divName= "div_"+parsedUser.userKey;
+			frames[0].document.getElementById(divName).style.backgroundColor='green'; 	
+		}				
+	});
+	
+	socket.on("userReady", function(userKey){
+		var parsedUserKey=JSON.parse(userKey);
+		g_ready[parsedUserKey]=true;
+		var divName= "div_"+parsedUserKey;
+		document.getElementById(divName).style.backgroundColor='green'; 
+		checkIfAllConnectedUsersAreReady();		
+	});
+	socket.on('userNotReady', function(userKey){
+		var parsedUserKey=JSON.parse(userKey);
+		g_ready[parsedUserKey]=false;
+		var divName= "div_"+parsedUserKey;
+		document.getElementById(divName).style.backgroundColor='grey'; 
+	});
+
+	function checkIfAllConnectedUsersAreReady(){
+		socket.emit('giveMeConnectedUsers');
+	}
+
+	socket.on("hereYouAreTheConnectedUsers", function(users){
+		var allReady=true;
+		var frames = window.parent.frames;	
+
+		
+		
+
+		for(i in users){
+			
+			var parsedUserKey=JSON.parse(users[i].userKey);
+	
+			var divName= "div_"+parsedUserKey;
+			
+			if(frames[0].document.getElementById(divName).style.backgroundColor=='grey'){
+				allReady=false;
+				break;
+			}
+		}
+		if(allReady==true){
+			//frames[1].location.href="./bottomFrame2.htm";
+			window.parent.location.href="./html/bottomFrame2.htm";		
+		}
+	
+	
+	
+	
+	});
+	socket.on('deleteHim',function(player){
+		
+		//To avoid the double call.			
+		if(player!=null){
+			 
+			document.getElementById(player.userKey).src=player.disconnectedImageUrl;
+			var divName= "div_"+player.userKey;
+			document.getElementById(divName).style.backgroundColor='grey'; 
+			
+			
+		}else{
+			console.log("Controlled error...");			
+		}	
+	});
+	</script>
+</body>
+</html>

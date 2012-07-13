@@ -11,43 +11,16 @@ var io = require('./lib/socket.io');
 
 // 4 players per room. Each room has no knowledge of other rooms.
 // Each room has their own game logic and win conditions.
-var rooms = [];	
-var game = "Reach";
-var game2 = "Walk";	
+var rooms = [];		
 
-/*
-	Action: start/stop/autoAdjust/changeLed/changeTilt
-	Type : skeleton/motor/pose/movement/hug/gameControl/reachPickUp/pichUpFromSides/all	
-	Types can be started together by not stopping the previous one.
-*/
-
-// To begin reaching game.
-var kinectDemands = {
-	device:"kinect",
-	action:"start",
-	type:"skeleton"
-}/*
-// To stop reaching game
-kinectDemands = {
-	device:"kinect",
-	action:"stop",
-	type:"skeleton"
-}
-// 
-kinectDemands = {
-	device:"kinect",
-	action:"start",
-	type:"all"
-}
-*/
 var server = http.createServer( function ( request , response ) {
  
-    console.log('request starting...');
+    console.log('request starting...'+ request.url);
 	
     var filePath = '.' + request.url;
 
     if ( filePath == './' ){// Just the root, localtion of server.js. Will only enter here initally.
-        filePath = './index.htm';// Serve html page.
+        filePath = './html/index.htm';// Serve html page.
 	}
 	
     var extname = path.extname( filePath );
@@ -58,50 +31,50 @@ var server = http.createServer( function ( request , response ) {
         case '.js':// Serving some script.
             contentType = 'text/javascript';
 			filePath = './script'+request.url;
-			console.log( "Serving JS" ); 
+			console.log( "Serving JS "+request.url ); 
             break;
         case '.css':// Serving some style
             contentType = 'text/css';
-			filePath = '..'+request.url;
-			console.log( "Serving CSS" ); 
+			filePath = '.'+request.url;
+			console.log( "Serving CSS "+request.url ); 
             break;
 		case '.png':// We're serving an image.
             contentType = 'image/png';
 			filePath = '.'+request.url;
-			console.log( "Serving PNG" ); 
+			console.log( "Serving PNG "+request.url ); 
             break;
 		case '.jpg':// We're serving an image.
             contentType = 'image/jpg';
 			filePath = '.'+request.url;
-			console.log( "Serving JPG" ); 
+			console.log( "Serving JPG "+request.url ); 
             break;
 		case '.dae':// We're serving an image.
             contentType = 'text/plain';
 			filePath = '.'+request.url;
-			console.log( "Serving DAE" ); 
+			console.log( "Serving DAE "+request.url ); 
             break;
     }
      
     path.exists( filePath, function(exists) {// Check to see if the file exists
      
-        if ( exists ) {// Returned from the callback, checking to see if valid.
+        if (exists) {// Returned from the callback, checking to see if valid.
 			// Read file from disk and trigger callback.
             fs.readFile( filePath, function(error, content) {
-                if ( error ) {
+                if (error) {
 					// If there's and error throw 500
-                    response.writeHead( 500 );
+                    response.writeHead(500);
                     response.end();
                 }
                 else {
 					// Otherwise return the file.
-                    response.writeHead( 200, { 'Content-Type': contentType } );
-                    response.end( content , 'utf-8');
+                    response.writeHead(200, { 'Content-Type': contentType });
+                    response.end(content, 'utf-8');
                 }
             });
         }
         else {
 			// Throw 404 if the file isn't there.
-            response.writeHead( 404 );
+            response.writeHead(404);
             response.end();
         }
 	});
@@ -111,15 +84,171 @@ var server = http.createServer( function ( request , response ) {
 var socket = io.listen( server ); 		// Socket IO server instance.
 var users = [];							// List of connected players.
 var userCount = 0;						// Number of users connected.
-var map = [];							// Container for the player data.
+//var map = [];							// Container for the player data.
 var rooms = [];							// Must be implemented to seperate players.
-var connected = [];
+//var connected = [];
+var clients=[];
+//var g_id;
+var images=[];
+
 
 
 socket.sockets.on( 'connection', function( client ){
+
+	clients[client.handshake.address.address]=client;
 	
-	connected.push( client.handshake.address.address );
+	function registerUser(userKeyParam){
 	
+
+		var mongoose = require('mongoose/'),
+			Schema = mongoose.Schema;
+		
+		mongoose.connect('mongodb://localhost/joinInDB');
+		
+		var userSchema = new Schema({
+			name : String, 
+			userKey: Number,
+			score : Number,
+			connectedImageUrl : String,
+			disconnectedImageUrl: String,
+			pos : String, 
+			kinect : String,
+			meshName :String
+			
+		});		
+
+		var usersModel= mongoose.model('users',userSchema);
+			
+		var nameAux;
+		var scoreAux;
+		var connectedImageUrlAux;
+		var disconnectedImageUrlAux;
+		var posAux;
+		var kinectAux;
+		var meshNameAux;
+	
+		var clientIPAddress=client.handshake.address.address;
+		
+		usersModel.findOne({userKey:userKeyParam}, function (err, doc) {
+			
+			 nameAux=doc.name;
+			 scoreAux=doc.score;
+			 connectedImageUrlAux=doc.connectedImageUrl;
+			 disconnectedImageUrlAux=doc.disconnectedImageUrl;
+			 posAux=0;
+			 kinectAux=null;
+			 meshNameAux=doc.meshName;
+
+			// Construct a map from the new player.
+			var map = { 
+		
+				"ip":clientIPAddress,
+				"userKey":userKeyParam,
+				"name": nameAux,
+				"score": scoreAux,
+				"connectedImageUrl": connectedImageUrlAux,
+				"disconnectedImageUrl": disconnectedImageUrlAux,
+				"pos": posAux,
+				"kinect": kinectAux,
+				"visible": true,
+				"meshName": meshNameAux
+			};
+			
+			// Store me in the map format.
+			users[ clientIPAddress ] =  map ;	
+	
+			for(index in users){
+				
+				socket.sockets.emit( 'updateNewUser',  JSON.stringify(users[index]) );	
+			}	
+			
+		});
+	}
+	
+	//
+	//
+	//
+	client.on('giveMeConnectedUsers', function() {
+		var aux = {};
+		for ( index in users){
+			
+			aux[ index ] = users[ index ];
+		
+		}
+		client.emit( 'hereYouAreTheConnectedUsers', aux);
+	});
+	
+	//
+	//
+	//
+	client.on( 'giveMeUserPictures', function(userKeyParam) {
+		
+		var mongoose = require('mongoose/'),
+			Schema = mongoose.Schema;
+		
+		mongoose.connect('mongodb://localhost/joinInDB');
+		
+		var userSchema = new Schema({
+			name : String, 
+			userKey: Number,
+			score : Number,
+			connectedImageUrl : String,
+			disconnectedImageUrl: String,
+			pos : String, 
+			kinect : String,
+			meshName :String
+			
+		});		
+
+
+		var usersModel= mongoose.model('users',userSchema);
+		var imagesAux=[];
+
+		
+		
+		usersModel.find( {}, function (err, team) {
+			if(images.length==0){
+				for(var index=1; index<=team.length; index++){
+			
+					var indexAjustado = index-1;
+					
+					var clientIPAddress=client.handshake.address.address;
+					imagesAux.push ({userKey:team[indexAjustado].userKey, image:team[indexAjustado].disconnectedImageUrl});
+				}
+			}else{
+				imagesAux=images;	
+				for(index in team){
+					imagesAux[index].image=team[index].disconnectedImageUrl;
+				}		
+			}
+			var usersAux = {};
+			for(index in users){
+				
+				for(index2 in imagesAux){
+		
+					if(users[index].userKey==imagesAux[index2].userKey){
+						
+						imagesAux[index2].image=team[index2].connectedImageUrl;
+					}else{
+						imagesAux[index2].image=team[index2].disconnectedImageUrl;
+					}
+				}
+
+			usersAux[ index ] = users[ index ];
+			}
+			
+			for (i in users){
+				console.log("i vale "+i+" y users "+users[i]);
+			}
+
+	  		client.emit( 'sendingUserPictures', imagesAux, usersAux);
+			images= imagesAux;
+			
+			registerUser(userKeyParam);
+		});
+	});
+
+		
 	//				(1)
 	// GET PLAYERS, SEND TO JUST ME.
 	// ****** Only happens upon connection to the server. ******
@@ -130,6 +259,7 @@ socket.sockets.on( 'connection', function( client ){
 		for ( index in users){
 			count++;
 			test[ count ] = users[ index ];
+		
 		}
 		
 		// Send the new client all the connected users.
@@ -137,12 +267,21 @@ socket.sockets.on( 'connection', function( client ){
 
 	});
 	
+	//
+	//
+	//
+	client.on('registerMeInServerFirstPage', function(userKeyParam){
+		
+		registerUser(userKeyParam);	
+	});
+	
 	
 	// 				(2)
 	// STORE ME AS A USER.
 	//	******* Only happens once when the player sends a template for the server to fill in and store him here********
 	client.on('registerMeInServer', function( data ){
-	
+		console.log("Register Me In Server was called on the server.");
+
 		// Construct a map from the new player.
 		var map = { 
 		
@@ -150,9 +289,7 @@ socket.sockets.on( 'connection', function( client ){
 			"pos":data.pos,
 			"ip":client.handshake.address.address,
 			"kinect":data.kinect,
-			"id": data.id,
-			"meshName":data.mesh,
-			"visible": data.visible
+			"meshName":data.mesh
 		};
 		
 		// Store me in the map format.
@@ -171,11 +308,14 @@ socket.sockets.on( 'connection', function( client ){
 	//***** Called from the onclick function in the game *****		HMM I DUNNO DAVID!
 	client.on( 'updateMe', function( me ) {
 	
+		console.log("Update me was called on the server.");
+		
 		// Find the user in the data structure.
 		if( users[ me.ip ] !== undefined){
 			
 			// If he exists, store my position.
 			users[ me.ip ].pos = me.pos;
+			
 			// Send my new position to everyone else connected, not me.
 			client.broadcast.emit( 'updateHim', users[ me.ip] );
 		}
@@ -198,19 +338,22 @@ socket.sockets.on( 'connection', function( client ){
 		var count=0;
 		for ( index in users){
 			count++;
-			temp[ count ] = users[ index ];	
+			temp[ count ] = users[ index ];
+		
 		}
 		// Return the users kinect data.
-		client.emit('syncKinect', temp );		
+		client.emit('syncKinect', temp );
+			
 	});
 	
 	
 	// 				(4)
 	// TELL EVERYONE I'M OFF AND DELETE ME.
 	//
-	client.on('disconnect', function(){
-	
-		socket.sockets.emit( 'deleteHim', users[ client.handshake.address.address ] );// Send to everyone, including me.
+	client.on('disconnect', function(){		
+		
+		
+		socket.sockets.emit( 'deleteHim', users[ client.handshake.address.address ]);		// Send to everyone, including me.
 		// Tell the users that some one has quit so tey can remve from their scenes.
 		delete users[ client.handshake.address.address ];
 	});
@@ -223,6 +366,7 @@ socket.sockets.on( 'connection', function( client ){
 		for ( index in users){
 			count++;
 			test[ count ] = users[ index ];
+		
 		}
 		socket.sockets.send( 'test', test );
 		socket.sockets.emit( 'test', test );		
@@ -272,28 +416,73 @@ javaServer.on('connection', function ( javaSocket ) {
 			console.log(" We didn't find the corresponding client to the interface. Not storing data." );		
 		}
 	}
-		
+	
 	//
 	// DATA RECIEVED FROM THE KINECT.
 	//
     javaSocket.on('data', function( data ){
-	
-		// Buffer the data incase its too big for stream and incomplete.
-		dataBuffer += data;		
-		// Get the position in the buffer of \n that signals the end of a full packet.
+		dataBuffer += data;
+		
 		newlineIndex = dataBuffer.indexOf( '\n' );
 		
+		clients[javaSocket.remoteAddress].emit( 'sandraHasConnected' );
 		
 		if( newlineIndex == -1){
-		
 			// Send next packet.
-			javaSocket.write( "{continue:true}\n" );
+			javaSocket.write( "{continue:true}\n");
+			
 			return;// If there was no end of package in the data return.
 		}
+		
 		// Store the kinect data locally on the server.
-		users[ javaSocket.remoteAddress ].kinect = JSON.parse( dataBuffer.slice(0, newlineIndex) );
+		if( users[javaSocket.remoteAddress ] !== undefined){
+
+		
+			users[ javaSocket.remoteAddress ].kinect = JSON.parse( dataBuffer.slice(0, newlineIndex) );
+			users[ javaSocket.remoteAddress ].visible = true;
+			
+			var ipAddress= javaSocket.remoteAddress;
+
+		
+		
+			var info= users[ javaSocket.remoteAddress ].kinect;
+			var userKey=0;
+			for(i in info){
+			
+				if(i=="accept" && info[i]=="true"){
+					
+					for(i2 in clients){	
+						for(i3 in users){
+							if(users[i3].ip==javaSocket.remoteAddress){
+								userKey=users[i3].userKey;						
+							}
+						}
+						for(i3 in clients){
+							clients[i3].emit("userReady", userKey );	
+
+						}
+					}	
+				}else if(i=="cancel" && info[i]=="true"){
+					for(i2 in clients){
+						for(i3 in users){
+							if(users[i3].ip==javaSocket.remoteAddress){
+								userKey=users[i3].userKey;						
+							}
+						}
+						for(i3 in clients){
+							clients[i3].emit("userNotReady", userKey );	
+
+						}
+					}	
+				}		
+			}
+
+		}
+
+
         dataBuffer = dataBuffer.slice(newlineIndex + 1);	
-		javaSocket.write( "{continue:true}\n" );
+		javaSocket.write(  "{continue:true}\n" );
+	
 		
 	});// End of on.Data
 
