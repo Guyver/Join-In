@@ -1,0 +1,32 @@
+<html>
+	<head>
+		
+	</head>
+	<body>
+		<p id="demo">My First Paragraph</p>
+	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+	<script>
+			var socket = io.connect( '193.156.105.142:7541' );
+			var score;
+			var keyHolder;
+			var gdata;
+			// Get the top score.
+			socket.emit('getGroupScore');
+			
+			socket.on( 'groupScore', function( data ){
+				
+				score = data.score;
+				console.log("Score is: "+ score);
+				keyHolder = data.keyHolder;
+				console.log("Keyholder is : "+ keyHolder);
+				gdata = data;
+				console.log("the data was : "+ gdata);
+				
+				document.getElementById("demo").innerHTML="The total score for the group was : "+ score	;		
+				document.getElementById("demo").innerHTML +="The user who got the key was : "+ keyHolder;	
+				
+			});
+			
+	</script>
+	</body>
+</html>

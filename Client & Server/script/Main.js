@@ -81,12 +81,9 @@ function init(){
 	// Test code is stuffed in here.
 	//ExampleCode();
 	
+	// The first call to the game loop.
 	gameLoop();
-	/*
-	// Initalise the game loop to 60fps. Anim frame pffft
-	interval = setInterval( 'gameLoop()', 1000 / 60 );
-	*/
-
+	
 };
 
 
@@ -193,6 +190,7 @@ function setupLights(){
 */
 function createObjects(){		
 	
+	// The list of joint names for the kinect.
 	jointList = [ 'head',
 				'leftElbow',
 				'leftFoot',
@@ -208,9 +206,10 @@ function createObjects(){
 				'rightKnee',
 				'rightShoulder',
 				'torso'];
-	
+	// Initalise the level manager.
 	level_Manager = new Level_Manager();
 	
+	// Define the map with hash tags.
 	var my_scene = {
 				"map" : [
 					"################",
@@ -231,8 +230,10 @@ function createObjects(){
 					"################"
 				] 
 	};
-			
+	
+	// Initalise the scene builder with the hash map.
 	architect = new Scene_Builder( my_scene );	
+	
 };
 
 
@@ -280,6 +281,11 @@ function gameLoop(){
 	// reset the last time to time this frame for the next.
 	last = current;	
 	
+	if( level_Manager._player_Manager._gameOver  ){
+
+		socket.emit( 'gameOver', level_Manager.getPlayer()._score  );	
+		level_Manager._player_Manager._gameOver = true;
+	}
 	// Render the scene.
 	render();
 	
@@ -693,7 +699,10 @@ function Skybox(){
 	
 };
  
-
+ /*
+var counter = new SPARKS.SteadyCounter( 500 ); 
+var emitter = new SPARKS.Emitter( counter );
+*/
 /**	@Name:	Example code
 	@Brief:	Code snippets that I used for testing.
 	@Arguments:N/A
@@ -701,6 +710,15 @@ function Skybox(){
 */
  function ExampleCode(){
  	
+	emitterpos = level_Manager.getPlayer().getJointPosition( "head" );
+	
+	emitter.addInitializer( new SPARKS.Position( new SPARKS.PointZone( emitterpos ) ) );
+	emitter.addInitializer( new SPARKS.Lifetime( 1, 15 ));
+	var vector = new THREE.Vector3( 0, +5, 1 );
+	emitter.addInitializer( new SPARKS.Velocity( new SPARKS.PointZone( vector ) ) );
+	
+	emitter.start();
+	/*
 	var what = new THREE.ColladaLoader();
 
 	what.load( "../model/room/house.dae",function( collada ){
@@ -710,7 +728,9 @@ function Skybox(){
 		model.position = new THREE.Vector3( 0,0,0 );
 		scene.add( model );
 		loading = false;
-	});
+	});*/
+	
+	
  };
 
 
@@ -922,7 +942,10 @@ socket.on( 'updateHim', function( data ){
 
 });
 
-
+socket.on( 'topScorePage', function( ){
+	
+	window.parent.location.href="./highScore.html";
+});
 socket.on('syncKinect', function( users ){
 
 	// for all the users in the server.

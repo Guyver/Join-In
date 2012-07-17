@@ -24,7 +24,7 @@ function ImageManager() {
 };
 
 
-/**				QUEUE DOWNLOAD()
+/**		TODO:		QUEUE DOWNLOAD()
 
 	@Brief: Adds a url of an image to a queue to be downloaded.
 	@Arguments: path:- A string URL of the image to be loaded.

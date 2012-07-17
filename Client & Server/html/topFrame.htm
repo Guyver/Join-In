@@ -14,33 +14,38 @@
 <script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 <script>
 	g_ready=[];
-	var socket= io.connect('193.156.105.162:7541');
+	var socket= io.connect('193.156.105.142:7541');
+	
+	
+	//
+	//
+	//
 	function getCookie(c_name)
 	{
-	var i,x,y,ARRcookies=document.cookie.split(";");
-	for (i=0;i<ARRcookies.length;i++)
-	  {
-	  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-	  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-	  x=x.replace(/^\s+|\s+$/g,"");
-	  if (x==c_name)
-	    {
-	    return unescape(y);
-	    }
-	  }
-}
+		var i,x,y,ARRcookies=document.cookie.split(";");
+		for (i=0;i<ARRcookies.length;i++){
+		
+			x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+			y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+			x=x.replace(/^\s+|\s+$/g,"");
+			if (x==c_name)
+			{
+				return unescape(y);
+			}
+		}
+	}
 	
 	var userKey= getCookie("userKey");
 	
 	socket.emit('giveMeUserPictures',userKey);	
 
+	//
 	//Callback functions
+	//
 	socket.on('sendingUserPictures',function(images) {	
 		
 		var parsedImages=images;
-	
-		
-		
+
 		document.write("<div id=\"container\" style=\"width:464px; margin:auto;\">");			
 	
 		for(index in images){	
@@ -54,6 +59,10 @@
 		
 	});
 
+	
+	//
+	//
+	//
 	socket.on('updateNewUser',function(user) {
 		var frames = window.parent.frames;
 		var parsedUser=JSON.parse(user);
@@ -64,6 +73,10 @@
 		}				
 	});
 	
+	
+	//
+	//
+	//
 	socket.on("userReady", function(userKey){
 		var parsedUserKey=JSON.parse(userKey);
 		g_ready[parsedUserKey]=true;
@@ -71,6 +84,11 @@
 		document.getElementById(divName).style.backgroundColor='green'; 
 		checkIfAllConnectedUsersAreReady();		
 	});
+	
+	
+	//
+	//
+	//
 	socket.on('userNotReady', function(userKey){
 		var parsedUserKey=JSON.parse(userKey);
 		g_ready[parsedUserKey]=false;
@@ -78,48 +96,54 @@
 		document.getElementById(divName).style.backgroundColor='grey'; 
 	});
 
+	//
+	//
+	//
 	function checkIfAllConnectedUsersAreReady(){
 		socket.emit('giveMeConnectedUsers');
 	}
 
-	socket.on("hereYouAreTheConnectedUsers", function(users){
+	
+	//
+	//
+	//
+	socket.on("hereYouAreTheConnectedUsers", function( users ){
+	
 		var allReady=true;
 		var frames = window.parent.frames;	
 
-		
-		
-
 		for(i in users){
 			
-			var parsedUserKey=JSON.parse(users[i].userKey);
+			var parsedUserKey=JSON.parse( users[i].userKey );
 	
 			var divName= "div_"+parsedUserKey;
 			
-			if(frames[0].document.getElementById(divName).style.backgroundColor=='grey'){
+			if( frames[0].document.getElementById(divName).style.backgroundColor=='grey' ){
 				allReady=false;
 				break;
 			}
 		}
-		if(allReady==true){
-			//frames[1].location.href="./bottomFrame2.htm";
-			window.parent.location.href="./html/bottomFrame2.htm";		
+		if( allReady ){
+			// If all are ready go to the next page.
+			window.parent.location.href="./html/gamePage.html";		
 		}
-	
-	
-	
-	
 	});
-	socket.on('deleteHim',function(player){
+	
+	
+	//
+	//
+	//
+	socket.on('deleteHim',function( player ){
 		
 		//To avoid the double call.			
-		if(player!=null){
+		if( player != null ){
 			 
 			document.getElementById(player.userKey).src=player.disconnectedImageUrl;
 			var divName= "div_"+player.userKey;
 			document.getElementById(divName).style.backgroundColor='grey'; 
-			
-			
-		}else{
+		}
+		else{
+		
 			console.log("Controlled error...");			
 		}	
 	});

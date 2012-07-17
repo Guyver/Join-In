@@ -1,7 +1,6 @@
 /**	@Name:	Level_Manager Class
 
 	@Author: James Browne
-	
 	@Brief:
 	A Level_Manager that controls the flow of the game.
 	Tell the scene builder how many levels there are and it will generate them for us.

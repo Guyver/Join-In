@@ -30,34 +30,33 @@
 
 		function setCookie(c_name,value,exdays)
 			{
-			var exdate=new Date();
-			exdate.setDate(exdate.getDate() + exdays);
-			var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-			document.cookie=c_name + "=" + c_value;
+				var exdate=new Date();
+				exdate.setDate(exdate.getDate() + exdays);
+				var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+				document.cookie=c_name + "=" + c_value;
 			}
 
 			var socket= io.connect('193.156.105.162:7541');
 			
 			function isNumber(n) {
+			
 			  return !isNaN(parseFloat(n)) && isFinite(n);
 			}
+			
+			
 			function checkForm(){
 			
 				var userKey= document.getElementById("userKey").value;
-				if(!isNumber(userKey) || userKey<0||userKey>5){
+				if( !isNumber( userKey ) || userKey<0||userKey>5){
+				
 					alert("Wrong user");
 					window.location = './html/index.htm';
 					return false;
 				}else{
 					
-					
-					setCookie("userKey",userKey,1);
-					socket.emit("registerMeInServerFirstPage",userKey);
-					
-					
-				}
-				
-			
+					setCookie( "userKey" , userKey , 1);
+					socket.emit("registerMeInServerFirstPage",userKey);					
+				}			
 			}
 		
 			

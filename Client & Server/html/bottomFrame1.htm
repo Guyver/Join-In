@@ -45,78 +45,93 @@
 	
 	<div id="div_youtubeVideo" class="centered_element">
 	You need Flash player 8+ and JavaScript enabled to view this video.
-	
 
+		<script type="text/javascript">
+		
+		var params = { allowScriptAccess: "always" };
+		var atts = { id: "videoPlayer" };
+		var ytplayer;
+		var map = [];
 
-	<script type="text/javascript">
-	
-	var params = { allowScriptAccess: "always" };
-	var atts = { id: "videoPlayer" };
-	var ytplayer;
-	var map = [];
-
-	swfobject.embedSWF("http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
-		       "div_youtubeVideo", "800", "600", "8", null, null, params, atts);
-	 
-	     
-	
-	var socket= io.connect('193.156.105.162:7541');
-
-	socket.on("userReady", function(userKey){
-		var frames = window.parent.frames; 
-		var parsedUserKey=JSON.parse(userKey);
-		var divName= "div_"+parsedUserKey;
-		frames[0].document.getElementById(divName).style.backgroundColor='green'; 	
-		checkIfAllConnectedUsersAreReady();		
-	});
-	
-	socket.on("userNotReady", function(userKey){
-		var frames = window.parent.frames;
-		var parsedUserKey=JSON.parse(userKey);
-		var divName= "div_"+parsedUserKey;
-		frames[0].document.getElementById(divName).style.backgroundColor='grey'; 	
-	});
-	
-	function checkIfAllConnectedUsersAreReady(){
-		socket.emit('giveMeConnectedUsers');
-	}
-
-	socket.on("hereYouAreTheConnectedUsers", function(users){
-		var allReady=true;
-		var frames = window.parent.frames;	
+		swfobject.embedSWF( "http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
+				   "div_youtubeVideo", "800", "600", "8", null, null, params, atts);
+		 
+		var socket= io.connect('193.156.105.142:7541');
 
 		
-
-		for(i in users){
-			
-			var parsedUserKey=JSON.parse(users[i].userKey);
-			
+		//
+		//
+		//
+		socket.on("userReady", function( userKey ){
+		
+			var frames = window.parent.frames; 
+			var parsedUserKey=JSON.parse(userKey);
 			var divName= "div_"+parsedUserKey;
-			
-			if(frames[0].document.getElementById(divName).style.backgroundColor=='grey'){
-				allReady=false;
-				break;
-			}
-		}
-		if(allReady==true){
-			//frames[1].location.href="./bottomFrame2.htm";	
-			window.parent.location.href="./bottomFrame2.htm";				
-		}
-	
-	
-	
-	
-	});
-       function onYouTubePlayerReady(playerId) {
-
-		ytplayer = document.getElementById("videoPlayer");
+			frames[0].document.getElementById(divName).style.backgroundColor='green'; 	
+			checkIfAllConnectedUsersAreReady();		
+		});
 		
-	    	ytplayer.playVideo();
-			window.parent.location.href="./bottomFrame2.htm";	
-        }
-	
-	
-	</script>
+		
+		//
+		//
+		//
+		socket.on("userNotReady", function(userKey){
+		
+			var frames = window.parent.frames;
+			var parsedUserKey=JSON.parse(userKey);
+			var divName= "div_"+parsedUserKey;
+			frames[0].document.getElementById(divName).style.backgroundColor='grey'; 	
+		});
+
+
+		//
+		//
+		//
+		socket.on( "hereYouAreTheConnectedUsers" , function( users ){
+		
+			var allReady=true;
+			var frames = window.parent.frames;	
+
+			for( i in users ){
+				
+				var parsedUserKey=JSON.parse( users[i].userKey );
+				
+				var divName= "div_"+parsedUserKey;
+				
+				if( frames[0].document.getElementById(divName).style.backgroundColor=='grey' ){
+				
+					allReady=false;
+					break;
+				}
+			}
+			
+			if( allReady ){
+		
+				window.parent.location.href="./gamePage.html";				
+			}
+		});
+		
+		
+		//
+		//
+		//		
+		function checkIfAllConnectedUsersAreReady(){
+		
+			socket.emit('giveMeConnectedUsers');
+		};
+		
+		
+		//
+		//
+		//
+		function onYouTubePlayerReady( playerId ) {
+
+			ytplayer = document.getElementById("videoPlayer");
+			ytplayer.playVideo();
+		};
+		
+		
+		</script>
 	</div>
 
 </body>

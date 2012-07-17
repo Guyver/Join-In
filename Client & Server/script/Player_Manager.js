@@ -67,7 +67,7 @@ Player_Manager.prototype.update = function(  ){
 			
 			if( this._checkpoints[1] != undefined ){
 				// Check to see if the player has an object in his inventory.
-				if( this._player.checkInventory() || true ){
+				if( this._player.checkInventory() ){
 								
 					// If at the position, push it into the walklist again.
 					//this._checkpoints.push( this._checkpoints[0] );

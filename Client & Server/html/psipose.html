@@ -35,9 +35,7 @@
 	</div>
 	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 	<script>
-	var socket= io.connect('193.156.105.162:7541');
-
-	setTimeout(function(){location.href="./framedPage.htm"},5000);
+	var socket= io.connect('193.156.105.142:7541');
 	
 	socket.on('sandraHasConnected', function(){
 			
