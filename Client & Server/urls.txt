@@ -18,3 +18,21 @@ lisa={userKey:0003, name:"Lisa", score:0000, connectedImageUrl:"http://i46.tinyp
 
 marge={userKey:0004, name:"Marge", score:0000, connectedImageUrl:"http://i50.tinypic.com/ivlrw6.jpg", disconnectedImageUrl:"http://i50.tinypic.com/2872clz.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined};
 
+
+ellen={userKey:0001, name:"Ellen", score:0000, connectedImageUrl:"http://img827.imageshack.us/img827/278/ellenf.jpg", disconnectedImageUrl:"http://img268.imageshack.us/img268/8512/ellenbw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"1", team: 1};
+
+aage={userKey:0002, name:"Aage", score:0000, connectedImageUrl:"http://img853.imageshack.us/img853/6319/aage.jpg", disconnectedImageUrl:"http://img607.imageshack.us/img607/4937/aagebw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"1", team: 1};
+
+geir={userKey:0003, name:"Geir", score:0000, connectedImageUrl:"http://img26.imageshack.us/img26/681/geir.jpg", disconnectedImageUrl:"http://img441.imageshack.us/img441/1314/geirbw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"1", team: 1};
+
+peter={userKey:0004, name:"Peter", score:0000, connectedImageUrl:"http://img42.imageshack.us/img42/3586/petercb.jpg", disconnectedImageUrl:"http://img52.imageshack.us/img52/7143/peterbn.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"1",team: 1};
+
+sigurd={userKey:0005, name:"Sigurd", score:0000, connectedImageUrl:"http://img440.imageshack.us/img440/9773/sigurd.jpg", disconnectedImageUrl:"http://img28.imageshack.us/img28/7861/sigurdbw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"2", team: 2};
+
+stig={userKey:0006, name:"Stig", score:0000, connectedImageUrl:"http://img850.imageshack.us/img850/4279/stigo.jpg", disconnectedImageUrl:"http://img341.imageshack.us/img341/526/stigbw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"2", team: 2};
+
+tore={userKey:0007, name:"Tore", score:0000, connectedImageUrl:"http://img201.imageshack.us/img201/4623/tore.jpg", disconnectedImageUrl:"http://img411.imageshack.us/img411/9189/torebw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined,teamNumber:"2", team: 2};
+
+roar={userKey:0008, name:"Roar", score:0000, connectedImageUrl:"http://img109.imageshack.us/img109/925/roarn.jpg", disconnectedImageUrl:"http://img641.imageshack.us/img641/7395/roarbw.jpg", pos:undefined, ip:undefined, kinect:undefined, meshname:undefined, teamNumber:"2", team: 2};
+
+

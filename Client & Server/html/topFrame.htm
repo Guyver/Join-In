@@ -14,7 +14,7 @@
 <script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 <script>
 	g_ready=[];
-	var socket= io.connect('193.156.105.142:7541');
+	var socket= io.connect('193.156.105.162:7541');
 	
 	
 	//
@@ -65,7 +65,7 @@
 	//
 	socket.on('updateNewUser',function(user) {
 		var frames = window.parent.frames;
-		var parsedUser=JSON.parse(user);
+		var parsedUser=user;
 		document.getElementById(parsedUser.userKey).src=parsedUser.connectedImageUrl;
 		if(g_ready[parsedUser.userKey]==true){
 			var divName= "div_"+parsedUser.userKey;
@@ -100,7 +100,7 @@
 	//
 	//
 	function checkIfAllConnectedUsersAreReady(){
-		socket.emit('giveMeConnectedUsers');
+		socket.emit('giveMeConnectedUsers', userKey);
 	}
 
 	

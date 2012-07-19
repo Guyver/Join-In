@@ -91,7 +91,7 @@ var topScore = 0;
 //var connected = [];
 var clients=[];
 //var g_id;
-var images=[];
+var imagesByTeam=[];
 // Get mongoose and connect to the server.
 var mongoose = require( 'mongoose' ).connect( 'mongodb://localhost/joinInDB' );
 
@@ -100,10 +100,9 @@ var mongoose = require( 'mongoose' ).connect( 'mongodb://localhost/joinInDB' );
 socket.sockets.on( 'connection', function( client ){
 
 	clients[client.handshake.address.address]=client;
+	
 	function registerUser(userKeyParam){
-		
-		
-		
+	
 		var mongoose = require('mongoose/'),
 			Schema = mongoose.Schema;
 		
@@ -117,7 +116,8 @@ socket.sockets.on( 'connection', function( client ){
 			disconnectedImageUrl: String,
 			pos : String, 
 			kinect : String,
-			meshName :String
+			meshName :String,
+			team: Number
 			
 		});		
 
@@ -132,7 +132,7 @@ socket.sockets.on( 'connection', function( client ){
 		var posAux;
 		var kinectAux;
 		var meshNameAux;
-	
+		var team;
 		
 		
 		var clientIPAddress=client.handshake.address.address;
@@ -140,51 +140,87 @@ socket.sockets.on( 'connection', function( client ){
 
 		usersModel.findOne({userKey:userKeyParam}, function (err, doc) {
 			
-			 nameAux=doc.name;
-			 scoreAux=doc.score;
-			 connectedImageUrlAux=doc.connectedImageUrl;
-			 disconnectedImageUrlAux=doc.disconnectedImageUrl;
-			 posAux=0;
-			 kinectAux=null;
-			 meshNameAux=doc.meshName;
+			console.log("The doc is: "+doc);			
+
+			if(doc==null){
+				clients[clientIPAddress].emit('noSuchUserKey');				
+			}else{
+			
+				clients[clientIPAddress].emit('goToPsiPage');			
+				 nameAux=doc.name;
+				 scoreAux=doc.score;
+				 connectedImageUrlAux=doc.connectedImageUrl;
+				 disconnectedImageUrlAux=doc.disconnectedImageUrl;
+				 posAux=0;
+				 kinectAux=null;
+				 meshNameAux=doc.meshName;
+				 team = doc.team;
 		
 			
 			
 	
-			// Construct a map from the new player.
-			var map = { 
+				// Construct a map from the new player.
+				var map = { 
 		
-				"ip":clientIPAddress,
-				"userKey":userKeyParam,
-				"name": nameAux,
-				"score": scoreAux,
-				"connectedImageUrl": connectedImageUrlAux,
-				"disconnectedImageUrl": disconnectedImageUrlAux,
-				"pos": posAux,
-				"kinect": kinectAux,
-				"visible": true,
-				"meshName": meshNameAux
-			};
+					"ip":clientIPAddress,
+					"userKey":userKeyParam,
+					"name": nameAux,
+					"score": scoreAux,
+					"connectedImageUrl": connectedImageUrlAux,
+					"disconnectedImageUrl": disconnectedImageUrlAux,
+					"pos": posAux,
+					"kinect": kinectAux,
+					"visible": true,
+					"meshName": meshNameAux,
+					"team": team
+				};
 			
-			// Store me in the map format.
-			users[ clientIPAddress ] =  map ;	
+				// Store me in the map format.
+				 users[ clientIPAddress ] =  map ;	
 
 			
-			for(index in users){
+
+		
+				for(index in users){
+					//Make green the ready-bar
+					
+					socket.sockets.emit( 'updateNewUser',  users[index] );
 				
-				socket.sockets.emit( 'updateNewUser',  JSON.stringify(users[index]) );
-				
-			}	
-			
+				}	
+			}
 		});
 
 	}
-	client.on('giveMeConnectedUsers', function() {
+	client.on('giveMeConnectedUsers', function(userKeyParam) {
+		var myTeam;
+
+		usersModel.find({}, function (err, doc){
+			for(index in doc){
+				if(doc[index].userKey==userKeyParam){
+				myTeam=	doc[index].team;			
+				}
+				
+			}
+			
+		});
+		//Work with my team mates only
+		var teamMates=[];
+		for(var index=1; index<=users.length; index++){
+			var adjustedIndex = index-1;
+			
+			var aux= users[adjustedIndex].team; 
+			if(JSON.stringify(aux)==JSON.stringify(myTeam)){
+				
+				teamMates.push(users[adjustedIndex]);
+			}
+		}
+
+
 		var aux = {};
 		
-		for ( index in users){
+		for ( index in teamMates){
 			
-			aux[ index ] = users[ index ];
+			aux[ index ] = teamMates[ index ];
 		
 		}
 		client.emit( 'hereYouAreTheConnectedUsers', aux);
@@ -205,59 +241,95 @@ socket.sockets.on( 'connection', function( client ){
 			disconnectedImageUrl: String,
 			pos : String, 
 			kinect : String,
-			meshName :String
+			meshName :String,
+			team: Number
+			
 			
 		});		
 
 
 		var usersModel= mongoose.model('users',userSchema);
-		var imagesAux=[];
+		
+		var myTeam;
 
+		usersModel.find({}, function (err, doc){
+			for(index in doc){
+				if(doc[index].userKey==userKeyParam){
+				myTeam=	doc[index].team;	
 		
-		
-		usersModel.find({}, function (err, team) {
-			if(images.length==0){
-				for(var index=1; index<=team.length; index++){
-			
-					var indexAjustado = index-1;
-					
-					var clientIPAddress=client.handshake.address.address;
-					imagesAux.push ({userKey:team[indexAjustado].userKey, image:team[indexAjustado].disconnectedImageUrl});
 				}
-			}else{
-				imagesAux=images;	
-				for(index in team){
-					imagesAux[index].image=team[index].disconnectedImageUrl;
-				}		
-			}
-			var usersAux = {};
-			for(index in users){
 				
+			}
+			
+		
+		
+		
+	
+
+
+		usersModel.find({}, function (err, usersInDB) {
+			var imagesAux=[];
+			var teamMates=[];
+			//Work with my team mates only
+
+			for(var index=1; index<=usersInDB.length; index++){
+				var adjustedIndex = index-1;
+				
+				
+				var aux= usersInDB[adjustedIndex].team; 
+				if(JSON.stringify(aux)==JSON.stringify(myTeam)){
+				
+					teamMates.push(usersInDB[adjustedIndex]);
+				}
+			}
+						
+
+			//if(imagesByTeam[myTeam]==undefined){
+			 	//imagesByTeam[myTeam]=[];
+			//}
+			//if(imagesByTeam[myTeam].length==0){
+				for(var index=1; index<=teamMates.length; index++){
+					var adjustedIndex = index-1;
+					
+					imagesAux.push ({userKey:teamMates[adjustedIndex].userKey, image:teamMates[adjustedIndex].disconnectedImageUrl});
+				}
+			/*}
+			else{
+				imagesAux=imagesByTeam[myTeam];	
+				for(index in teamMates){
+					imagesAux[index].image=teamMates[index].disconnectedImageUrl;
+				}		
+			}*/
+			var usersAux = {};
+			
+			
+
+			
+			for(index in teamMates){
+								
+				
+
 				for(index2 in imagesAux){
 		
-					if(users[index].userKey==imagesAux[index2].userKey){
+					if(teamMates[index].userKey==imagesAux[index2].userKey){
 						
-						imagesAux[index2].image=team[index2].connectedImageUrl;
+						imagesAux[index2].image=usersInDB[index2].connectedImageUrl;
 					}else{
-						imagesAux[index2].image=team[index2].disconnectedImageUrl;
+						imagesAux[index2].image=usersInDB[index2].disconnectedImageUrl;
 					}
 				}
 
-			usersAux[ index ] = users[ index ];
+			usersAux[ index ] = teamMates[ index ];
 			}
 			
-			for (i in users){
-				console.log("i vale "+i+" y users "+users[i]);
-			}
-			
-			
+		
 
 	  		client.emit( 'sendingUserPictures', imagesAux, usersAux);
-			images= imagesAux;
+			imagesByTeam[myTeam]= imagesAux;
 			
-			//-----------------------Repetición de la función otra
-
+			
 			registerUser(userKeyParam);
+			});
 		});
 	});
 
@@ -332,7 +404,8 @@ socket.sockets.on( 'connection', function( client ){
 		else
 		{
 			// If I dont exist somehow, fire a message.
-			console.log( " Unregistered user "+ me.ip );return;		
+			console.log( " Unregistered user "+ me.ip );
+			return;		
 		}
 
 	});

@@ -35,11 +35,18 @@
 	</div>
 	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 	<script>
-	var socket= io.connect('193.156.105.142:7541');
+	var socket= io.connect('193.156.105.162:7541');
 	
+	setInterval(function(){location.href="./framedPage.htm";},2000);
+
 	socket.on('sandraHasConnected', function(){
 			
 		location.href="./framedPage.htm";		
+	});
+
+	socket.on('noSuchUserKey', function(){
+			
+		location.href="./index.html";		
 	});
 
 </script>

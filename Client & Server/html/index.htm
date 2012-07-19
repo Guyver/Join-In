@@ -47,31 +47,41 @@
 			function checkForm(){
 			
 				var userKey= document.getElementById("userKey").value;
-				if( !isNumber( userKey ) || userKey<0||userKey>5){
+				
+				if( !isNumber( userKey ) || userKey<=0){
 				
 					alert("Wrong user");
-					window.location = './html/index.htm';
+					window.location.reload();				
 					return false;
 				}else{
 					
 					setCookie( "userKey" , userKey , 1);
-					socket.emit("registerMeInServerFirstPage",userKey);					
+					socket.emit("registerMeInServerFirstPage",userKey);
+					return false;
+										
 				}			
 			}
 		
 			
-	
+	socket.on('noSuchUserKey', function(){
+			
+		alert("Wrong user");
+		window.location.reload();
+	});
+	socket.on('goToPsiPage', function(){
+		window.location='./html/psipose.html';	
+	});
 		</script>
 	</head>
 	<body>
 
 		
-		<form action="./html/psipose.html" onSubmit="return checkForm()" method="post"  >
+		<form  onSubmit="return checkForm()" method="post"  >
 		
 		<div id="div_submit">
 			
 				Type your userKey 
-				<p><input type="text" id="userKey" name="userKey" value="1" /></p>
+				<p><input type="text" id="userKey" name="userKey" value="0" /></p>
 				<p><input type="submit" value="Send it!"/></p>
 				
 			

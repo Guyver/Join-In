@@ -41,7 +41,7 @@
 
 	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 	
-	<script type="text/javascript" src="../swfobject/swfobject.js"></script>    
+	<!--<script type="text/javascript" src="../swfobject/swfobject.js"></script>    
 	
 	<div id="div_youtubeVideo" class="centered_element">
 	You need Flash player 8+ and JavaScript enabled to view this video.
@@ -53,10 +53,10 @@
 		var ytplayer;
 		var map = [];
 
-		swfobject.embedSWF( "http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
-				   "div_youtubeVideo", "800", "600", "8", null, null, params, atts);
+		//swfobject.embedSWF( "http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
+			//	   "div_youtubeVideo", "800", "600", "8", null, null, params, atts);
 		 
-		var socket= io.connect('193.156.105.142:7541');
+		var socket= io.connect('193.156.105.162:7541');
 
 		
 		//
@@ -126,8 +126,8 @@
 		//
 		function onYouTubePlayerReady( playerId ) {
 
-			ytplayer = document.getElementById("videoPlayer");
-			ytplayer.playVideo();
+			//ytplayer = document.getElementById("videoPlayer");
+			//ytplayer.playVideo();
 		};
 		
 		
