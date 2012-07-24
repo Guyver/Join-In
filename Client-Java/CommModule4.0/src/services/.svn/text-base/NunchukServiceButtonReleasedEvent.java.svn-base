@@ -1,0 +1,24 @@
+package services;
+
+import org.wiigee.event.NunchukButtonReleasedEvent;
+
+import control.IEventCommModule;
+/**
+ * Defines the Nunchuk button released events.
+ * @author Santiago Hors Fraile
+ */
+public class NunchukServiceButtonReleasedEvent extends NunchukServiceButton implements IEventCommModule{
+	/**
+	 * Represents the released button.
+	 */
+	public int button;
+	/**
+	 * Sets the released button with the given parameter.
+	 * @param event The new released button.
+	 */
+	public NunchukServiceButtonReleasedEvent(NunchukButtonReleasedEvent event) {
+		this.button = event.getButton();
+	}
+
+
+}

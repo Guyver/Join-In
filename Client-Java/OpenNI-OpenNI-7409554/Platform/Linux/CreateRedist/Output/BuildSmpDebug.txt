@@ -1,0 +1,157 @@
+make: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/Build»
+make -C ../SimpleRead.net
+make -C ../SimpleViewer.net
+make -C ../UserTracker.net
+make -C ../NiSampleModule
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleRead.net»
+gmcs -out:../Bin/x86-Debug/SimpleRead.net.exe -target:winexe  -r:OpenNI.net.dll -lib:../Bin/x86-Debug ./*.cs ../Res/AssemblyInfo-OpenNI.cs
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleViewer.net»
+gmcs -out:../Bin/x86-Debug/SimpleViewer.net.exe -target:winexe -unsafe -r:OpenNI.net.dll -r:System.Windows.Forms.dll -r:System.Drawing.dll -lib:../Bin/x86-Debug ./*.cs ../Res/AssemblyInfo-OpenNI.cs
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/UserTracker.net»
+gmcs -out:../Bin/x86-Debug/UserTracker.net.exe -target:winexe -unsafe -r:OpenNI.net.dll -r:System.Windows.Forms.dll -r:System.Drawing.dll -lib:../Bin/x86-Debug ./*.cs ../Res/AssemblyInfo-OpenNI.cs
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSampleModule»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/ExportedSampleDepth.d x86-Debug/ExportedSampleDepth.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -fPIC -fvisibility=hidden -o x86-Debug/ExportedSampleDepth.o ExportedSampleDepth.cpp
+g++ -MD -MP -MT "./x86-Debug/Registration.d x86-Debug/Registration.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -fPIC -fvisibility=hidden -o x86-Debug/Registration.o Registration.cpp
+Compilation succeeded - 1 warning(s)
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleViewer.net»
+make -C ../NiSkeletonBenchmark
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSkeletonBenchmark»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiSkeletonBenchmark.d x86-Debug/NiSkeletonBenchmark.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiSkeletonBenchmark.o NiSkeletonBenchmark.cpp
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleRead.net»
+make -C ../NiCRead
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiCRead»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiCRead.d x86-Debug/NiCRead.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiCRead.o NiCRead.c
+g++ -o ../Bin/x86-Debug/Sample-NiCRead ./x86-Debug/NiCRead.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiCRead»
+make -C ../NiHandTracker
+Compilation succeeded - 1 warning(s)
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiHandTracker»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/main.d x86-Debug/main.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/main.o main.cpp
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/UserTracker.net»
+g++ -MD -MP -MT "./x86-Debug/NiHandTracker.d x86-Debug/NiHandTracker.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/NiHandTracker.o NiHandTracker.cpp
+g++ -o ../Bin/x86-Debug/NiSkeletonBenchmark ./x86-Debug/NiSkeletonBenchmark.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSkeletonBenchmark»
+make -C ../SimpleViewer.java
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleViewer.java»
+mkdir -p x86-Debug
+javac -cp ../Bin/x86-Debug/org.OpenNI.jar:/usr/share/java/org.OpenNI.jar -d x86-Debug ./org/OpenNI/Samples/SimpleViewer/*.java
+g++ -MD -MP -MT "./x86-Debug/SampleDepth.d x86-Debug/SampleDepth.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -fPIC -fvisibility=hidden -o x86-Debug/SampleDepth.o SampleDepth.cpp
+g++ -MD -MP -MT "./x86-Debug/NiHandViewer.d x86-Debug/NiHandViewer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/NiHandViewer.o NiHandViewer.cpp
+g++ -MD -MP -MT "./x86-Debug/NiSimpleViewer.d x86-Debug/NiSimpleViewer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/NiSimpleViewer.o NiSimpleViewer.cpp
+make -C ../NiUserTracker
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiUserTracker»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/main.d x86-Debug/main.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/main.o main.cpp
+g++ -o ../Bin/x86-Debug/libSample-NiSampleModule.so ./x86-Debug/ExportedSampleDepth.o ./x86-Debug/Registration.o ./x86-Debug/SampleDepth.o -L../../Lib -L../Bin/x86-Debug -lOpenNI -Wl,--no-undefined -shared
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSampleModule»
+make -C ../NiViewer
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiViewer»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/Audio.d x86-Debug/Audio.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Audio.o Audio.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiHandTracker ./x86-Debug/main.o ./x86-Debug/NiHandTracker.o ./x86-Debug/NiHandViewer.o ./x86-Debug/NiSimpleViewer.o -L../../Lib -L../Bin/x86-Debug -lglut -lGL -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiHandTracker»
+make -C ../NiSimpleCreate
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleCreate»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiSimpleCreate.d x86-Debug/NiSimpleCreate.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiSimpleCreate.o NiSimpleCreate.cpp
+g++ -MD -MP -MT "./x86-Debug/Capture.d x86-Debug/Capture.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Capture.o Capture.cpp
+g++ -MD -MP -MT "./x86-Debug/opengles.d x86-Debug/opengles.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/opengles.o opengles.cpp
+g++ -MD -MP -MT "./x86-Debug/SceneDrawer.d x86-Debug/SceneDrawer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/SceneDrawer.o SceneDrawer.cpp
+( echo "Main-Class: org.OpenNI.Samples.SimpleViewer.SimpleViewerApplication"; echo "Class-Path:  ../Bin/x86-Debug/org.OpenNI.jar /usr/share/java/org.OpenNI.jar"; ) > Manifest.txt
+jar -cfm ../Bin/x86-Debug/org.OpenNI.Samples.SimpleViewer.jar Manifest.txt -C x86-Debug .
+g++ -o ../Bin/x86-Debug/Sample-NiSimpleCreate ./x86-Debug/NiSimpleCreate.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+echo java -jar org.OpenNI.Samples.SimpleViewer.jar > ../Bin/x86-Debug/org.OpenNI.Samples.SimpleViewer; chmod +x ../Bin/x86-Debug/org.OpenNI.Samples.SimpleViewer
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleViewer.java»
+make -C ../UserTracker.java
+g++ -MD -MP -MT "./x86-Debug/Device.d x86-Debug/Device.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Device.o Device.cpp
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/UserTracker.java»
+mkdir -p x86-Debug
+javac -cp ../Bin/x86-Debug/org.OpenNI.jar:/usr/share/java/org.OpenNI.jar -d x86-Debug ./org/OpenNI/Samples/UserTracker/*.java
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleCreate»
+g++ -MD -MP -MT "./x86-Debug/Draw.d x86-Debug/Draw.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Draw.o Draw.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiUserTracker ./x86-Debug/main.o ./x86-Debug/opengles.o ./x86-Debug/SceneDrawer.o -L../../Lib -L../Bin/x86-Debug -lglut -lGL -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiUserTracker»
+g++ -MD -MP -MT "./x86-Debug/Keyboard.d x86-Debug/Keyboard.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Keyboard.o Keyboard.cpp
+make -C ../SimpleRead.java
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleRead.java»
+mkdir -p x86-Debug
+javac -cp ../Bin/x86-Debug/org.OpenNI.jar:/usr/share/java/org.OpenNI.jar -d x86-Debug ./org/OpenNI/Samples/SimpleRead/*.java
+g++ -MD -MP -MT "./x86-Debug/Menu.d x86-Debug/Menu.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Menu.o Menu.cpp
+g++ -MD -MP -MT "./x86-Debug/MouseInput.d x86-Debug/MouseInput.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/MouseInput.o MouseInput.cpp
+g++ -MD -MP -MT "./x86-Debug/NiViewer.d x86-Debug/NiViewer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/NiViewer.o NiViewer.cpp
+g++ -MD -MP -MT "./x86-Debug/Statistics.d x86-Debug/Statistics.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni -I./  -o x86-Debug/Statistics.o Statistics.cpp
+make -C ../NiBackRecorder
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiBackRecorder»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/main.d x86-Debug/main.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/main.o main.cpp
+( echo "Main-Class: org.OpenNI.Samples.UserTracker.UserTrackerApplication"; echo "Class-Path:  ../Bin/x86-Debug/org.OpenNI.jar /usr/share/java/org.OpenNI.jar"; ) > Manifest.txt
+jar -cfm ../Bin/x86-Debug/org.OpenNI.Samples.UserTracker.jar Manifest.txt -C x86-Debug .
+g++ -o ../Bin/x86-Debug/Sample-NiBackRecorder ./x86-Debug/main.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+echo java -jar org.OpenNI.Samples.UserTracker.jar > ../Bin/x86-Debug/org.OpenNI.Samples.UserTracker; chmod +x ../Bin/x86-Debug/org.OpenNI.Samples.UserTracker
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/UserTracker.java»
+make -C ../NiConvertXToONI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiBackRecorder»
+make -C ../NiRecordSynthetic
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiConvertXToONI»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiConvertXToONI.d x86-Debug/NiConvertXToONI.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiConvertXToONI.o NiConvertXToONI.cpp
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiRecordSynthetic»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiRecordSynthetic.d x86-Debug/NiRecordSynthetic.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiRecordSynthetic.o NiRecordSynthetic.cpp
+( echo "Main-Class: org.OpenNI.Samples.SimpleRead.SimpleRead"; echo "Class-Path:  ../Bin/x86-Debug/org.OpenNI.jar /usr/share/java/org.OpenNI.jar"; ) > Manifest.txt
+jar -cfm ../Bin/x86-Debug/org.OpenNI.Samples.SimpleRead.jar Manifest.txt -C x86-Debug .
+echo java -jar org.OpenNI.Samples.SimpleRead.jar > ../Bin/x86-Debug/org.OpenNI.Samples.SimpleRead; chmod +x ../Bin/x86-Debug/org.OpenNI.Samples.SimpleRead
+g++ -o ../Bin/x86-Debug/NiViewer ./x86-Debug/Audio.o ./x86-Debug/Capture.o ./x86-Debug/Device.o ./x86-Debug/Draw.o ./x86-Debug/Keyboard.o ./x86-Debug/Menu.o ./x86-Debug/MouseInput.o ./x86-Debug/NiViewer.o ./x86-Debug/Statistics.o -L../../Lib -L../Bin/x86-Debug -lglut -lGL -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/SimpleRead.java»
+make -C ../NiSimpleSkeleton
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleSkeleton»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiSimpleSkeleton.d x86-Debug/NiSimpleSkeleton.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiSimpleSkeleton.o NiSimpleSkeleton.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiConvertXToONI ./x86-Debug/NiConvertXToONI.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+g++ -o ../Bin/x86-Debug/Sample-NiRecordSynthetic ./x86-Debug/NiRecordSynthetic.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiViewer»
+make -C ../NiSimpleRead
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleRead»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiSimpleRead.d x86-Debug/NiSimpleRead.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiSimpleRead.o NiSimpleRead.cpp
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiConvertXToONI»
+make -C ../NiSimpleViewer
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiRecordSynthetic»
+make -C ../NiUserSelection
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleViewer»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiSimpleViewer.d x86-Debug/NiSimpleViewer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiSimpleViewer.o NiSimpleViewer.cpp
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiUserSelection»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/ClosestUserSelector.d x86-Debug/ClosestUserSelector.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/ClosestUserSelector.o ClosestUserSelector.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiSimpleSkeleton ./x86-Debug/NiSimpleSkeleton.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleSkeleton»
+make -C ../NiAudioSample
+make[1]: se ingresa al directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiAudioSample»
+mkdir -p x86-Debug
+g++ -MD -MP -MT "./x86-Debug/NiAudioSample.d x86-Debug/NiAudioSample.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/NiAudioSample.o NiAudioSample.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiSimpleRead ./x86-Debug/NiSimpleRead.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleRead»
+g++ -MD -MP -MT "./x86-Debug/DefaultTrackingInitializer.d x86-Debug/DefaultTrackingInitializer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/DefaultTrackingInitializer.o DefaultTrackingInitializer.cpp
+g++ -MD -MP -MT "./x86-Debug/ExitPoseDetector.d x86-Debug/ExitPoseDetector.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/ExitPoseDetector.o ExitPoseDetector.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiSimpleViewer ./x86-Debug/NiSimpleViewer.o -L../../Lib -L../Bin/x86-Debug -lglut -lGL -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiSimpleViewer»
+g++ -MD -MP -MT "./x86-Debug/main.d x86-Debug/main.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/main.o main.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiAudioSample ./x86-Debug/NiAudioSample.o -L../../Lib -L../Bin/x86-Debug -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiAudioSample»
+g++ -MD -MP -MT "./x86-Debug/opengles.d x86-Debug/opengles.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/opengles.o opengles.cpp
+g++ -MD -MP -MT "./x86-Debug/PoseToggleUserSelector.d x86-Debug/PoseToggleUserSelector.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/PoseToggleUserSelector.o PoseToggleUserSelector.cpp
+g++ -MD -MP -MT "./x86-Debug/PoseUserSelector.d x86-Debug/PoseUserSelector.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/PoseUserSelector.o PoseUserSelector.cpp
+g++ -MD -MP -MT "./x86-Debug/SampleManager.d x86-Debug/SampleManager.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/SampleManager.o SampleManager.cpp
+g++ -MD -MP -MT "./x86-Debug/SceneDrawer.d x86-Debug/SceneDrawer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/SceneDrawer.o SceneDrawer.cpp
+g++ -MD -MP -MT "./x86-Debug/SinglePoseUserSelector.d x86-Debug/SinglePoseUserSelector.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/SinglePoseUserSelector.o SinglePoseUserSelector.cpp
+g++ -MD -MP -MT "./x86-Debug/TrackingInitializer.d x86-Debug/TrackingInitializer.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/TrackingInitializer.o TrackingInitializer.cpp
+g++ -MD -MP -MT "./x86-Debug/UserSelector.d x86-Debug/UserSelector.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/UserSelector.o UserSelector.cpp
+g++ -MD -MP -MT "./x86-Debug/UserTracker.d x86-Debug/UserTracker.o" -c -msse3 -O0 -g -I../../Include -I/usr/include/ni  -o x86-Debug/UserTracker.o UserTracker.cpp
+g++ -o ../Bin/x86-Debug/Sample-NiUserSelection ./x86-Debug/ClosestUserSelector.o ./x86-Debug/DefaultTrackingInitializer.o ./x86-Debug/ExitPoseDetector.o ./x86-Debug/main.o ./x86-Debug/opengles.o ./x86-Debug/PoseToggleUserSelector.o ./x86-Debug/PoseUserSelector.o ./x86-Debug/SampleManager.o ./x86-Debug/SceneDrawer.o ./x86-Debug/SinglePoseUserSelector.o ./x86-Debug/TrackingInitializer.o ./x86-Debug/UserSelector.o ./x86-Debug/UserTracker.o -L../../Lib -L../Bin/x86-Debug -lglut -lGL -lOpenNI
+make[1]: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/NiUserSelection»
+make: se sale del directorio «/home/norut/Escritorio/OpenNI-OpenNI-7409554/Platform/Linux/Redist/OpenNI-Bin-Dev-Linux-x86-v1.5.4.0/Samples/Build»

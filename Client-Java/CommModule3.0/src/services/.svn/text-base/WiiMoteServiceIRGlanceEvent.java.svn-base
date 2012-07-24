@@ -1,0 +1,39 @@
+package services;
+
+import control.IEventCommModule;
+
+import IRGlancePackage.IRGlance;
+
+/**
+ * Defines the WiiMote IRGlance events
+ * @author Santiago Hors Fraile
+ */
+public class WiiMoteServiceIRGlanceEvent implements IEventCommModule{
+	/**
+	 * Represents the rate in which the timer is working. It is measured in miliseconds.
+	 * 
+	 */
+	public int period;
+	/**
+	 * Represents the number of changes in the detection of IR spots during one period.
+	 */
+	public int speed;
+	/**
+	 * Represents the Wiimote object.
+	 */
+	public IRGlance source;
+	/**
+	 * Sets the fields of this class with the given parameters.
+	 * @param source The new Wiimote.
+	 * @param period The new period.
+	 * @param speed The new speed.
+	 */ 
+	public WiiMoteServiceIRGlanceEvent (IRGlance source, int period, int speed){
+		this.period= period;
+		this.speed= speed;
+		this.source= source;
+	}
+
+
+	
+}

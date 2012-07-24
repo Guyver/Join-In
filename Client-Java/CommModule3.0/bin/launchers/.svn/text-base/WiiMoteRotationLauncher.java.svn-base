@@ -1,0 +1,126 @@
+package launchers;
+
+import iservices.*;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.wiigee.device.Wiimote;
+import org.wiigee.event.RotationEvent;
+import org.wiigee.event.RotationListener;
+import org.wiigee.event.RotationSpeedEvent;
+
+import services.*;
+
+import control.DeviceManager;
+import control.IListenerCommModule;
+import control.LauncherWrapper;
+
+public class WiiMoteRotationLauncher extends LauncherWrapper implements RotationListener {
+
+	/**
+	 * This field is the reference to the object wiiMote of DeviceManager class.
+	 */
+	private Wiimote wiiMote;
+	
+	/**
+	 * Returns the obejct wiiMote.
+	 * @return noninManager The object wiiMote.
+	 */
+	public Wiimote getWiiMote(){
+		return wiiMote;
+	}
+	
+	/**
+	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
+	 * @param l The listener that have to be added.
+	 */
+	public void addListener (IWiiMoteRotationService  l){	
+		super.addListener(l);
+	}
+	
+	/**
+	 * Calls to the superclass LauncherWrapper function dropService and drops one WiiMoted labeled with the given parameter from the DeviceManager.
+	 * It also sets the WiiMotionPlus of that WiiMote to false.
+	 * @param label The label of the WiiMote whose service is going to be dropped.
+	 */
+	public void dropService(int label){
+		try {
+			wiiMote.setWiiMotionPlusEnabled(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		super.dropService();
+		DeviceManager.getDeviceManager().dropWiiMote(label);	
+	}
+	
+	/**
+	 * Links this class with the DeviceManager by adding itself as listener.
+	 * @param wm The Wiimote object that must be now the field noninManager of this class.
+	 */
+	public WiiMoteRotationLauncher(Wiimote wm) {
+		wiiMote= wm; 
+		wm.getWiiMotionPlus().addRotationListener(this);
+	
+		try {
+			
+			wm.setWiiMotionPlusEnabled(true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	//Specific functions
+
+	/**
+	 * Throws the given RotationEvent to all listeners from listenersList as a WiiMoteServiceRotationEvent.
+	 * @param arg0 The RotationEvent.
+	 */
+	@Override
+	public void rotationReceived(RotationEvent arg0) {
+		WiiMoteServiceRotationEvent se = new WiiMoteServiceRotationEvent(arg0);	
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		
+	
+			while(it.hasNext()){
+				IWiiMoteRotationService l = (IWiiMoteRotationService)it.next();
+				l.rotationReceived(se);		
+			}			
+		
+	}
+	/**
+	 * Throws the given RotationSpeedEvent to all listeners from listenersList as a WiiMoteServiceRotationSpeedEvent.
+	 * @param arg0 The RotationSpeedEvent.
+	 */
+	@Override
+	public void rotationSpeedReceived(RotationSpeedEvent arg0) {
+		WiiMoteServiceRotationSpeedEvent se = new WiiMoteServiceRotationSpeedEvent(arg0);	
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		
+	
+			while(it.hasNext()){
+				IWiiMoteRotationSpeedService l = (IWiiMoteRotationSpeedService)it.next();
+				l.rotationSpeedReceived(se);		
+			}		
+		
+		
+	}
+	/**
+	 * Calls the calibrationFinished function in all listeners from listenersList.
+	 */
+	@Override
+	public void calibrationFinished() {
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+	
+			while(it.hasNext()){
+				ICalibrationFinishedService l = (ICalibrationFinishedService)it.next();
+				l.calibrationFinished();		
+			}	
+		
+	}		
+	
+
+
+
+}

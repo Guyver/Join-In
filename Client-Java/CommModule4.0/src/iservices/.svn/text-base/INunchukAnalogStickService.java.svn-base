@@ -1,0 +1,20 @@
+package iservices;
+
+import services.*;
+
+import control.IListenerCommModule;
+
+/**
+ * Must be implemented by any class which wants to receive the events from the Nunchuk analog stick
+ * @author Santiago Hors Fraile
+ */
+public interface INunchukAnalogStickService extends IListenerCommModule {
+
+	/**
+	 * Must be implemented to manage the NunchukAnalogStickServiceEvent received.
+	 * @param se This is the NunchukAnalogStickServiceEvent received.
+	 */
+	void analogStickEventReceived(NunchukAnalogStickServiceEvent se);
+		
+
+}

@@ -1,0 +1,85 @@
+package launchers;
+
+import iservices.*;
+
+import java.util.Iterator;
+
+import org.wiigee.device.Wiimote;
+import org.wiigee.event.ButtonListener;
+import org.wiigee.event.ButtonPressedEvent;
+import org.wiigee.event.ButtonReleasedEvent;
+
+import services.*;
+
+import control.DeviceManager;
+import control.IListenerCommModule;
+import control.LauncherWrapper;
+public class WiiMoteButtonsLauncher extends LauncherWrapper implements ButtonListener{
+
+	/**
+	 * This field is the reference to the object wiiMote of DeviceManager class.
+	 */
+	private Wiimote wiiMote;
+
+	/**
+	 * Returns the object wiiMote.
+	 * @return noninManager The object wiiMote.
+	 */
+	public Wiimote getWiiMote(){
+		return wiiMote;
+	}
+	
+	/**
+	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
+	 * @param l The listener that have to be added.
+	 */
+	public void addListener (IWiiMoteButtonsService l){	
+		super.addListener(l);
+	}
+	
+	/**
+	 * Calls to the superclass LauncherWrapper function dropService and drops one WiiMoted labeled with the given parameter from the DeviceManager.
+	 * @param label The label of the WiiMote whose service is going to be dropped.
+	 */
+	public void dropService(int label){
+		super.dropService();
+		DeviceManager.getDeviceManager().dropWiiMote(label);	
+	}
+	/**
+	  * Links this class with the DeviceManager by adding itself as listener.
+	 * @param wm The Wiimote object that must be now the field noninManager of this class.
+	 */
+	public WiiMoteButtonsLauncher(Wiimote wm) {
+		wiiMote= wm; 
+		wm.addButtonListener(this);
+	}
+	
+	//Specific functions
+	/**
+	 * Throws the given ButtonPressedEvent to all listeners in the listenerList as a WiiMoteServiceButtonPressReceivedEvent.
+	 * @param event The ButtonPressedEvent.
+	 */
+	public void buttonPressReceived(ButtonPressedEvent event) {
+		WiiMoteServiceButtonPressReceivedEvent se = new WiiMoteServiceButtonPressReceivedEvent(event);	
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			IWiiMoteButtonsService l = (IWiiMoteButtonsService)it.next();
+			l.buttonPressedEventReceived(se);		
+		}					
+	}
+
+	/**
+	 * Throws the given ButtonReleasedEvent to all listeners in the listenerList as a WiiMoteServiceButtonReleaseReceivedEvent.
+	 * @param event The ButtonReleasedEvent.
+	 */
+	public void buttonReleaseReceived(ButtonReleasedEvent event) {
+		WiiMoteServiceButtonReleaseReceivedEvent se = new WiiMoteServiceButtonReleaseReceivedEvent(event);	
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			IWiiMoteButtonsService l = (IWiiMoteButtonsService)it.next();
+			l.buttonReleasedEventReceived(se);		
+		}	
+		
+	}
+
+}

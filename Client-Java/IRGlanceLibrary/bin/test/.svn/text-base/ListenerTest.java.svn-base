@@ -1,0 +1,19 @@
+package test;
+
+import IRGlancePackage.IRGlanceListener;
+import IRGlancePackage.SpeedEvent;
+
+/**
+ * This is an example of how to print the speed results by implementing the IRGlancListener interface.
+ * Implementación de ejemplo de un IRGlanceListener que imprimie por pantalla
+ * @author Santiago
+ *
+ */
+public class ListenerTest implements IRGlanceListener {
+
+	public void speedUpdated(SpeedEvent se) {
+		System.out.println("\nSpeed = " +se.speed);
+
+	}
+
+}

@@ -1,0 +1,33 @@
+package services;
+
+import control.IEventCommModule;
+
+import edu.unsw.cse.wiiboard.event.WiiBoardStatusEvent;
+
+/**
+ * Defines the WiiBoard status event.
+ * @author Santiago Hors Fraile
+ */
+public class WiiBoardServiceStatusEvent implements IEventCommModule{
+
+	/**
+	 * Represents the battery life of the batteries of the WiiBoard
+	 */
+	public double battery;
+	/**
+	 * Represents the LED light state of the WiiBoard.
+	 */
+	public boolean lightState;
+	
+	/**
+	 * Sets the fields of this class with the data contained in the given parameter.
+	 * @param status The new status report of the WiiBoard.
+	 */
+	public WiiBoardServiceStatusEvent(WiiBoardStatusEvent status) {
+		this.battery= status.batteryLife();
+		this.lightState = status.isLEDon();
+		
+		
+	}
+
+}

@@ -1,0 +1,48 @@
+<!--
+	@Author: Santiago Hors Fraile
+-->
+<html>
+<head>
+	
+	<title> JoinIn </title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style type="text/css">
+		#div_psiPose
+		{
+			position: absolute;
+			top: -550px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 50%;
+			height: 30%;
+			margin: auto;
+			text-align:center;
+		}
+	</style>
+	
+	
+	
+</head>
+
+<body>
+	
+
+	<div id="div_psiPose">
+	<p><h1>Do this to start.</h1></p>
+	<img src="../img/psipose.gif" type="image" align="middle"/>
+	</div>
+	<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+	<script>
+	var socket= io.connect('193.156.105.142:7541');
+	
+	socket.on('sandraHasConnected', function(){
+			
+		location.href="./framedPage.htm";		
+	});
+
+</script>
+</body>
+
+</html>

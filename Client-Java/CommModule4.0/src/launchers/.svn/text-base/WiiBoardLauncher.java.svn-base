@@ -1,0 +1,120 @@
+package launchers;
+
+import iservices.*;
+
+import java.util.Iterator;
+
+
+
+
+import edu.unsw.cse.wiiboard.WiiBoard;
+
+import edu.unsw.cse.wiiboard.event.WiiBoardButtonEvent;
+
+import edu.unsw.cse.wiiboard.event.WiiBoardListener;
+import edu.unsw.cse.wiiboard.event.WiiBoardMassEvent;
+import edu.unsw.cse.wiiboard.event.WiiBoardStatusEvent;
+import services.*;
+
+import control.DeviceManager;
+import control.IListenerCommModule;
+import control.LauncherWrapper;
+
+
+public class WiiBoardLauncher extends LauncherWrapper implements WiiBoardListener{
+
+	/**
+	 * This field is the reference to the object wiiBoard of DeviceManager class.
+	 */
+	private WiiBoard wiiBoard;
+
+	/**
+	 * Returns the object wiiBoard.
+	 * @return noninManager The object wiiBoard.
+	 */
+	public WiiBoard getWiiBoard(){
+		return wiiBoard;
+	}
+	
+	/**
+	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
+	 * @param l The listener that have to be added.
+	 */
+	public void addListener (IWiiBoardService l){
+		super.addListener(l);	
+	}
+	
+	/**
+	 * Calls to the superclass LauncherWrapper function dropService and drops one WiiBoard from the DeviceManager.
+	 */
+	public void dropService(){
+		super.dropService();
+		DeviceManager.getDeviceManager().dropWiiBoard();	
+	}
+	
+	/**
+	  * Links this class with the DeviceManager by adding itself as listener.
+	 * @param wb The WiiBoard object that must be now the field noninManager of this class.
+	 */
+	public WiiBoardLauncher(WiiBoard wb) {
+		this.wiiBoard= wb;
+		wb.addListener(this);	
+
+
+	}
+	
+	//Specific functions
+	/**
+	 * Throws the given WiiBoardButtonEvent to all listeners in the listenerList as a WiiBoardServiceButtonEvent.
+	 * @param buttonEvent The WiiBoardButtonEvent.
+	 */
+	public void wiiBoardButtonEvent(WiiBoardButtonEvent buttonEvent) {
+		WiiBoardServiceButtonEvent se = new WiiBoardServiceButtonEvent(buttonEvent);
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			IWiiBoardService l = (IWiiBoardService)it.next();
+			l.wiiBoardButtonEvent(se);	
+		}		
+	}
+
+	/**
+	 * Calls the wiiBoardDisconnected function in all listeners contained in the listenerList.
+	 */
+	public void wiiBoardDisconnected() {
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			IWiiBoardService l = (IWiiBoardService)it.next();
+			l.wiiBoardDisconnected();		
+		}		
+	}
+
+	/**
+	 * Throws the given WiiBoardMassEvent to all listeners in the listenerList as a WiiBoardServiceMassEvent.
+	 * @param massEvent The WiiBoardMassEvent.
+	 */
+	public void wiiBoardMassReceived(WiiBoardMassEvent massEvent) {		
+		WiiBoardServiceMassEvent se = new WiiBoardServiceMassEvent(massEvent);
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			IWiiBoardService l = (IWiiBoardService)it.next();
+			l.wiiBoardUpdate(se);		
+		}		
+	}
+
+	/**
+	 * Throws the given WiiBoardStatusEvent to all listeners in the listenerList as a WiiBoardServiceStatusEvent.
+	 * @param statusEvent The WiiBoardStatusEvent.
+	 */
+	public void wiiBoardStatusReceived(WiiBoardStatusEvent statusEvent) {		
+		WiiBoardServiceStatusEvent se = new WiiBoardServiceStatusEvent(statusEvent);		
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			IWiiBoardService l = (IWiiBoardService)it.next();
+			l.wiiBoardStatusEvent(se);	
+		}			
+	}
+
+	
+
+
+}

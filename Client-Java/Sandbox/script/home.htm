@@ -1,0 +1,62 @@
+<!--
+	@Author: James Browne
+	
+	@Brief:
+	The html page that the clients will recieve upon connecting to the game server.
+	This is far from the finished article and will probably change a lot.
+-->
+<html>
+<head>
+	<title> Sand box </title>
+	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #f0f0f0;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+
+</head>
+
+<body>
+
+<script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
+<script>
+	// Connect to the server.
+	var socket = io.connect('193.156.105.166:7541');
+	var connectedUsers = [];
+	var name;	
+	
+	socket.on( 'heresPlayersFromServer', function( data ) {
+
+		connectedUsers.push( data );
+	});
+
+	function show_prompt()
+	{
+		var name= prompt("Please enter your name","Enter your name...");
+		
+		if (name!=null && name!="")
+		{
+			 document.body.appendChild("<p>Hello " + name + "! How are you today?</p>");
+		}
+		socket.emit( 'getPlayers' );
+	}
+	
+	function load(){
+		
+		setTimeout( show_prompt , 1000);	
+	};
+	
+window.onload = load;
+</script>
+<input type="button" value='Test' id='string'  onClick="location.href='index.htm'" ></button>
+
+
+</body>
+
+
+</html>
