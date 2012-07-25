@@ -349,17 +349,7 @@ Player.prototype.handleMovement = function(  ) {
 				break;
 		}//End Switch
 		
-	}// End for 
-	
-	// If the player has changed its position or rotated, tell the server.
-	if( needsUpdate ){
-	
-		var map = { 
-			pos : this._position, 
-			ip : 	this._ip,
-		};
-		socket.emit('updateMe', map	);
-	}	
+	}// End for 	
 };
 
 
@@ -626,15 +616,10 @@ Player.prototype.getJoint = function( jointName ) {
 };
 
 
-/**	@Name:
-	
-	@Brief:
-
-	
-	@Arguments: N/A
-	
+/**	@Name:	
+	@Brief:	
+	@Arguments: N/A	
 	@Returns: 
-
 */
 Player.prototype.getDirection = function( ) {
 
@@ -643,15 +628,9 @@ Player.prototype.getDirection = function( ) {
 
 
 /**	@name LOAD MODEL MESH( )
-
-	@brief
-	Load a model from file specified.
-	
-	@args
-	url = The string location of the model on disk
-	
-	@Returns
-	N/A
+	@brief Load a model from file specified.	
+	@args url = The string location of the model on disk	
+	@Returns N/A
 */
 Player.prototype.loadModelMesh = function( url ){
 	

@@ -295,13 +295,12 @@ socket.sockets.on( 'connection', function( client ){
 	//
 	client.on( 'updateKinect', function( ) {
 		
-		try{
-		
+		try{		
 			var kinectData = users[ client.handshake.address.address ].kinect
 			// Return the users kinect data.
 			client.emit('syncKinect', kinectData );
 		}catch( err ){
-			console.log("Do fuck all");		
+			console.log("Do fuck all, theres not kinect data or that user doesnt exist.");		
 		}
 			
 	});

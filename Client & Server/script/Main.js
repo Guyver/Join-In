@@ -56,6 +56,7 @@ var players;
 var deltaTime, last, current;
 
 var waiting = false;
+var paused = false;
 // The level manager.
 var level_Manager;
 
@@ -94,7 +95,7 @@ function init(){
 	// Create the game objects.
 	createObjects();
 	// Gui stuff.
-	setupGui();
+	//setupGui();
 	// Skybox...etc.
 	setupEnviornment();
 	// Send the server your data.
@@ -200,7 +201,9 @@ function setupLights(){
 	directionalLight.position.z = -2000;
 	directionalLight.position.normalize();
 	// Add to the scene.
-	scene.add( directionalLight );/**/
+	scene.add( directionalLight );
+	
+
 };
 
 
@@ -269,12 +272,7 @@ function gameLoop(){
 	
 	requestAnimationFrame( gameLoop, renderer.domElement );
 	
-	if( !level_Manager._player_Manager._gameOver  ){
-		// Update all the players. TODO: Move to player manager.
-		for ( each_player in players ){
-			
-			players[ each_player ].update();	
-		}
+	if( !level_Manager._player_Manager._gameOver && !paused ){
 		
 		// Update the level manager.
 		level_Manager.update( scene, camera );
@@ -286,11 +284,18 @@ function gameLoop(){
 	}
 	else{
 	
-		if( !waiting ){
-			setCookie( "score" , level_Manager.getPlayer()._score , 1);
+		if( !waiting && !paused && level_Manager._player_Manager._gameOver ){
+			// If we're not waiting and the game isn't paused and its game over go in here.
+			setCookie( "score" , level_Manager.getPlayer()._score , 1 );
 			socket.emit( 'gameOver', level_Manager.getPlayer()._score  );
 			waiting = true;	
 			console.log( "Waiting for the call from the server that the team is finished." );
+		}
+		
+		if( paused ){
+			// Do nothing 
+			console.log( "The game is paused." );
+		
 		}
 	}
 };
@@ -712,26 +717,11 @@ function Skybox(){
 	
  };
 
-
-function updatePlayers( data ) {  
-	
-	// Use the ip to match up the data. 
-	for ( index in data ){
-	
-		try{
-			players[ index ].setPosition( data[index].pos );
-		}
-		catch( err ){
-			console.log( "Couldn't find the player with ip address of  : %s", index );
-			if( index !== undefined){
-				// Create the player.
-				players[ index ] = new Player( "", data[index].pos);
-			}
-		}		
-	}// end for.	
-}; //end func. 
-
-
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
 function sendData(  ) {  
 	
 	console.log( "The key from the cookie is : "+level_Manager.getPlayer()._userKey );
@@ -812,6 +802,7 @@ function handleKeyEvents( event ) {
 	  		break;
 		case 97:// Num pad 1. First Person.
 			var cameraType = 1;
+			paused = true;
 			level_Manager.setCameraType( cameraType );
 	  		break;
 		case 98:// Num pad 2. Test.
@@ -819,20 +810,13 @@ function handleKeyEvents( event ) {
 	  		break;
 		case 99:// Num pad 3. Third Person.
 			var cameraType = 3;
+			paused = false;
 			level_Manager.setCameraType( cameraType );
 	  		break;
 		default:
 			update = false;
 	  		return;		
 	}
-	
-	var map = { 
-			pos : level_Manager.getPlayer().getPosition() 
-		};
-		
-	if( update ){
-		socket.emit('updateMe', map	);
-	}	
 };
 
 socket.on( 'topScorePage', function( ){
@@ -852,12 +836,6 @@ socket.on('updateNewUser',function(user) {
 		console.log( "User is :"+ JSON.parse( user ).name );	
 		console.log( "User's ip :"+ JSON.parse( user ).ip);		
 });
-
-
-
-
-
-
 
 
 /**	@Name:	Resize

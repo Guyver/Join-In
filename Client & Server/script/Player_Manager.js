@@ -63,14 +63,22 @@ Player_Manager.prototype.update = function(  ){
 	if( this._playGame && !this._gameOver ){	
 	
 		// If the player is within 50 units of the checkpoint.
-		if ( dist < 50 ){
-			
+		if ( dist < 50 ){					
+					
 			if( this._checkpoints[1] != undefined ){
+			
 				// Check to see if the player has an object in his inventory.
 				if( this._player.checkInventory() ){
 								
-					// If at the position, push it into the walklist again.
+					var map = { 
+						pos : this._player.getPosition(), 
+					};
+					// Tell the server what checkpoint we're at.
+					socket.emit('updateMe', map	);
+					
+					// If at the position, push it into the walklist again, infinite game :D
 					//this._checkpoints.push( this._checkpoints[0] );
+					
 					// Pop off the so the current goal is the next one.
 					this._checkpoints.shift();
 					// Remove the equipped item from the Player.
