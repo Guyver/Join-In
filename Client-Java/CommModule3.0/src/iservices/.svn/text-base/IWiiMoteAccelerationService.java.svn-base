@@ -1,0 +1,19 @@
+package iservices;
+
+import services.*;
+
+import control.IListenerCommModule;
+
+/**
+ * Must be implemented by any class which wants to receive acceleration events from the WiiMote
+ * @author Santiago Hors Fraile
+ */
+public interface IWiiMoteAccelerationService extends IListenerCommModule{
+	/**
+	 * Must be implemented to manage the WiiMoteServiceAccelerationEvent received.
+	 * @param se This is the WiiMoteServiceAccelerationEvent received.
+	 */
+	void accelerationReceived(WiiMoteServiceAccelerationEvent se);
+
+
+}

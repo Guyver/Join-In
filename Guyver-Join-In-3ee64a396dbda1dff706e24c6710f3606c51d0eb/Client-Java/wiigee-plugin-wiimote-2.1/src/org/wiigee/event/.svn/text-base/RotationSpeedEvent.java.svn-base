@@ -1,0 +1,88 @@
+/*
+ * wiigee - accelerometerbased gesture recognition
+ * Copyright (C) 2007, 2008, 2009 Benjamin Poppinga
+ *
+ * Developed at University of Oldenburg
+ * Contact: wiigee@benjaminpoppinga.de
+ *
+ * This file is part of wiigee.
+ *
+ * wiigee is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+package org.wiigee.event;
+
+import java.util.EventObject;
+import org.wiigee.device.Device;
+
+/**
+ * Defines the rotation speed event.
+ * The RotationSpeedEvent contains the raw angle velocities - psi, theta, phi.
+ * This event only occurs, if a Wii Motion Plus is attached.
+ *
+ * @author Benjamin 'BePo' Poppinga, upgraded by Santiago Hors Fraile
+ */
+public class RotationSpeedEvent extends EventObject {
+
+	private static final long serialVersionUID = 1L;
+	/**
+	 * Represents the raw angle velocity of the x axis.
+	 */
+	protected double psi;
+	/**
+	 * Represents the raw angle velocity of the y axis.
+	 */
+    protected double theta;
+	/**
+	 * Represents the raw angle velocity of the z axis.
+	 */
+    protected double phi;
+
+    /**
+     * Sets the fields of this class with the given parameters.
+     * @param source The WiiMote to whom the WiiMotionPlus is attached.
+     * @param psi the new raw angle velocity of the x axis.
+     * @param theta the raw angle velocity of the y axis.
+     * @param phi the raw angle velocity of the z axis.
+     */
+	public RotationSpeedEvent(Device source, double psi, double theta, double phi) {
+        super(source);
+		this.psi = psi;
+        this.theta = theta;
+        this.phi = phi;
+	}
+
+	/**
+	 * Gets the current field psi.
+	 * @return double The current psi.
+	 */
+	public double getPsi() {
+        return this.psi;
+    }
+	/**
+	 * Gets the current field theta.
+	 * @return double The current theta.
+	 */
+    public double getTheta() {
+        return this.theta;
+    }
+	/**
+	 * Gets the current field phi.
+	 * @return double The current phi.
+	 */
+    public double getPhi() {
+        return this.phi;
+    }
+}

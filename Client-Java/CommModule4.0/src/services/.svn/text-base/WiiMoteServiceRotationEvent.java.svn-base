@@ -1,0 +1,59 @@
+package services;
+
+import org.wiigee.event.RotationEvent;
+
+import control.IEventCommModule;
+
+/**
+ * Defines the WiiMote rotation events
+ * @author Santiago Hors Fraile
+ */
+public class WiiMoteServiceRotationEvent implements IEventCommModule{
+
+	/**
+	 * Represents the pitch of the WiiMotionPlus.
+	 */
+    protected double pitch;
+
+	/**
+	 * Represents the yaw of the WiiMotionPlus.
+	 */
+	protected double yaw;
+
+	/**
+	 * Represents the roll of the WiiMotionPlus.
+	 */
+    protected double roll;
+    
+    /**
+     * Sets the fields of this class with the information contained in the given parameter.
+     * @param event The new RotationEvent.
+     */
+	public WiiMoteServiceRotationEvent(RotationEvent event) {
+        this.pitch = event.getPitch();
+        this.roll = event.getRoll();
+        this.yaw = event.getYaw();
+	}
+	/**
+	 * Gets the current field pitch.
+	 * @return double The current pitch.
+	 */
+	public double getPitch() {
+        return this.pitch;
+    }
+	/**
+	 * Gets the current field yaw.
+	 * @return double The current yaw.
+	 */
+    public double getYaw() {
+        return this.yaw;
+    }
+	/**
+	 * Gets the current field roll.
+	 * @return double The current roll.
+	 */
+    public double getRoll() {
+        return this.roll;
+    }
+	
+}

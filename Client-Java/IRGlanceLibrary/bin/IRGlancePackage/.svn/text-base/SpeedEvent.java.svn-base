@@ -1,0 +1,34 @@
+package IRGlancePackage;
+
+/**
+ * Defines the SpeedEvent
+ * @author  Santiago Hors Fraile
+ */
+public class SpeedEvent {
+	
+	/**
+	 * Represents the rate in which the timer is working. It is measured in milliseconds.
+	 */
+	public int period;
+	/**
+	 * Represents the number of changes in the detection of IR spots.
+	 */
+	public int speed;
+	/**
+	 * Represents the IRGlance object that launches the event.
+	 */
+	public IRGlance source;
+	
+	/**
+	 * Sets the field of this class with the given parameters.
+	 * @param source The new IRglance object that launches the event.
+	 * @param period The new period.
+	 * @param speed The new speed.
+	 */
+	public SpeedEvent (IRGlance source, int period, int speed){
+		this.period= period;
+		this.speed= speed;
+		this.source= source;
+	}
+	
+}

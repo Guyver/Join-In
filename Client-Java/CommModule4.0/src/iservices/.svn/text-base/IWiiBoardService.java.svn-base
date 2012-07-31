@@ -1,0 +1,41 @@
+package iservices;
+
+import services.*;
+
+import control.IListenerCommModule;
+
+
+/**
+ * Must be implemented by any class which wants to receive the events from the WiiBoard
+ * @author Santiago Hors Fraile
+ */
+public interface IWiiBoardService extends IListenerCommModule{
+
+	/**
+	 * Must be implemented to manage the WiiBoardServiceMassEvent received.
+	 * @param se This is the WiiBoardServiceMassEvent received.
+	 */	
+	public void wiiBoardMassEvent(WiiBoardServiceMassEvent se);
+	/**
+	 * Must be implemented to manage the WiiBoardServiceStatusEvent received.
+	 * @param se This is the WiiBoardServiceStatusEvent received.
+	 */
+	public void wiiBoardStatusEvent(WiiBoardServiceStatusEvent se);
+	/**
+	 * Must be implemented to manage the WiiBoardServiceMassEvent received.
+	 * @param se This is the WiiBoardServiceMassEvent received.
+	 */
+	public void wiiBoardUpdate(WiiBoardServiceMassEvent se);
+	/**
+	 * Must be implemented to manage the WiiBoardServiceButtonEvent received.
+	 * @param se This is the WiiBoardServiceButtonEvent received.
+	 */
+	public void wiiBoardButtonEvent(WiiBoardServiceButtonEvent se);
+	/**
+	 * Must be implemented to deal the WiiBoard disconnection.
+	 */
+	public void wiiBoardDisconnected();
+
+
+	
+}

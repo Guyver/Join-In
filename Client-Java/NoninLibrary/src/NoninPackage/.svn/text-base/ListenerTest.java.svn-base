@@ -1,0 +1,14 @@
+package NoninPackage;
+
+
+public class ListenerTest implements INoninListener{
+
+	@Override
+	public void noninUpdate(NoninEvent ne) {
+	//	System.out.println("Pulso: "+ne.pulse);
+		
+	}
+
+
+
+}

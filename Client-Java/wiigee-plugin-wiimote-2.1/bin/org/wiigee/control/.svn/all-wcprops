@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/CatedraTelefonica/!svn/ver/145/WonderHealth/software/librerias/wiigee-plugin-wiimote-1.5.7/src/org/wiigee/control
+END
+WiimoteStreamer.java
+K 25
+svn:wc:ra_dav:version-url
+V 139
+/svn/CatedraTelefonica/!svn/ver/145/WonderHealth/software/librerias/wiigee-plugin-wiimote-1.5.7/src/org/wiigee/control/WiimoteStreamer.java
+END
+WiimoteDeviceDiscovery.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/CatedraTelefonica/!svn/ver/120/WonderHealth/software/librerias/wiigee-plugin-wiimote-1.5.7/src/org/wiigee/control/WiimoteDeviceDiscovery.java
+END
+WiimoteWiigee.java
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/CatedraTelefonica/!svn/ver/120/WonderHealth/software/librerias/wiigee-plugin-wiimote-1.5.7/src/org/wiigee/control/WiimoteWiigee.java
+END
+Extension.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/CatedraTelefonica/!svn/ver/145/WonderHealth/software/librerias/wiigee-plugin-wiimote-1.5.7/src/org/wiigee/control/Extension.java
+END
+NunchukCalibrationData.java
+K 25
+svn:wc:ra_dav:version-url
+V 146
+/svn/CatedraTelefonica/!svn/ver/145/WonderHealth/software/librerias/wiigee-plugin-wiimote-1.5.7/src/org/wiigee/control/NunchukCalibrationData.java
+END

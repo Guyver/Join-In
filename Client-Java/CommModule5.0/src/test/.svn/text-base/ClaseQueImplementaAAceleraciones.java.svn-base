@@ -1,0 +1,14 @@
+package test;
+
+import iservices.IWiiMoteAccelerationService;
+
+import services.WiiMoteServiceAccelerationEvent;
+
+public class ClaseQueImplementaAAceleraciones implements IWiiMoteAccelerationService {
+
+	@Override
+	public void accelerationReceived(WiiMoteServiceAccelerationEvent se) {
+		System.out.println("X: "+se.X+" Y:"+se.Y +" Z:" +se.Z);		
+	}
+
+}

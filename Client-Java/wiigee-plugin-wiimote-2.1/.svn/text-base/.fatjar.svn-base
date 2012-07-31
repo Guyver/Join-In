@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Sun Jun 20 09:59:05 CEST 2010
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=wiigee-plugin-wiimote-1.5.7.jar
+manifest.mergeall=true
+manifest.mainclass=
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

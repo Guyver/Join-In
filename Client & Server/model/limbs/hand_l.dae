@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <contributor>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.63.0 r46461:46487M</authoring_tool>
+    </contributor>
+    <created>2012-06-28T19:11:03</created>
+    <modified>2012-06-28T19:11:03</modified>
+    <unit name="meter" meter="1"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="Skin_003-effect">
+      <profile_COMMON>
+        <technique sid="common">
+          <phong>
+            <emission>
+              <color sid="emission">0 0 0 1</color>
+            </emission>
+            <ambient>
+              <color sid="ambient">0 0 0 1</color>
+            </ambient>
+            <diffuse>
+              <color sid="diffuse">0.364626 0.3083878 0.2409267 1</color>
+            </diffuse>
+            <specular>
+              <color sid="specular">0 0 0 1</color>
+            </specular>
+            <shininess>
+              <float sid="shininess">5</float>
+            </shininess>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
+          </phong>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
+    </effect>
+  </library_effects>
+  <library_materials>
+    <material id="Skin_003-material" name="Skin.003">
+      <instance_effect url="#Skin_003-effect"/>
+    </material>
+  </library_materials>
+  <library_geometries>
+    <geometry id="Bip002_L_Hand-mesh_001-mesh" name="Bip002_L_Hand-mesh.001">
+      <mesh>
+        <source id="Bip002_L_Hand-mesh_001-mesh-positions">
+          <float_array id="Bip002_L_Hand-mesh_001-mesh-positions-array" count="84">-0.2687957 0.008373975 -0.1158613 -0.2673957 0.04157584 0.2352387 0.07820415 0.07337391 -0.1301612 -0.9462957 -1.195226 0.01703864 -0.9357957 -0.9802255 0.3656385 -1.110596 -1.793826 0.1141386 -1.115596 -1.649926 0.3072388 -0.1341957 -0.5661258 -0.2402613 -0.6118957 -0.8589257 -0.1418614 0.005904257 -0.6780261 -0.04866141 0.4017043 -0.07132506 0.2353385 0.4003043 -0.104525 -0.1158613 0.4692043 -2.143526 0.3844388 0.1700043 -2.110725 0.4648388 0.4840043 -2.286726 0.1026387 -0.8450957 -1.993425 0.3625391 0.6275043 -1.053925 -0.02256119 0.6302043 -1.017424 0.3450387 0.6112043 -1.425626 0.01703864 0.7376043 -2.079326 0.1141386 0.7326043 -1.935425 0.3072388 0.5251043 -0.9262256 -0.09836143 0.2619042 -0.6251258 -0.1243612 -0.8807957 -1.613226 -0.04896128 -0.7981957 -2.137126 0.04923868 0.4829043 -1.804126 -0.04896128 -0.3015957 -0.968626 0.5176385 0.2542042 -0.9977254 0.5087388</float_array>
+          <technique_common>
+            <accessor source="#Bip002_L_Hand-mesh_001-mesh-positions-array" count="28" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Bip002_L_Hand-mesh_001-mesh-normals">
+          <float_array id="Bip002_L_Hand-mesh_001-mesh-normals-array" count="84">-0.4907681 0.6524247 -0.5774407 -0.3881955 0.7690665 0.5077365 0.1708731 0.7787714 -0.6035646 -0.6776025 0.2225714 -0.7008881 -0.7807245 0.3554796 0.5138707 -0.8940092 -0.3147679 -0.3187658 -0.8619037 -0.01779228 0.5067293 0.2605975 -0.2259895 -0.9385968 -0.1994384 -0.2189702 -0.9551073 0.1296731 -0.2664266 -0.9550768 0.5973693 0.6161077 0.5133519 0.6083865 0.4322642 -0.6655477 0.3287149 -0.5698111 0.7531358 0.007202327 -0.5591296 0.8290353 0.2700888 -0.9006012 -0.340495 -0.4148076 -0.5633717 0.7144688 0.7467574 -0.05423134 -0.662862 0.8378247 0.140263 0.5275735 0.6433302 0.07211524 -0.7621387 0.831843 -0.4534745 -0.3199256 0.8243965 -0.148503 0.5461288 0.137669 -0.3379009 -0.9310282 -0.1422162 -0.06335639 -0.9877926 -0.2754906 -0.02063047 -0.9610584 -0.374401 -0.8166143 -0.4392224 0.2125919 -0.07425153 -0.9743034 -0.1029389 0.1158788 0.9878842 0.1972411 0.1092867 0.9742119</float_array>
+          <technique_common>
+            <accessor source="#Bip002_L_Hand-mesh_001-mesh-normals-array" count="28" stride="3">
+              <param name="X" type="float"/>
+              <param name="Y" type="float"/>
+              <param name="Z" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <source id="Bip002_L_Hand-mesh_001-mesh-map-0">
+          <float_array id="Bip002_L_Hand-mesh_001-mesh-map-0-array" count="312">0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1</float_array>
+          <technique_common>
+            <accessor source="#Bip002_L_Hand-mesh_001-mesh-map-0-array" count="156" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Bip002_L_Hand-mesh_001-mesh-vertices">
+          <input semantic="POSITION" source="#Bip002_L_Hand-mesh_001-mesh-positions"/>
+        </vertices>
+        <polylist material="Skin_003" count="52">
+          <input semantic="VERTEX" source="#Bip002_L_Hand-mesh_001-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Bip002_L_Hand-mesh_001-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Bip002_L_Hand-mesh_001-mesh-map-0" offset="2" set="0"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>0 0 0 1 1 1 2 2 2 0 0 3 3 3 4 1 1 5 4 4 6 1 1 7 3 3 8 3 3 9 5 5 10 4 4 11 6 6 12 4 4 13 5 5 14 7 7 15 0 0 16 2 2 17 8 8 18 0 0 19 7 7 20 0 0 21 8 8 22 3 3 23 2 2 24 9 9 25 7 7 26 8 8 27 7 7 28 9 9 29 9 9 30 3 3 31 8 8 32 1 1 33 10 10 34 2 2 35 11 11 36 2 2 37 10 10 38 12 12 39 13 13 40 14 14 41 6 6 42 5 5 43 15 15 44 11 11 45 10 10 46 16 16 47 17 17 48 16 16 49 10 10 50 16 16 51 17 17 52 18 18 53 18 18 54 17 17 55 19 19 56 20 20 57 19 19 58 17 17 59 21 21 60 22 22 61 11 11 62 9 9 63 18 18 64 3 3 65 18 18 66 9 9 67 16 16 68 23 23 69 24 24 70 5 5 71 19 19 72 14 14 73 25 25 74 10 10 75 1 1 76 26 26 77 26 26 78 27 27 79 10 10 80 27 27 81 12 12 82 20 20 83 6 6 84 26 26 85 4 4 86 11 11 87 16 16 88 21 21 89 9 9 90 2 2 91 11 11 92 11 11 93 22 22 94 9 9 95 21 21 96 9 9 97 22 22 98 9 9 99 21 21 100 16 16 101 5 5 102 3 3 103 23 23 104 19 19 105 25 25 106 18 18 107 18 18 108 23 23 109 3 3 110 23 23 111 18 18 112 25 25 113 27 27 114 17 17 115 10 10 116 17 17 117 27 27 118 20 20 119 26 26 120 6 6 121 15 15 122 4 4 123 26 26 124 1 1 125 26 26 126 13 13 127 27 27 128 12 12 129 19 19 130 20 20 131 26 26 132 15 15 133 13 13 134 15 15 135 24 24 136 13 13 137 24 24 138 23 23 139 25 25 140 24 24 141 15 15 142 5 5 143 14 14 144 19 19 145 12 12 146 27 27 147 13 13 148 12 12 149 14 14 150 24 24 151 25 25 152 14 14 153 13 13 154 24 24 155</p>
+        </polylist>
+      </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
+    </geometry>
+  </library_geometries>
+  <library_visual_scenes>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Mesh_018" type="NODE">
+        <translate sid="location">0 0 0</translate>
+        <rotate sid="rotationZ">0 0 1 -90</rotate>
+        <rotate sid="rotationY">0 1 0 -4.32571e-6</rotate>
+        <rotate sid="rotationX">1 0 0 -359.9997</rotate>
+        <scale sid="scale">0.9999999 0.9999999 1</scale>
+        <instance_geometry url="#Bip002_L_Hand-mesh_001-mesh">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="Skin_003" target="#Skin_003-material">
+                <bind_vertex_input semantic="UVTex" input_semantic="TEXCOORD" input_set="0"/>
+              </instance_material>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#Scene"/>
+  </scene>
+</COLLADA>

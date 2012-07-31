@@ -1,0 +1,158 @@
+package test;
+
+import wiiusej.WiiUseApiManager;
+import wiiusej.Wiimote;
+import wiiusej.wiiusejevents.physicalevents.ExpansionEvent;
+import wiiusej.wiiusejevents.physicalevents.IREvent;
+import wiiusej.wiiusejevents.physicalevents.MotionSensingEvent;
+import wiiusej.wiiusejevents.physicalevents.WiimoteButtonsEvent;
+import wiiusej.wiiusejevents.utils.WiimoteListener;
+import wiiusej.wiiusejevents.wiiuseapievents.ClassicControllerInsertedEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.ClassicControllerRemovedEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.DisconnectionEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.GuitarHeroInsertedEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.GuitarHeroRemovedEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.NunchukInsertedEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.NunchukRemovedEvent;
+import wiiusej.wiiusejevents.wiiuseapievents.StatusEvent;
+
+import IRGlancePackage.IRGlance;
+
+
+
+/**
+ * This is an example of how to use the IRGlanceLibrary using the supplied ListenerTest and WiiUseJ.
+ * @author Santiago
+ *
+ */
+
+public class WiiUseJTest implements WiimoteListener{
+
+	Wiimote wiimote;
+	String eventstring=""; 
+	public static void main (String [] args) {
+		new WiiUseJTest();
+	}
+	
+	/**
+	 * This function settles all the necessary actions to run the test
+	 */
+	public WiiUseJTest()
+	{
+		Wiimote[] wiimotes = WiiUseApiManager.getWiimotes(1,true);
+		wiimote= wiimotes[0];
+		wiimote.activateIRTRacking();
+		
+	
+		
+		IRGlance irglance = new IRGlance(1000);
+		
+		irglance.setEventFilter(5);
+		
+		ListenerTest li = new ListenerTest ();
+		
+		irglance.addListener(li);
+		
+		wiimote.addWiiMoteEventListeners(irglance);
+		wiimote.addWiiMoteEventListeners(this);
+		
+		
+	}
+
+	
+	/**
+	 * This function prints the number the IR spots for each event arrives. It prints a new line if the number is different from the number that was before. 
+	 */
+	public void onIrEvent(IREvent arg0)
+	{
+		if(!eventstring.equals(((arg0.getIRPoints()).length)+"")){
+			eventstring = (arg0.getIRPoints()).length+"";
+			System.out.print("\n    Event = "+(arg0.getIRPoints()).length);
+		}else{
+			System.out.print((arg0.getIRPoints()).length);
+
+		}
+		
+	}
+	
+	
+	/**
+	 * This function recognizes if we have pushed the home button to stop the test.
+	 */
+	@Override
+	public void onButtonsEvent(WiimoteButtonsEvent arg0) {
+		if ( arg0.isButtonHomeJustReleased())
+		{
+			wiimote.disconnect();
+			WiiUseApiManager.definitiveShutdown();
+		
+			
+			System.out.println("Bye-Bye");	
+		}
+		
+	}
+
+	@Override
+	public void onClassicControllerInsertedEvent(
+			ClassicControllerInsertedEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onClassicControllerRemovedEvent(
+			ClassicControllerRemovedEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDisconnectionEvent(DisconnectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onExpansionEvent(ExpansionEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGuitarHeroInsertedEvent(GuitarHeroInsertedEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGuitarHeroRemovedEvent(GuitarHeroRemovedEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onMotionSensingEvent(MotionSensingEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNunchukInsertedEvent(NunchukInsertedEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNunchukRemovedEvent(NunchukRemovedEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusEvent(StatusEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}

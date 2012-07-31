@@ -1,0 +1,24 @@
+package iservices;
+
+import services.*;
+
+import control.IListenerCommModule;
+
+
+/**
+ * Must be implemented by any class which wants to receive the events from a Nonin
+ * @author Santiago Hors Fraile
+ */
+public interface INoninService extends IListenerCommModule {
+	
+	/**
+	 * Must be implemented to manage the NoninServiceEvent received.
+	 * @param se This is the NoninServiceEvent received.
+	 */
+	public void noninUpdate(NoninServiceEvent se);
+
+	
+
+
+	
+}

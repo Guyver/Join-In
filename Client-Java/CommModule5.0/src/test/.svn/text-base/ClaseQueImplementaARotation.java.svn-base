@@ -1,0 +1,27 @@
+package test;
+
+import iservices.ICalibrationFinishedService;
+import iservices.IWiiMoteRotationService;
+import iservices.IWiiMoteRotationSpeedService;
+
+import services.WiiMoteServiceRotationEvent;
+import services.WiiMoteServiceRotationSpeedEvent;
+
+public class ClaseQueImplementaARotation implements IWiiMoteRotationService, IWiiMoteRotationSpeedService, ICalibrationFinishedService{
+
+	@Override
+	public void rotationReceived(WiiMoteServiceRotationEvent se) {
+		System.out.println("Se ha lanzado un evento de rotación con Roll="+se.getRoll()+" Pitch="+se.getPitch()+" Yaw= "+se.getYaw());
+	}
+
+	@Override
+	public void rotationSpeedReceived(WiiMoteServiceRotationSpeedEvent se) {
+		System.out.println("Se ha lanzado un evento de velocidad de rotación con Phi="+se.getPhi()+" Psi="+se.getPsi()+" Theta="+se.getTheta());
+	}
+
+	@Override
+	public void calibrationFinished() {
+System.out.println("Se ha lanzado un evento de final de calibración");
+	}
+
+}

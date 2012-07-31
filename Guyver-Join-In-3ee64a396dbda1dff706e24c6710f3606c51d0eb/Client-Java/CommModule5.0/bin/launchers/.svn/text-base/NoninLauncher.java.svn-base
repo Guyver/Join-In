@@ -1,0 +1,100 @@
+package launchers;
+
+import iservices.*;
+
+import java.util.Iterator;
+
+
+
+import NoninPackage.INoninListener;
+import NoninPackage.NoninData;
+import NoninPackage.NoninEvent;
+import NoninPackage.NoninManager;
+import services.*;
+
+import control.DeviceManager;
+import control.IListenerCommModule;
+import control.LauncherWrapper;
+
+/**
+ * A Nonin event thrower facade. 
+ * @author Santiago Hors Fraile
+ */
+public class NoninLauncher extends LauncherWrapper implements INoninListener{
+	
+	/**
+	 * This field is the reference to the object noninManager of DeviceManager class.
+	 */
+	private NoninManager noninManager;
+	
+	/**
+	 * Returns the obejct noninManager.
+	 * @return noninManager The object noninManager.
+	 */
+	public NoninManager getNoninManager(){
+		return noninManager;
+	}
+
+	/**
+	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
+	 * @param l The listener that have to be added.
+	 */
+	public void addListener (INoninService l){
+		super.addListener(l);	
+	}
+	
+	/**
+	 * TCalls to the superclass LauncherWrapper function dropService and drops one Nonin from the DeviceMnager.
+	 */
+	public void dropService(){
+		super.dropService();
+		DeviceManager.getDeviceManager().dropNonin();	
+	}
+	/**
+	  * Links this class with the DeviceManager by adding itself as listener.
+	 * @param noninManager The noninManager object that must be now the field noninManager of this class.
+	 */
+	public NoninLauncher(NoninManager noninManager){
+		this.noninManager= noninManager;
+		noninManager.addListener(this);
+	}
+
+	//Specific functions
+	/**
+	 * Throws the given NoninEvent to all listeners in the listenerList as a NoninServiceEvent.
+	 * @param ne The NoninEvent.
+	 */
+	public void noninUpdate(NoninEvent ne) {		
+		NoninServiceEvent se = new NoninServiceEvent(ne.pulse, ne.oxy, ne.data);		
+		Iterator<IListenerCommModule> it = listenersList.iterator();
+		while(it.hasNext()){
+			INoninService l = (INoninService)it.next();
+			l.noninUpdate(se);
+		}		
+	}
+	
+	/**
+	 * Gets the current pulse.
+	 * @return int The current pulse.
+	 */
+	public int getPulse(){
+		return noninManager.getPulse();
+	}
+	/**
+	 * Gets the current oxygen value.
+	 * @return int The current oxygen value.
+	 */
+	public int getOxy(){
+		return noninManager.getOxy();
+	}
+	/**
+	 * Gets the current Nonin data.
+	 * @return NoninData The current Nonin data.
+	 */
+	public NoninData getData(){
+		return noninManager.getData();
+	}
+	
+	
+	
+}
