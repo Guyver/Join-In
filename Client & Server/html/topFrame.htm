@@ -13,8 +13,8 @@
 
 <script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 <script>
-	//g_ready=[];
-	var socket= io.connect('193.156.105.162:7541');
+	g_ready=[];
+	var socket= io.connect('193.156.105.142:7541');
 	
 	
 	//
@@ -63,29 +63,14 @@
 	//
 	//
 	//
-	socket.on('updateNewUser',function(user, myTeam) {
-
-		console.log("[TOP]Update for user: "+user.userKey);
+	socket.on('updateNewUser',function(user) {
 		var frames = window.parent.frames;
-		var team;
-		
-		frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
-		//if(g_ready[user.userKey]==true){
-
-		
-		for(i in myTeam){
-			team=myTeam[i].team;
-			console.log("Iterating in myTeam with i "+i);
-			if(myTeam[i].ready==true){
-				console.log("myTeam[i].ready == true so...");		
-				var divName= "div_"+myTeam[i].userKey;
-				console.log("myTeam[i].userKey is "+myTeam[i].userKey);	
-				if(frames[0].document.getElementById(divName)!=null){
-					frames[0].document.getElementById(divName).style.backgroundColor='green';
-				} 	
-			}
-		}	
-		//checkIfAllConnectedUsersAreReady(team);			
+		var parsedUser=JSON.parse(user);
+		document.getElementById(parsedUser.userKey).src=parsedUser.connectedImageUrl;
+		if(g_ready[parsedUser.userKey]==true){
+			var divName= "div_"+parsedUser.userKey;
+			frames[0].document.getElementById(divName).style.backgroundColor='green'; 	
+		}				
 	});
 	
 	
@@ -93,9 +78,9 @@
 	//
 	//
 	socket.on("userReady", function(userKey){
-		console.log("[Top] Ready the user: "+userKey);
-		//g_ready[userKey]=true;
-		var divName= "div_"+userKey;
+		var parsedUserKey=JSON.parse(userKey);
+		g_ready[parsedUserKey]=true;
+		var divName= "div_"+parsedUserKey;
 		document.getElementById(divName).style.backgroundColor='green'; 
 		checkIfAllConnectedUsersAreReady();		
 	});
@@ -105,32 +90,31 @@
 	//
 	//
 	socket.on('userNotReady', function(userKey){
-		//g_ready[userKey]=false;
-		var divName= "div_"+userKey;
+		var parsedUserKey=JSON.parse(userKey);
+		g_ready[parsedUserKey]=false;
+		var divName= "div_"+parsedUserKey;
 		document.getElementById(divName).style.backgroundColor='grey'; 
 	});
 
 	//
 	//
 	//
-	function checkIfAllConnectedUsersAreReady(team){
-		socket.emit('giveMeConnectedUsers', team);
+	function checkIfAllConnectedUsersAreReady(){
+		socket.emit('giveMeConnectedUsers');
 	}
 
 	
 	//
 	//
 	//
-	socket.on("hereYouAreTheConnectedUsers", function( myTeam ){
+	socket.on("hereYouAreTheConnectedUsers", function( users ){
 	
 		var allReady=true;
 		var frames = window.parent.frames;	
 
-		console.log("here you are");
-
-		for(i in myTeam){
+		for(i in users){
 			
-			var parsedUserKey=JSON.parse( myTeam[i].userKey );
+			var parsedUserKey=JSON.parse( users[i].userKey );
 	
 			var divName= "div_"+parsedUserKey;
 			

@@ -17,10 +17,6 @@
 package test;
 
 
-import handlers.KinectPoseHandler;
-import handlers.KinectSkeletonJointsHandler;
-import handlers.KinectUserOutOfScopeHandler;
-
 import java.io.IOException;
 
 
@@ -28,7 +24,6 @@ import launchers.KinectAbsoluteSpaceForATimeLauncher;
 
 import launchers.KinectSkeletonLauncher;
 import launchers.KinectTotalSpaceTravelledForATimeLauncher;
-import launchers.KinectUserGameControlLauncher;
 import launchers.KinectUserJointReachPointLauncher;
 import launchers.NoninLauncher;
 import launchers.NunchukAnalogStickLauncher;
@@ -78,7 +73,7 @@ public class TestGrande
     public TestGrande() throws Exception
     {    	
     	
-  
+    	int theUserIWant=1;
     	int maximumNumberOfKinectUsers =1;
     	
     	//DeviceManager dm = DeviceManager.getDeviceManager("193.156.105.166", 7540,maximumNumberOfKinectUsers);
@@ -88,43 +83,36 @@ public class TestGrande
     	
     	//dm.adjustKinectForTheBestTilt(theUserIWant);
     
+    /*
+    	
+    	
+    	KinectUserMovementLauncher kumLauncher;
+    	KinectUserHugLauncher kuhLauncher;
+    	KinectUserGameControlLauncher kgcLauncher;
+    	KinectUserReachPickUpLauncher kurpuLauncher;
+    	KinectUserPickedUpFromSidesLauncher kupufsLauncher;
+    	
+    	kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant);
+    	kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
+    	kgcLauncher= dm.getKinectUserGameControlLauncher(theUserIWant);
+    	kurpuLauncher= dm.getKinectUserReachPickUpLauncher(theUserIWant);
+    	kupufsLauncher =dm.getKinectUserPickedUpFromSidesLauncher(theUserIWant);
+    	
+    	ClaseQueImplementaAPose jiji = new ClaseQueImplementaAPose();
     
-    
     	
-    //	KinectUserMovementLauncher kumLauncher;
- //   	KinectUserHugLauncher kuhLauncher;
-    	
-    //	KinectUserReachPickUpLauncher kurpuLauncher;
-    //	KinectUserPickedUpFromSidesLauncher kupufsLauncher;
-    	
-    	
- //   	kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant);
-  //  	kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
-  
-   // 	kurpuLauncher= dm.getKinectUserReachPickUpLauncher(theUserIWant);
-  //  	kupufsLauncher =dm.getKinectUserPickedUpFromSidesLauncher(theUserIWant);
-    	
-    	
-    
-    	
-  //  	kumLauncher.addListener(jiji);
-   // 	kuhLauncher.addListener(jiji);
-    	
-  //  	kurpuLauncher.addListener(jiji);
-  //  	kupufsLauncher.addListener(jiji);
-    	
- 
- 
-    	
-    	KinectUserGameControlLauncher kgcLauncher = dm.getKinectUserGameControlLauncher(1);
-    	KinectPoseHandler jiji = new KinectPoseHandler();
+    	kumLauncher.addListener(jiji);
+    	kuhLauncher.addListener(jiji);
     	kgcLauncher.addListener(jiji);
-    	//Thread t1= new Thread(jiji);
-       // t1.start();
-    
-    	dm.getKinectUserOutOfScopeLauncher(1).addListener(new KinectUserOutOfScopeHandler());
-    	dm.getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());
+    	kurpuLauncher.addListener(jiji);
+    	kupufsLauncher.addListener(jiji);
     	
+    	Thread t1= new Thread(jiji);
+    	t1.start();
+ */
+    	KinectSkeletonLauncher lanzador = dm.getKinectSkeletonLauncher(1);
+    	ClaseQueImplementaAKinectSkeleton jiji2 = new ClaseQueImplementaAKinectSkeleton();
+    	lanzador.addListener(jiji2);
  
     	
  

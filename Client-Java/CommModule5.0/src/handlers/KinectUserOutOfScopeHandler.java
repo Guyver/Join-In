@@ -15,7 +15,6 @@
  */
 package handlers;
 
-
 import control.SharedSocket;
 import services.KinectUserOutOfScopeServiceEvent;
 import iservices.IKinectUserOutOfScopeService;
@@ -33,7 +32,6 @@ public class KinectUserOutOfScopeHandler implements IKinectUserOutOfScopeService
 	 * Sends the KinectUserOutOfScopeServiceEvent to the socket.
 	 */
 	public void kinectUpdate(KinectUserOutOfScopeServiceEvent kinectUserOutOfScopeServiceEvent) {
-		
 		SharedSocket.getSharedSocket().performTransference(kinectUserOutOfScopeServiceEvent);
 		
 	}

@@ -64,18 +64,9 @@ import com.google.gson.Gson;
  *
  */
 public class SharedSocket implements Runnable{
-//	boolean paused= false;
 	
-	//int jointsSent=0;
-	//long customTimer=0;
-	/**
-	 * This variable represents when was the last time that the KinectJoints data was sent. 
-	 */
-	//long lastTimeKinectJoinDataWasSent=System.currentTimeMillis();
-	/**
-	 * 
-	 */
-	boolean firstTime=true;
+
+	
 	/**
 	 * This object is the only object that can exist of this class. This object
 	 * has to be the one used to send the events through the socket to the remote server.
@@ -126,8 +117,7 @@ public class SharedSocket implements Runnable{
 	        if (rc == null) {
 	            rc = new SharedSocket();
 	            
-	            sendingSem = new Semaphore(1,true);
-	            
+	            sendingSem = new Semaphore(0,true);
 	            actionMap= new ConcurrentHashMap<Object, Object>();
 	            jointMap=new ConcurrentHashMap<Object, Object>();
 	            lastActionMap= new ConcurrentHashMap<Object, Object>();
@@ -150,8 +140,6 @@ public class SharedSocket implements Runnable{
 	 */
 	public void performTransference(IEventCommModule se){
 	
-		
-		
 		
 		while (sm == null) {
 			try {
@@ -184,8 +172,11 @@ public class SharedSocket implements Runnable{
 					actionMap.put("walk", "false");
 				}
 				actionMap.put("hug", "false");
-				actionMap.put("pause", "false");
-				actionMap.put("resume","false");
+				if(lastActionMap.containsKey("pause")){
+					actionMap.put("pause", lastActionMap.get("pause"));
+				}else{
+					actionMap.put("pause", "false");
+				}
 				actionMap.put("accept","false");
 				actionMap.put("cancel","false");
 				if(actionMap.containsKey("reached")){
@@ -205,10 +196,8 @@ public class SharedSocket implements Runnable{
 					actionMap.put("walk","true");
 				}else if(action.compareTo(KinectUserActionEnum.PAUSE.name())==0){
 					actionMap.put("pause", "true");
-					//paused=true;
 				}else if(action.compareTo(KinectUserActionEnum.RESUME.name())==0){
-					actionMap.put("resume", "true");
-					//paused=false;
+					actionMap.put("pause", "false");
 				}else if(action.compareTo(KinectUserActionEnum.HUG.name())==0){
 					actionMap.put("hug", "true");
 				}else if(action.compareTo(KinectUserActionEnum.ACCEPT.name())==0){
@@ -224,13 +213,10 @@ public class SharedSocket implements Runnable{
 				}
 			}else 
 			if(se instanceof KinectUserOutOfScopeServiceEvent){
-				validEvent=true;	
-				actionMap.put("device", "kinect");
 				actionMap.put("pause", "true");
 				System.out.println("+++++++++++++++++++");
 				System.out.println("GAME PAUSE (user out of scope)");
 				System.out.println("+++++++++++++++++++");
-			//	paused=true;
 			}
 			if (se instanceof KinectSkeletonServiceEvent){
 				if(((KinectSkeletonServiceEvent) se).getHead().getX()!=0.0){
@@ -281,8 +267,7 @@ public class SharedSocket implements Runnable{
 			if(se instanceof WiiMoteServiceIREvent){
 				validEvent=true;
 				 
-				actionMap.put("device","wiimote");
-				//actionMap= new ConcurrentHashMap<Object, Object>();
+				actionMap.put("device","wiimote");actionMap= new ConcurrentHashMap<Object, Object>();
 				actionMap.put("type", "ir");
 				actionMap.put("coordinates", ((WiiMoteServiceIREvent) se).getCoordinates());
 				actionMap.put("valids",((WiiMoteServiceIREvent) se).getValids());
@@ -376,50 +361,51 @@ public class SharedSocket implements Runnable{
 			 * This map splitting should be done for each service (or group of services) of the devices. 
 			 * But since for the July 2012 demo we only require the Kinect, this task remains pending.
 			 */
+				mixedMap.putAll(jointMap);
+				mixedMap.putAll(actionMap);
 				
-			
-				//mixedMap.putAll(actionMap);
-
+				s+= gson.toJson(mixedMap);
+				mixedMap = new ConcurrentHashMap<Object,Object>();
 				
-				if(se instanceof KinectUserActionServiceEvent || se instanceof KinectUserOutOfScopeServiceEvent){	
-					mixedMap.putAll(actionMap);
-					//s+= gson.toJson(actionMap);
-					
-					//s+='\n';
-					String sAux="";
-					sAux=gson.toJson(actionMap);
-					System.out.println("Attaching: "+sAux.toString());
+				if (se instanceof KinectSkeletonServiceEvent){
+					jointMap.clear();
+				}else if(se instanceof KinectUserActionServiceEvent){
 					actionMap.clear();
-					//sm.sendMessage(s);
-				}else  if(se instanceof KinectSkeletonServiceEvent ){		
-					
-					// if(!paused){
-						  	
-							sendingSem.acquire();
-							//s+= gson.toJson(jointMap);
-							//jointMap.clear();
-							mixedMap.putAll(jointMap);
-							s+= gson.toJson(mixedMap);
-							s+='\n';
-							//System.out.println("Sending como joints: "+s.toString() );
-							//lastTimeKinectJoinDataWasSent=System.currentTimeMillis();
-							//jointsSent++;
-							mixedMap = new ConcurrentHashMap<Object,Object>();
-							sm.sendMessage(s);
-							s="";
-					//  }
-					  //Si ha pasado un segundo
-					//  if(lastTimeKinectJoinDataWasSent+1000<System.currentTimeMillis()){
-					//	  jointsSent=0;
-					//  }
-				  
 				}
 				
+				s+='\n';
+
+		
 				
+				/*
+				 *  ----Start of critical section-----
+				 */
+			
+		
+				
+					//System.out.println("Wating for the message... ");
+				
+					//sm.readMessage();
+					sendingSem.acquire();
+					
+				
+					System.out.println("Sending: "+s.toString());
+						
+					
+					sm.sendMessage(s);
+				
+				//sem.release();
+			}
+		//	if(! (se instanceof KinectUserActionServiceEvent) ){
+			//	System.out.println("Sent: "+ s.toString());
+		//	}
 	
-			}	
-		
-		
+			/*
+			 * ----End of critical section-----
+			 */
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -444,302 +430,283 @@ public class SharedSocket implements Runnable{
 				sm = null;
 			}
 		}
-		if(firstTime==true){
-			ConcurrentHashMap<Object, Object> startMap = new ConcurrentHashMap<Object, Object>();
-			startMap.put("start","true");
-			
-			String s="";
-			Gson gson = new Gson();
-			s+= gson.toJson(startMap);
-			s+="\n";
-			try {
-				sm.sendMessage(s);
-				firstTime=false;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}else{
-			 try {
-				
-					receivedMessage= sm.readMessage();
-					
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		
+		 try {
+			
+			receivedMessage= sm.readMessage();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
+
 		Gson gson = new Gson();
 		
 		ConcurrentHashMap<Object,Object> receivedMessageConcurrentHashMap = gson.fromJson(receivedMessage, ConcurrentHashMap.class);
-		if(receivedMessageConcurrentHashMap!=null){
-			if(receivedMessageConcurrentHashMap.containsKey("continue")){
-				sendingSem.release();
-				
-			}//else 
-			if(receivedMessageConcurrentHashMap.containsKey("device")){
-				if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("wiiboard")==0){
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
-						try {
-							DeviceManager.getDeviceManager().getWiiBoardLauncher("").addListener(new WiiBoardHandler());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
-						DeviceManager.getDeviceManager().dropWiiBoard(DeviceManager.getDeviceManager().getCreatedWiiBoardLauncher());
-					}else if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("ledOn")==0){
-						DeviceManager.getDeviceManager().wiiBoard.setLight(true);
-					}else if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("ledOff")==0){
-						DeviceManager.getDeviceManager().wiiBoard.setLight(false);
-					}
-				}else if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("wiimote")==0){
-					
-					int label = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("label"));
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startTypical")==0){
-						try {
-							DeviceManager.getDeviceManager().getWiiMoteAccelerationLauncher("", label).addListener(new WiiMoteAccelerationHandler());
-							DeviceManager.getDeviceManager().getWiiMoteButtonsLauncher("", label).addListener(new WiiMoteButtonsHandler());		
-							DeviceManager.getDeviceManager().getWiiMoteRotationLauncher(label).addListener(new WiiMoteRotationHandler());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAcceleration")==0){
-						try {
-							DeviceManager.getDeviceManager().getWiiMoteAccelerationLauncher("", label).addListener(new WiiMoteAccelerationHandler());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startButtons")==0){
-						try {
-							DeviceManager.getDeviceManager().getWiiMoteButtonsLauncher("", label).addListener(new WiiMoteButtonsHandler());		
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startRotation")==0){
-						try {
-							DeviceManager.getDeviceManager().getWiiMoteRotationLauncher(label).addListener(new WiiMoteRotationHandler());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startIR")==0){
-						try {
-							DeviceManager.getDeviceManager().getWiiMoteIRLauncher("", label).addListener(new WiiMoteIRHandler());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopAcceleration")==0){
-						try {
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteAccelerationLauncher().get(label));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopButtons")==0){
-						try {
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteButtonsLauncher().get(label));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopRotation")==0){
-						try {
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteRotationLauncher().get(label));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopIR")==0){
-						try {
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteIRLauncher().get(label));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopTypical")==0){
-						try {
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteAccelerationLauncher().get(label));
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteButtonsLauncher().get(label));
-							DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteRotationLauncher().get(label));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("vibrateForTime")==0){
-						int vibrationTime = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("vibrationTime"));
-						try {
-							DeviceManager.getDeviceManager().wiiMoteCreated.get(label).vibrateForTime(vibrationTime);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}	
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("changeLeds")==0){
-						int ledValue = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("ledValue"));
-						try {
-							DeviceManager.getDeviceManager().wiiMoteCreated.get(label).setLED(ledValue);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				
-				}else if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("nunchuk")==0){
-					
-					int label = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("label"));
+	
+		if(receivedMessageConcurrentHashMap.containsKey("continue")){
+			sendingSem.release();
+		}//else 
+		if(receivedMessageConcurrentHashMap.containsKey("device")){
+			if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("wiiboard")==0){
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
 					try {
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAll")==0){
-								DeviceManager.getDeviceManager().getNunchukAccelerationLauncher(label).addListener(new NunchukAccelerationHandler());
-								DeviceManager.getDeviceManager().getNunchukAnalogStickLauncher(label).addListener(new NunchukAnalogStickHandler());
-								DeviceManager.getDeviceManager().getNunchukButtonsLauncher(label).addListener(new NunchukButtonsHandler());
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAcceleration")==0){
-							
-								DeviceManager.getDeviceManager().getNunchukAccelerationLauncher(label).addListener(new NunchukAccelerationHandler());
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startButtons")==0){
-							
-								DeviceManager.getDeviceManager().getNunchukButtonsLauncher(label).addListener(new NunchukButtonsHandler());
-							
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAnalogStick")==0){
-						
-								DeviceManager.getDeviceManager().getNunchukAnalogStickLauncher(label).addListener(new NunchukAnalogStickHandler());
-							
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopAcceleration")==0){
-							
-								DeviceManager.getDeviceManager().dropNunchuk(label, DeviceManager.getDeviceManager().getCreatedNunchukAccelerationLauncher().get(label));
-							
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopButtons")==0){
-							
-								DeviceManager.getDeviceManager().dropNunchuk(label, DeviceManager.getDeviceManager().getCreatedNunchukButtonsLauncher().get(label));
-						
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopAnalogStick")==0){
-							
-								DeviceManager.getDeviceManager().dropNunchuk(label, DeviceManager.getDeviceManager().getCreatedNunchukAnalogStickLauncher().get(label));
-							
-						}
-						if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
-							DeviceManager.getDeviceManager().setNunchukDisabled(label);
-						}			
-					}catch(Exception e){
+						DeviceManager.getDeviceManager().getWiiBoardLauncher("").addListener(new WiiBoardHandler());
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				}else if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("kinect")==0){
 					
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
-						try{
-							if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("skeleton")==0){
-								DeviceManager.getDeviceManager().getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());						
-							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("motor")==0){
-								DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectMotorHandler());
-							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("gameControl")==0){
-								DeviceManager.getDeviceManager().getKinectUserGameControlLauncher(1).addListener(new KinectPoseHandler());	
-							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("hug")==0){
-								DeviceManager.getDeviceManager().getKinectUserHugLauncher(1).addListener(new KinectPoseHandler());	
-							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("movement")==0){
-								DeviceManager.getDeviceManager().getKinectUserMovementLauncher(1).addListener(new KinectPoseHandler());	
-							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pickedUpFromSides")==0){
-								DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher(1).addListener(new KinectPoseHandler());
-							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("all")==0){
-								DeviceManager.getDeviceManager().getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());
-								DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectMotorHandler());
-								DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectPoseHandler());
-								DeviceManager.getDeviceManager().getKinectUserGameControlLauncher(1).addListener(new KinectPoseHandler());	
-								DeviceManager.getDeviceManager().getKinectUserHugLauncher(1).addListener(new KinectPoseHandler());	
-								DeviceManager.getDeviceManager().getKinectUserMovementLauncher(1).addListener(new KinectPoseHandler());	
-								DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher(1).addListener(new KinectPoseHandler());	
-							
-							}
-						}catch(Exception e){
-							e.printStackTrace();
-						}
-						
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
-						
-						if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("skeleton")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectSkeletonLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("motor")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectMotorLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pose")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectPoseLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("movement")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserMovementLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("hug")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserHugLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("gameControl")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserGameControlLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pickUpFromSides")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserPickedUpFromSidesLauncher());
-						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("all")==0){
-							DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserPickedUpFromSidesLauncher());
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("autoAdjust")==0){
-						try {
-							DeviceManager.getDeviceManager().adjustKinectForTheBestTilt(1);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("changeLed")==0){
-						String status = (String) receivedMessageConcurrentHashMap.get("status");
-						try {
-							DeviceManager.getDeviceManager().getKinectManager().getMotorCommunicator().setLED(LEDStatus.valueOf(status));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("changeTilt")==0){
-						int angle = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("angle"));
-						try {
-							DeviceManager.getDeviceManager().getKinectManager().getMotorCommunicator().setAngle(angle);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
+					DeviceManager.getDeviceManager().dropWiiBoard(DeviceManager.getDeviceManager().getCreatedWiiBoardLauncher());
+				}else if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("ledOn")==0){
+					DeviceManager.getDeviceManager().wiiBoard.setLight(true);
+				}else if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("ledOff")==0){
+					DeviceManager.getDeviceManager().wiiBoard.setLight(false);
+				}
+			}else if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("wiimote")==0){
 				
-					//other functions
-				} else if (((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("nonin")==0){
-					
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
-						
-						try {
-							DeviceManager.getDeviceManager().getNoninLauncher("").addListener(new NoninHandler());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				int label = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("label"));
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startTypical")==0){
+					try {
+						DeviceManager.getDeviceManager().getWiiMoteAccelerationLauncher("", label).addListener(new WiiMoteAccelerationHandler());
+						DeviceManager.getDeviceManager().getWiiMoteButtonsLauncher("", label).addListener(new WiiMoteButtonsHandler());		
+						DeviceManager.getDeviceManager().getWiiMoteRotationLauncher(label).addListener(new WiiMoteRotationHandler());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-		
-					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
-						
-						try {
-							DeviceManager.getDeviceManager().dropNonin(DeviceManager.getDeviceManager().getCreatedNoninLauncher());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAcceleration")==0){
+					try {
+						DeviceManager.getDeviceManager().getWiiMoteAccelerationLauncher("", label).addListener(new WiiMoteAccelerationHandler());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startButtons")==0){
+					try {
+						DeviceManager.getDeviceManager().getWiiMoteButtonsLauncher("", label).addListener(new WiiMoteButtonsHandler());		
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startRotation")==0){
+					try {
+						DeviceManager.getDeviceManager().getWiiMoteRotationLauncher(label).addListener(new WiiMoteRotationHandler());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startIR")==0){
+					try {
+						DeviceManager.getDeviceManager().getWiiMoteIRLauncher("", label).addListener(new WiiMoteIRHandler());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopAcceleration")==0){
+					try {
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteAccelerationLauncher().get(label));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopButtons")==0){
+					try {
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteButtonsLauncher().get(label));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopRotation")==0){
+					try {
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteRotationLauncher().get(label));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopIR")==0){
+					try {
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteIRLauncher().get(label));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopTypical")==0){
+					try {
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteAccelerationLauncher().get(label));
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteButtonsLauncher().get(label));
+						DeviceManager.getDeviceManager().dropWiiMote(label, DeviceManager.getDeviceManager().getCreatedWiiMoteRotationLauncher().get(label));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("vibrateForTime")==0){
+					int vibrationTime = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("vibrationTime"));
+					try {
+						DeviceManager.getDeviceManager().wiiMoteCreated.get(label).vibrateForTime(vibrationTime);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}	
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("changeLeds")==0){
+					int ledValue = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("ledValue"));
+					try {
+						DeviceManager.getDeviceManager().wiiMoteCreated.get(label).setLED(ledValue);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			
+			}else if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("nunchuk")==0){
+				
+				int label = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("label"));
+				try {
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAll")==0){
+							DeviceManager.getDeviceManager().getNunchukAccelerationLauncher(label).addListener(new NunchukAccelerationHandler());
+							DeviceManager.getDeviceManager().getNunchukAnalogStickLauncher(label).addListener(new NunchukAnalogStickHandler());
+							DeviceManager.getDeviceManager().getNunchukButtonsLauncher(label).addListener(new NunchukButtonsHandler());
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAcceleration")==0){
+						
+							DeviceManager.getDeviceManager().getNunchukAccelerationLauncher(label).addListener(new NunchukAccelerationHandler());
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startButtons")==0){
+						
+							DeviceManager.getDeviceManager().getNunchukButtonsLauncher(label).addListener(new NunchukButtonsHandler());
+						
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("startAnalogStick")==0){
+					
+							DeviceManager.getDeviceManager().getNunchukAnalogStickLauncher(label).addListener(new NunchukAnalogStickHandler());
+						
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopAcceleration")==0){
+						
+							DeviceManager.getDeviceManager().dropNunchuk(label, DeviceManager.getDeviceManager().getCreatedNunchukAccelerationLauncher().get(label));
+						
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopButtons")==0){
+						
+							DeviceManager.getDeviceManager().dropNunchuk(label, DeviceManager.getDeviceManager().getCreatedNunchukButtonsLauncher().get(label));
+					
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stopAnalogStick")==0){
+						
+							DeviceManager.getDeviceManager().dropNunchuk(label, DeviceManager.getDeviceManager().getCreatedNunchukAnalogStickLauncher().get(label));
+						
+					}
+					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
+						DeviceManager.getDeviceManager().setNunchukDisabled(label);
+					}			
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}else if(((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("kinect")==0){
+				
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
+					try{
+						if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("skeleton")==0){
+							DeviceManager.getDeviceManager().getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());						
+						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("motor")==0){
+							DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectMotorHandler());
+						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("gameControl")==0){
+							DeviceManager.getDeviceManager().getKinectUserGameControlLauncher(1).addListener(new KinectPoseHandler());	
+						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("hug")==0){
+							DeviceManager.getDeviceManager().getKinectUserHugLauncher(1).addListener(new KinectPoseHandler());	
+						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("movement")==0){
+							DeviceManager.getDeviceManager().getKinectUserMovementLauncher(1).addListener(new KinectPoseHandler());	
+						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pickedUpFromSides")==0){
+							DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher(1).addListener(new KinectPoseHandler());
+						}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("all")==0){
+							DeviceManager.getDeviceManager().getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());
+							DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectMotorHandler());
+							DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectPoseHandler());
+							DeviceManager.getDeviceManager().getKinectUserGameControlLauncher(1).addListener(new KinectPoseHandler());	
+							DeviceManager.getDeviceManager().getKinectUserHugLauncher(1).addListener(new KinectPoseHandler());	
+							DeviceManager.getDeviceManager().getKinectUserMovementLauncher(1).addListener(new KinectPoseHandler());	
+							DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher(1).addListener(new KinectPoseHandler());	
+						
+						}
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+					
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
+					
+					if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("skeleton")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectSkeletonLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("motor")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectMotorLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pose")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectPoseLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("movement")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserMovementLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("hug")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserHugLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("gameControl")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserGameControlLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pickUpFromSides")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserPickedUpFromSidesLauncher());
+					}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("all")==0){
+						DeviceManager.getDeviceManager().dropKinect(DeviceManager.getDeviceManager().getCreatedKinectUserPickedUpFromSidesLauncher());
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("autoAdjust")==0){
+					try {
+						DeviceManager.getDeviceManager().adjustKinectForTheBestTilt(1);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("changeLed")==0){
+					String status = (String) receivedMessageConcurrentHashMap.get("status");
+					try {
+						DeviceManager.getDeviceManager().getKinectManager().getMotorCommunicator().setLED(LEDStatus.valueOf(status));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("changeTilt")==0){
+					int angle = Integer.parseInt((String)receivedMessageConcurrentHashMap.get("angle"));
+					try {
+						DeviceManager.getDeviceManager().getKinectManager().getMotorCommunicator().setAngle(angle);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			
+				//other functions
+			} else if (((String)(receivedMessageConcurrentHashMap.get("device"))).compareToIgnoreCase("nonin")==0){
+				
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
+					
+					try {
+						DeviceManager.getDeviceManager().getNoninLauncher("").addListener(new NoninHandler());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+	
+				if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("stop")==0){
+					
+					try {
+						DeviceManager.getDeviceManager().dropNonin(DeviceManager.getDeviceManager().getCreatedNoninLauncher());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
+		
 		}
+		
 	}
 
 
 	@Override
 	public void run() {
 		while(true){
-			
-			
 			receiveInstructions();
 		}
 		

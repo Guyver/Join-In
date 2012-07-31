@@ -106,6 +106,29 @@ public class SkeletonManager
 		this.kinectUserOutOfScopeListenersList.add(li);
 	}
   
+  private void reset(){
+	  
+
+	      
+      userGenerator.getNewUserEvent().deleteObserver(newUserObserver);  // new user found
+      userGenerator.getLostUserEvent().deleteObserver(lostUserObserver);  // lost a user
+      userGenerator.getUserExitEvent().deleteObserver(exitUserObserver);        // user has exited (but may re-enter)
+      userGenerator.getUserReenterEvent().deleteObserver(reEnterUserObserver);  // user has re-entered
+      
+      poseDetectionCapability.getPoseDetectedEvent().deleteObserver( poseDetectedObserver);    // for when a pose is detected
+      
+      skeletonCapability.getCalibrationStartEvent().deleteObserver(calibrationStartObserver);    // calibration is starting
+      skeletonCapability.getCalibrationCompleteEvent().deleteObserver(calibrationCompleteObserver );   
+       
+  	
+	  configure();
+      idOfUsersWhoAreBeingWatched=new LinkedList<Integer>();
+      userSkels3D = new HashMap<Integer, Skeleton3D>();
+      maximumNumberOfKinectUsers= 1;
+      switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+  }
+
+
   private void configure()
   /* create pose and skeleton detection capabilities for the user generator, 
      and set up observers (listeners)   */
@@ -161,10 +184,7 @@ public class SkeletonManager
         if (skeletonCapability.isSkeletonCalibrating(userID))
           continue;    // test to avoid occasional crashes with isSkeletonTracking()
         if (skeletonCapability.isSkeletonTracking(userID)){
-        	//System.out.println("El userSkels es "+userSkels3D);
-        	if(!userSkels3D.isEmpty()){
-        		userSkels3D.get(userID).update();
-        	}
+          userSkels3D.get(userID).update();
         }
       }
     }
@@ -255,9 +275,8 @@ public LEDStatus getSwitchToLEDColor() {
 public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 	this.switchToLEDColor = switchToLEDColor;
 }
-/**
- * @author Santiago Hors Fraile
- */
+
+
 	class NewUserObserver implements IObserver<UserEventArgs> {
 
 		@Override
@@ -276,22 +295,19 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 					switchToLEDColor = LEDStatus.LED_ORANGE;
 
 					if (idOfUsersWhoAreBeingWatched.size() == maximumNumberOfKinectUsers) {
-
-						System.out.println("The number of users is "
-								+ userGenerator.getNumberOfUsers());
-
-						userGenerator.getNewUserEvent().deleteObserver(
-								newUserObserver);
-
+						
+						System.out.println("The number of users is "+userGenerator.getNumberOfUsers());
+						
+				
+						userGenerator.getNewUserEvent().deleteObserver(newUserObserver);
+					
 						System.out.println("I stop detecting more users");
 					}
-
+					
 					System.out.println("Taking care of user " + args.getId());
 
 					poseDetectionCapability.startPoseDetection(calibPose,
 							args.getId());
-
-				} else {
 
 				}
 
@@ -304,141 +320,177 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 		}
 
 	} // end of NewUserObserver inner class
-	/**
-	 * @author Santiago Hors Fraile
-	 */
-	class LostUserObserver implements IObserver<UserEventArgs> {
-		@Override
-		public void update(IObservable<UserEventArgs> observable,
-				UserEventArgs args) {
 
-			int userID = args.getId();
-			System.out.println("Lost track of user " + userID);
 
-			try {
 
-				userGenerator.getNewUserEvent().addObserver(newUserObserver);
+  class LostUserObserver implements IObserver<UserEventArgs>
+  {
+    @Override
+	public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
+    { 
+    	
+	      int userID = args.getId();
+	      System.out.println("Lost track of user " + userID);
+	      
+	     
+	      
+	      
+	      if(idOfUsersWhoAreBeingWatched.contains(new Integer(userID))){
+	    	  
+	    	  switchToLEDColor=LEDStatus.LED_BLINK_RED_ORANGE;
+	    	  
+	    	  idOfUsersWhoAreBeingWatched.remove(new Integer(userID));
+	    	  
+	    	  if(idOfUsersWhoAreBeingWatched.size()==maximumNumberOfKinectUsers-1){
+	    		  try{
+	    		  userGenerator.getNewUserEvent().addObserver(newUserObserver);
+	    	  	}catch(StatusException e){
+	    		  e.printStackTrace();
+	    	  	}
+	    	  }
+   	  
+    		  //Fire KinectUserOutOfScopeEvent 
+	    	  fireKinectUserOutOfScopeEvent(new KinectUserOutOfScopeEvent(userID));
+			 
 
-			} catch (StatusException e) {
-				e.printStackTrace();
-			}
+	    	  
+    	  }
+	   	      
+	      
+	      Skeleton3D skel = userSkels3D.remove(userID);
+	      
+	      System.out.println("-----------------------Reseting-----------------------");
+	      
+	      reset();
+	      if (skel == null){
+	        return;
+	      }
+	      skel.delete();
+	      
+	      
+	     
+    }
+  } // end of LostUserObserver inner class
 
-			// Fire KinectUserOutOfScopeEvent
-			fireKinectUserOutOfScopeEvent(new KinectUserOutOfScopeEvent(userID));
 
-		}
-	} // end of LostUserObserver inner class
-	/**
-	 * @author Santiago Hors Fraile
-	 */
-	class ExitUserObserver implements IObserver<UserEventArgs> {
-		@Override
-		public void update(IObservable<UserEventArgs> observable,
-				UserEventArgs args) {
 
-			int userID = args.getId();
+  class ExitUserObserver implements IObserver<UserEventArgs>
+  {
+    @Override
+	public void update(IObservable<UserEventArgs> observable, UserEventArgs args) {
+    	
+				int userID = args.getId();
+				System.out.println("Exit of user " + userID);
+				 Skeleton3D skel ;
+				 switchToLEDColor=LEDStatus.LED_ORANGE;
+				// make 3D skeleton invisible when user exits
+				 skel = userSkels3D.get(userID);
+				
+				
+				 
+				if (skel == null)
+					return;
+    	
+    }
+  } // end of ExitUserObserver inner class
 
-			switchToLEDColor = LEDStatus.LED_BLINK_RED_ORANGE;
 
-			idOfUsersWhoAreBeingWatched.remove(new Integer(userID));
 
-			// Fire KinectUserOutOfScopeEvent
-			fireKinectUserOutOfScopeEvent(new KinectUserOutOfScopeEvent(userID));
+  class ReEnterUserObserver implements IObserver<UserEventArgs>
+  {
+    @Override
+	public void update(IObservable<UserEventArgs> observable, UserEventArgs args)
+    { 	
+    	
+      int userID = args.getId();
+      System.out.println("Reentry of user " + userID);
+ 
+      switchToLEDColor=LEDStatus.LED_GREEN;
+      // make 3D skeleton visible when user re-enters
+      Skeleton3D skel = userSkels3D.get(userID);
+      if (skel == null)
+        return;
+    
+    }
+  } // end of ReEnterUserObserver inner class
 
-			userSkels3D.remove(userID);
 
-		}
-	} // end of ExitUserObserver inner class
-	/**
-	 * @author Santiago Hors Fraile
-	 */
-	class ReEnterUserObserver implements IObserver<UserEventArgs> {
-		@Override
-		public void update(IObservable<UserEventArgs> observable,
-				UserEventArgs args) {
 
-			int userID = args.getId();
-			System.out.println("Reentry of user " + userID);
+  class PoseDetectedObserver implements IObserver<PoseDetectionEventArgs>
+  {
+	@Override
+	public void update(IObservable<PoseDetectionEventArgs> observable,
+                                                     PoseDetectionEventArgs args)
+    {
+	
+      int userID = args.getUser();
+     
+	      System.out.println(args.getPose() + " pose detected for user " + userID);
+	  
+	     
+	      try {
+	        // finished pose detection; switch to skeleton calibration
+	    	
+	        poseDetectionCapability.stopPoseDetection(userID);
+	        skeletonCapability.requestSkeletonCalibration(userID, true);
+	      }
+	      catch (StatusException e)
+	      {  e.printStackTrace(); }
+	    
+    }
+  }  // end of PoseDetectedObserver inner class
 
-			switchToLEDColor = LEDStatus.LED_GREEN;
-			// make 3D skeleton visible when user re-enters
 
-			Skeleton3D skel = new Skeleton3D(userID, skeletonCapability, false);
-			userSkels3D.put(userID, skel);
 
-		}
-	} // end of ReEnterUserObserver inner class
 
-	class PoseDetectedObserver implements IObserver<PoseDetectionEventArgs> {
-		@Override
-		public void update(IObservable<PoseDetectionEventArgs> observable,
-				PoseDetectionEventArgs args) {
+  class CalibrationStartObserver implements IObserver<CalibrationStartEventArgs>
+  {
+	 
+    @Override
+	public void update(IObservable<CalibrationStartEventArgs> observable, CalibrationStartEventArgs args)
+    {
+    	switchToLEDColor=LEDStatus.LED_BLINK_GREEN;
+    	System.out.println("Calibration started for user " + args.getUser()); 
+  
+    }
+  }  // end of CalibrationStartObserver inner class
 
-			int userID = args.getUser();
 
-			System.out.println(args.getPose() + " pose detected for user "
-					+ userID);
 
-			try {
-				// finished pose detection; switch to skeleton calibration
+  class CalibrationCompleteObserver implements IObserver<CalibrationProgressEventArgs>
+  {
+  
+	@Override
+	public void update(IObservable<CalibrationProgressEventArgs> observable,
+                                                    CalibrationProgressEventArgs args)
+    {
+      int userID = args.getUser();
+                                                                        
+      try {
+        if (args.getStatus() == CalibrationProgressStatus.OK) {
+          // calibration succeeded; move to skeleton tracking
+          System.out.println("Starting tracking user " + userID);
+          skeletonCapability.startTracking(userID);
 
-				poseDetectionCapability.stopPoseDetection(userID);
-				skeletonCapability.requestSkeletonCalibration(userID, true);
-			} catch (StatusException e) {
-				e.printStackTrace();
-			}
+          switchToLEDColor=LEDStatus.LED_GREEN;
+          
+          // create skeleton3D in userSkels3D, and add to scene
+          Skeleton3D skel = new Skeleton3D(userID, skeletonCapability, false);
+          userSkels3D.put(userID, skel);
+      
+        } 
+        else   // calibration failed; return to pose detection
+      
+        	poseDetectionCapability.startPoseDetection(calibPose, userID);
+      }
+      catch (StatusException e)
+      {  e.printStackTrace(); }
+     
+    }
+  }  // end of CalibrationCompleteObserver inner class
 
-		}
-	} // end of PoseDetectedObserver inner class
-
-	class CalibrationStartObserver implements
-			IObserver<CalibrationStartEventArgs> {
-
-		@Override
-		public void update(IObservable<CalibrationStartEventArgs> observable,
-				CalibrationStartEventArgs args) {
-			switchToLEDColor = LEDStatus.LED_BLINK_GREEN;
-			System.out
-					.println("Calibration started for user " + args.getUser());
-
-		}
-	} // end of CalibrationStartObserver inner class
-
-	class CalibrationCompleteObserver implements
-			IObserver<CalibrationProgressEventArgs> {
-
-		@Override
-		public void update(
-				IObservable<CalibrationProgressEventArgs> observable,
-				CalibrationProgressEventArgs args) {
-			int userID = args.getUser();
-
-			try {
-				if (args.getStatus() == CalibrationProgressStatus.OK) {
-					// calibration succeeded; move to skeleton tracking
-					System.out.println("Starting tracking user " + userID);
-					skeletonCapability.startTracking(userID);
-
-					switchToLEDColor = LEDStatus.LED_GREEN;
-
-					// create skeleton3D in userSkels3D, and add to scene
-					Skeleton3D skel = new Skeleton3D(userID,
-							skeletonCapability, false);
-					userSkels3D.put(userID, skel);
-
-				} else { // calibration failed; return to pose detection
-
-					poseDetectionCapability.startPoseDetection(calibPose,
-							userID);
-				}
-			} catch (StatusException e) {
-				e.printStackTrace();
-			}
-
-		}
-	} // end of CalibrationCompleteObserver inner class
-
-	/**
+ 
+  /**
 	 * @author Santiago Hors Fraile
 	 */
 	class KinectUserOutOfScopeEventLauncher implements Runnable {
@@ -459,8 +511,7 @@ public void setSwitchToLEDColor(LEDStatus switchToLEDColor) {
 		 * @param kuoose
 		 *            The new KinectUserOutOfScopeEvent.
 		 */
-		KinectUserOutOfScopeEventLauncher(IKinectUserOutOfScopeListener kuoosl,
-				KinectUserOutOfScopeEvent kuoose) {
+		KinectUserOutOfScopeEventLauncher(IKinectUserOutOfScopeListener kuoosl, KinectUserOutOfScopeEvent kuoose) {
 			this.kuoosl = kuoosl;
 			this.kuoose = kuoose;
 		}
