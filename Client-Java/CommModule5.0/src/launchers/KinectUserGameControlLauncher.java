@@ -50,7 +50,8 @@ public class KinectUserGameControlLauncher extends LauncherWrapper {
 	 * The launcher of the psi-pose
 	 */
 	KinectPoseLauncher kplHandsAboveShouldersPsiPose;
-
+	
+	
 	/**
 	 * 
 	 * @return the launcher of the crossed hands above the user's shoulders pose

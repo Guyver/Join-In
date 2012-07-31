@@ -32,7 +32,7 @@
 				document.cookie=c_name + "=" + c_value;
 			}
 
-			var socket= io.connect('193.156.105.142:7541');
+			var socket= io.connect('193.156.105.162:7541');
 			
 			function isNumber(n) {
 			
@@ -43,7 +43,7 @@
 			function checkForm(){
 			
 				var userKey= document.getElementById("userKey").value;
-				if( !isNumber( userKey ) || userKey<0||userKey>5){
+				if( !isNumber( userKey ) || userKey<0||userKey>9){
 				
 					alert("Wrong user");
 					window.location = './html/index.htm';

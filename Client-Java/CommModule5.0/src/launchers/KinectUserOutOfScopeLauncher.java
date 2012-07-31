@@ -67,6 +67,9 @@ public class KinectUserOutOfScopeLauncher extends LauncherWrapper implements IKi
 	 * @param ne The KinectUserOutOfScopeEvent.
 	 */	
 	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose) {
+		
+		
+		
 		KinectUserOutOfScopeServiceEvent se = new KinectUserOutOfScopeServiceEvent(kuoose.getUserId());		
 		Iterator<IListenerCommModule> it = super.listenersList.iterator();
 		while(it.hasNext()){

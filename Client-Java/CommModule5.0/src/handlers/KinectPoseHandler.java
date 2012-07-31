@@ -28,8 +28,10 @@ import iservices.IKinectSkeletonService;
  * @author Santiago Hors Fraile
  *
  */
-public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonService, Runnable {
-
+public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonService {
+	
+	
+	String currentMovementState="";
 	/**
 	 * Represents whether the user's left leg is risen.
 	 */
@@ -233,11 +235,17 @@ public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonSer
 		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER.name())==0 ||
 				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER.name())==0){
 			accept=true;
-			lastTimeAccept=System.currentTimeMillis();
+			if(lastAccept==false){
+				lastTimeAccept=System.currentTimeMillis();
+			}
+			
 		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_FROM_LEFT_HIP.name())==0||
 				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPARATED_FROM_RIGHT_HIP.name())==0){
 			cancel=true;
-			lastTimeCancel=System.currentTimeMillis();
+			if(lastCancel==false){
+				lastTimeCancel=System.currentTimeMillis();
+			}
+			
 		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_SHOULDER_LOWER_AND_CLOSER.name())==0){
 			pickedUpFromRight=true;
 			lastTimePickedUpFromRight=System.currentTimeMillis();
@@ -246,7 +254,7 @@ public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonSer
 			lastTimePickedUpFromLeft=System.currentTimeMillis();
 		}
 	
-
+		sendToTheSharedSocketIfNecessary();
 	}
 
 	@Override
@@ -283,160 +291,162 @@ public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonSer
 		}else{
 			reached=0;
 		}
+		
+		sendToTheSharedSocketIfNecessary();
 	}
 	
-	@Override
-	/**
-	 * Sends the detected user actions to the socket .
-	 */
-	public void run() {
-		String currentMovementState="";
-
-		while(true){
-	/*
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			*/
-			//if((lastMovementState.compareTo(KinectUserActionEnum.WALK.name())==0||lastMovementState.compareTo(KinectUserActionEnum.RUN.name())==0)&&System.currentTimeMillis()-lastStep>1000){
-			if((lastMovementState.compareTo(KinectUserActionEnum.WALK.name())==0)&&System.currentTimeMillis()-lastStep>1000){
-					
-			//System.out.println("You're trying to cheat!");
-				lastMovementState = KinectUserActionEnum.STAND.name();			
-			}
-
-			
-			
-		
-			if(cancel && System.currentTimeMillis()-lastTimeCancel>1000)
-			{
-				cancel=false;
-				lastCancel=false;
-		
-			}	
-			if(accept && System.currentTimeMillis()-lastTimeAccept>1000)
-			{
-				accept=false;
-				lastAccept=false;
-		
-			}
-			if(pickedUpFromLeft && System.currentTimeMillis()-lastTimePickedUpFromLeft>1000)
-			{
-				pickedUpFromLeft=false;
-				lastPickedUpFromLeft=false;
-		
-			}
-			if(pickedUpFromRight && System.currentTimeMillis()-lastTimePickedUpFromRight>1000)
-			{
-				pickedUpFromRight=false;
-				lastPickedUpFromRight=false;
-		
-			}
-			
-			if(reached!=lastReached){
-				lastReached=reached;
-				KinectUserActionServiceEvent juas = new KinectUserActionServiceEvent (KinectUserActionEnum.REACHED.name(),  reached);
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println(" REACHED "+ reached);
-				System.out.println("++++++++++++++++++++");
-				
-			} else
-			
-		
-		
-			
-			if(currentMovementState.compareTo(lastMovementState)!=0){
-				currentMovementState=lastMovementState;
-			
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(lastMovementState);
-				SharedSocket.getSharedSocket().performTransference(juas);
-				
-				System.out.println("+++++++++++++++++++");
-				System.out.println(" ACTION "+currentMovementState);
-				System.out.println("++++++++++++++++++++");
-				
-			} else 
-			
-			
 	
-			
-			if(hugCompleted){
-				hugCompleted=false;
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.HUG.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
+
+private void sendToTheSharedSocketIfNecessary() {
+	
+
+
+
+		//if((lastMovementState.compareTo(KinectUserActionEnum.WALK.name())==0||lastMovementState.compareTo(KinectUserActionEnum.RUN.name())==0)&&System.currentTimeMillis()-lastStep>1000){
+		if((lastMovementState.compareTo(KinectUserActionEnum.WALK.name())==0)&&System.currentTimeMillis()-lastStep>1000){
 				
-				System.out.println("+++++++++++++++++++");
-				System.out.println("HUG");
-				System.out.println("++++++++++++++++++++");
-			} else 
+		//System.out.println("You're trying to cheat!");
+			lastMovementState = KinectUserActionEnum.STAND.name();			
+		}
+
+		
+		
+		if(accept && System.currentTimeMillis()-lastTimeAccept>2000)
+		{
+			accept=false;
+			lastAccept=false;
+		
+		}	
+		
+		if(cancel && System.currentTimeMillis()-lastTimeCancel>2000)
+		{
+			cancel=false;
+			lastCancel=false;
+		
+		}	
+		
+		if(pickedUpFromLeft && System.currentTimeMillis()-lastTimePickedUpFromLeft>1000)
+		{
+			pickedUpFromLeft=false;
+			lastPickedUpFromLeft=false;
 			
-			if(pause&& generalGameState.compareTo("Active")==0){
-				pause=false;
-				generalGameState="Paused";
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PAUSE.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println("GAME PAUSE");
-				System.out.println("++++++++++++++++++++");
-			} else if(resume && generalGameState.compareTo("Paused")==0){
-				pause=false;
-				generalGameState="Active";
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.RESUME.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println("GAME ACTIVE");
-				System.out.println("++++++++++++++++++++");
-			} else 
-			
-			if(cancel && lastCancel==false){
-				cancel=false;
-				lastCancel=true;
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.CANCEL.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println("CANCEL");
-				System.out.println("++++++++++++++++++++");
-			}else 
-			
-			if(accept && lastAccept==false){
-				accept=false;
-				lastAccept=true;
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.ACCEPT.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println("ACCEPT");
-				System.out.println("++++++++++++++++++++");
-			} else
-			
-			if(pickedUpFromLeft && lastPickedUpFromLeft==false){
-				pickedUpFromLeft=false;
-				lastPickedUpFromLeft=true;
-				pickedUpFromRight=false;
-				lastPickedUpFromRight=false;
-			
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PICKED_UP_FROM_LEFT.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println("PICKED UP FROM LEFT");
-				System.out.println("++++++++++++++++++++");
-			}else 
-				
-			if(pickedUpFromRight && lastPickedUpFromRight==false){
-				pickedUpFromRight=false;
-				lastPickedUpFromRight=true;
-				pickedUpFromLeft=false;
-				lastPickedUpFromLeft=false;
-				KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PICKED_UP_FROM_RIGHT.name());
-				SharedSocket.getSharedSocket().performTransference(juas);
-				System.out.println("+++++++++++++++++++");
-				System.out.println("PICKED UP FROM RIGHT");
-				System.out.println("++++++++++++++++++++");
-			}
+		}
+		if(pickedUpFromRight && System.currentTimeMillis()-lastTimePickedUpFromRight>1000)
+		{
+			pickedUpFromRight=false;
+			lastPickedUpFromRight=false;
+	
 		}
 		
-	}
+		//int nThreads= Thread.activeCount();
+		//System.out.println("There are "+nThreads+" threads in the pose Handler group ");
+	
+		
+		if(reached!=lastReached){
+			lastReached=reached;
+			KinectUserActionServiceEvent juas = new KinectUserActionServiceEvent (KinectUserActionEnum.REACHED.name(),  reached);
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println(" REACHED "+ reached);
+			System.out.println("++++++++++++++++++++");
+			
+		} else
+		
+	
+	
+		
+		if(currentMovementState.compareTo(lastMovementState)!=0){
+			currentMovementState=lastMovementState;
+		
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(lastMovementState);
+			SharedSocket.getSharedSocket().performTransference(juas);
+			
+			System.out.println("+++++++++++++++++++");
+			System.out.println(" ACTION "+currentMovementState);
+			System.out.println("++++++++++++++++++++");
+			
+		} else 
+		
+		
+
+		
+		if(hugCompleted){
+			hugCompleted=false;
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.HUG.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			
+			System.out.println("+++++++++++++++++++");
+			System.out.println("HUG");
+			System.out.println("++++++++++++++++++++");
+		} else 
+		
+		if(pause&& generalGameState.compareTo("Active")==0){
+			pause=false;
+			generalGameState="Paused";
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PAUSE.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println("GAME PAUSE");
+			System.out.println("++++++++++++++++++++");
+		} else if(resume && generalGameState.compareTo("Paused")==0){
+			pause=false;
+			generalGameState="Active";
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.RESUME.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println("GAME ACTIVE");
+			System.out.println("++++++++++++++++++++");
+		} else 
+		
+		if(cancel && lastCancel==false){
+			cancel=false;
+			lastCancel=true;
+			//lastTimeCancel=System.currentTimeMillis();
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.CANCEL.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println("CANCEL");
+			System.out.println("++++++++++++++++++++");
+		}else 
+		
+		if(accept && lastAccept==false){
+			accept=false;
+			lastAccept=true;
+			//lastTimeAccept=System.currentTimeMillis();
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.ACCEPT.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println("ACCEPT");
+			System.out.println("++++++++++++++++++++");
+		} else
+		
+		if(pickedUpFromLeft && lastPickedUpFromLeft==false){
+			pickedUpFromLeft=false;
+			lastPickedUpFromLeft=true;
+			pickedUpFromRight=false;
+			lastPickedUpFromRight=false;
+		
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PICKED_UP_FROM_LEFT.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println("PICKED UP FROM LEFT");
+			System.out.println("++++++++++++++++++++");
+		}else 
+			
+		if(pickedUpFromRight && lastPickedUpFromRight==false){
+			pickedUpFromRight=false;
+			lastPickedUpFromRight=true;
+			pickedUpFromLeft=false;
+			lastPickedUpFromLeft=false;
+			KinectUserActionServiceEvent juas= new KinectUserActionServiceEvent(KinectUserActionEnum.PICKED_UP_FROM_RIGHT.name());
+			SharedSocket.getSharedSocket().performTransference(juas);
+			System.out.println("+++++++++++++++++++");
+			System.out.println("PICKED UP FROM RIGHT");
+			System.out.println("++++++++++++++++++++");
+		}
+	
+	
+}
+
 
 }

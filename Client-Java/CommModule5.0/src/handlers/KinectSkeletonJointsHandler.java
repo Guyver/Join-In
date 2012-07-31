@@ -33,7 +33,7 @@ public class KinectSkeletonJointsHandler implements IKinectSkeletonService{
 	 * Sends the KinectSkeletonServiceEvent to the socket.
 	 */
 	public void kinectUpdate(KinectSkeletonServiceEvent kinectSkeletonServiceEvent) {
-
+				
 		SharedSocket.getSharedSocket().performTransference(kinectSkeletonServiceEvent);
 		
 	}

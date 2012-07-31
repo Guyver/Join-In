@@ -56,17 +56,35 @@
 		swfobject.embedSWF( "http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
 				   "div_youtubeVideo", "800", "600", "8", null, null, params, atts);
 		 
-		var socket= io.connect('193.156.105.142:7541');
+		var socket= io.connect('193.156.105.162:7541');
+
+
+		socket.on('updateNewUser',function(user, myTeam) {
+
+			console.log("Update for user: "+user.userKey);
+			var frames = window.parent.frames;
+		
+			frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
+			//if(g_ready[user.userKey]==true){
+			for(i in myTeam){
+				if(myTeam[i].ready==true){		
+					var divName= "div_"+myTeam[i].userKey;
+					if(frames[0].document.getElementById(divName)!=null){
+						frames[0].document.getElementById(divName).style.backgroundColor='green';
+					} 	
+				}
+			}				
+		});
 
 		
 		//
 		//
 		//
 		socket.on("userReady", function( userKey ){
-		
+			console.log("[Bottom] Ready the user: "+userKey);
 			var frames = window.parent.frames; 
-			var parsedUserKey=JSON.parse(userKey);
-			var divName= "div_"+parsedUserKey;
+			
+			var divName= "div_"+userKey;
 			frames[0].document.getElementById(divName).style.backgroundColor='green'; 	
 			checkIfAllConnectedUsersAreReady();		
 		});
@@ -78,8 +96,8 @@
 		socket.on("userNotReady", function(userKey){
 		
 			var frames = window.parent.frames;
-			var parsedUserKey=JSON.parse(userKey);
-			var divName= "div_"+parsedUserKey;
+		
+			var divName= "div_"+userKey;
 			frames[0].document.getElementById(divName).style.backgroundColor='grey'; 	
 		});
 

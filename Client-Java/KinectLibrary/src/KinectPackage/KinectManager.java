@@ -304,7 +304,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	 */
 	private void fireKinectEvent(KinectDataEvent ke) {
 		try{
-			sem.acquire();
+			//sem.acquire();
 			
 			Iterator<IKinectDataListener> it = listenersList.iterator();
 	
@@ -314,7 +314,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	
 				(new Thread(new EventLauncher(kl, ke))).start();
 			}
-			sem.release();
+			//sem.release();
 		}catch(Exception e){
 			
 			System.out.println("Error at firing the Kinect Event in KinectManager");
@@ -329,7 +329,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	 */
 	private void fireKinectUserOutOfScopeEvent(KinectUserOutOfScopeEvent kuoose) {
 		try{
-			//sem.acquire();
+			sem.acquire();
 			
 			Iterator<IKinectUserOutOfScopeListener> it = kinectUserOutOfScopeListenersList.iterator();
 	
@@ -339,7 +339,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	
 				(new Thread(new KinectUserOutOfScopeEventLauncher(koosl, kuoose))).start();
 			}
-			//sem.release();
+			sem.release();
 		}catch(Exception e){
 			
 			System.out.println("Error at firing the Kinect Event in KinectManager");
@@ -357,20 +357,29 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 			
 			try {
 				context.waitAnyUpdateAll();
-			} catch (StatusException e) {
+				//Alternatively, we can do these 3 other instructions which substitute the previous one-
+				//userGenerator.waitAndUpdateData();
+				//depthGenerator.waitAndUpdateData();
+				//imageGenerator.waitAndUpdateData();
+			
+			} catch (Exception e) {
 				System.out.println(e);
 				System.exit(1);
 			}
+			
 			skeletonManager.update(); // get the skeletons manager to carry out
-										// the updates
+								// the updates
 			if(skeletonManager.getSwitchToLEDColor()!=motorCommunicator.getLED()){
+				
 				motorCommunicator.setLED(skeletonManager.getSwitchToLEDColor());
+				
 			}
 			
 			for (int i = 0; i < userGenerator.getNumberOfUsers(); i++) {
-
+				
 				KinectDataEvent ke = new KinectDataEvent(i, new KinectData(motorCommunicator, skeletonManager));
 				fireKinectEvent(ke);
+		
 			}
 			
 			
@@ -378,10 +387,14 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 		}
 		// close down
 		try {
+
 			context.stopGeneratingAll();
+
 		} catch (StatusException e) {
 		}
+	
 		context.release();
+
 		System.exit(0);
 	} // end of run()
 
@@ -499,14 +512,19 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 		
 		@Override
 		public void run() {
-
-			kuoosl.kinectUpdate(kuoose);
+			try{
+				kuoosl.kinectUpdate(kuoose);
+			}catch(Exception e){
+				System.out.println("The exception in the KinectOutOfScope Launcher thread is "+e.toString());
+			}
 		}
 	}
 	@Override
 	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose) {
 		//Relaunch the KinectOutOfScopeEvent
+		
 		fireKinectUserOutOfScopeEvent(kuoose);
+		
 		
 	}
 }

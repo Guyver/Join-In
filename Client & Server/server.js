@@ -13,6 +13,11 @@ var io = require('./lib/socket.io');
 // Each room has their own game logic and win conditions.
 var rooms = [];		
 
+
+var clientsConnected = [];
+
+
+
 var server = http.createServer( function ( request , response ) {
  
     console.log('request starting...'+ request.url);
@@ -118,7 +123,9 @@ socket.sockets.on( 'connection', function( client ){
 			disconnectedImageUrl: String,
 			pos : String, 
 			kinect : String,
-			meshName :String
+			meshName :String,
+			team: Number,
+			ready: Boolean
 			
 		});		
 		var usersModel= mongoose.model('users',userSchema);
@@ -130,7 +137,7 @@ socket.sockets.on( 'connection', function( client ){
 		var posAux;
 		var kinectAux;
 		var meshNameAux;
-	
+		var team;
 		
 		
 		var clientIPAddress=client.handshake.address.address;
@@ -145,7 +152,7 @@ socket.sockets.on( 'connection', function( client ){
 			 posAux=0;
 			 kinectAux=null;
 			 meshNameAux=doc.meshName;
-		
+			 team=doc.team;
 			
 			
 	
@@ -161,28 +168,34 @@ socket.sockets.on( 'connection', function( client ){
 				"pos": posAux,
 				"kinect": kinectAux,
 				"visible": true,
-				"meshName": meshNameAux
+				"meshName": meshNameAux,
+				"team":team,
+				"ready": false
 			};
 			
 			// Store me in the map format.
 			users[ clientIPAddress ] =  map ;	
+			
 
-			
+			var myTeam=[];
+			//update the green bar of the others about me
 			for(index in users){
-				
-				socket.sockets.emit( 'updateNewUser',  JSON.stringify(users[index]) );				
+				if(users[index].team==team){
+					myTeam.push(users[index]);		
+				}
+								
 			}	
-			
+			socket.sockets.emit( 'updateNewUser',  users[index], myTeam );
 		});
 
 	}
-	client.on('giveMeConnectedUsers', function() {
+	client.on('giveMeConnectedUsers', function(team) {
 		var aux = {};
 		
 		for ( index in users){
-			
-			aux[ index ] = users[ index ];
-		
+			if(users[index].team==team){
+				aux[ index ] = users[ index ];
+			}
 		}
 		client.emit( 'hereYouAreTheConnectedUsers', aux);
 
@@ -202,8 +215,8 @@ socket.sockets.on( 'connection', function( client ){
 			disconnectedImageUrl: String,
 			pos : String, 
 			kinect : String,
-			meshName :String
-			
+			meshName :String,
+			team: Number
 		});		
 
 
@@ -211,47 +224,61 @@ socket.sockets.on( 'connection', function( client ){
 		var imagesAux=[];
 
 		
+		usersModel.findOne({userKey:userKeyParam},function(err, currentUser){
 		
-		usersModel.find({}, function (err, team) {
-			if(images.length==0){
+			var currentTeam = currentUser.team;
+			
+	
+
+			usersModel.find({team:currentTeam}, function (err, team) {
+			
 				for(var index=1; index<=team.length; index++){
-			
-					var indexAjustado = index-1;
 					
-					var clientIPAddress=client.handshake.address.address;
-					imagesAux.push ({userKey:team[indexAjustado].userKey, image:team[indexAjustado].disconnectedImageUrl});
-				}
-			}else{
-				imagesAux=images;	
-				for(index in team){
-					imagesAux[index].image=team[index].disconnectedImageUrl;
-				}		
-			}
-			var usersAux = {};
-			for(index in users){
+					var adjustedIndex = index-1;
 				
-				for(index2 in imagesAux){
+					var clientIPAddress=client.handshake.address.address;
+					imagesAux.push ({userKey:team[adjustedIndex].userKey, image:team[adjustedIndex].disconnectedImageUrl});
+				}
+				
+				var usersAux = {};
+				for(index in users){
+				
+					for(index2 in imagesAux){
 		
-					if(users[index].userKey==imagesAux[index2].userKey){
+						if(users[index].userKey==imagesAux[index2].userKey){
 						
-						imagesAux[index2].image=team[index2].connectedImageUrl;
-					}else{
-						imagesAux[index2].image=team[index2].disconnectedImageUrl;
+							imagesAux[index2].image=team[index2].connectedImageUrl;
+						}else{
+							imagesAux[index2].image=team[index2].disconnectedImageUrl;
+						}
 					}
+
+				usersAux[ index ] = users[ index ];
+				}
+			
+				for (i in users){
+					console.log("i vale "+i+" y users "+users[i]);
 				}
 
-			usersAux[ index ] = users[ index ];
-			}
+		  		client.emit( 'sendingUserPictures', imagesAux, usersAux);
+				images= imagesAux;
+				console.log("Got here");
+				
+
+				registerUser(userKeyParam);
 			
-			for (i in users){
-				console.log("i vale "+i+" y users "+users[i]);
-			}
+				//Update the green bar of the previous ready people
+				/*for( i in users){
+					console.log("I'm iterating over users "+i);
+					console.log("The team is: "+users[i].team+"and it maches"+currentTeam);
+					if(users[i]!=null && users[i]!=undefined && users[i].team==currentTeam){
+						console.log("Sending userReady signal and "+i);
+						client.emit("userReady", i);
 
-	  		client.emit( 'sendingUserPictures', imagesAux, usersAux);
-			images= imagesAux;
-
-			registerUser(userKeyParam);
-		});
+					}
+				}*/
+			});
+	});
 	});
 
 	
@@ -392,7 +419,7 @@ socket.sockets.on( 'connection', function( client ){
 	// TELL EVERYONE I'M OFF AND DELETE ME.
 	//
 	client.on('disconnect', function(){		
-	
+		clientsConnected [ client.handshake.address.address ]=false;
 		// Tell the users that some one has quit so tey can remve from their scenes.
 		delete users[ client.handshake.address.address ];
 	});
@@ -438,8 +465,11 @@ javaServer.on('connection', function ( javaSocket ) {
 		
 		newlineIndex = dataBuffer.indexOf( '\n' );
 		
-		clients[ javaSocket.remoteAddress ].emit( 'sandraHasConnected' );
-		
+		if(! clientsConnected [ javaSocket.remoteAddress ] ||  clientsConnected [ javaSocket.remoteAddress ] == undefined ||  clientsConnected [ javaSocket.remoteAddress ] == null ){
+			clientsConnected [ javaSocket.remoteAddress ]= true;
+			clients[ javaSocket.remoteAddress ].emit( 'sandraHasConnected' );
+		}
+
 		if( newlineIndex == -1){
 			// Send next packet.
 			javaSocket.write( "{continue:true}\n");
@@ -449,39 +479,76 @@ javaServer.on('connection', function ( javaSocket ) {
 		// Store the kinect data locally on the server.
 		if( users[javaSocket.remoteAddress ] !== undefined){
 
-		
-			users[ javaSocket.remoteAddress ].kinect = JSON.parse( dataBuffer.slice(0, newlineIndex) );			
-			var ipAddress= javaSocket.remoteAddress;
-		
-			var info= users[ javaSocket.remoteAddress ].kinect;
+		var info = JSON.parse( dataBuffer.slice(0, newlineIndex) );
+			var parsedData= JSON.parse( dataBuffer.slice(0, newlineIndex) );
+			if(parsedData!=null){
+				users[ javaSocket.remoteAddress ].kinect = parsedData;
+			}
 			var userKey=0;
+
+			
 			for(i in info){
 			
+				if(i=="pause" && info[i]=="true"){
+					console.log("-----------------------------------------------------PAUSED-----------------------------------------------------");
+				}else if(i=="resume" && info[i]=="true"){
+					console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++RESUMED++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+				}		
 				if(i=="accept" && info[i]=="true"){
+					var myTeam=[];
+					var team;
+					var givenUser={};
+					//for(i2 in clients){	
+						for(i3 in users){
+							if(users[i3].ip==javaSocket.remoteAddress){
+								//userKey=users[i3].userKey;
+								team = users[i3].team;	
+								givenUser=users[i3];
+								console.log("+++++User: "+i3+" set to true");
+								users[i3].ready=true;					
+							}
+								
+						}
+						for(i3 in users){
+							if(users[i3].team==team){
+								myTeam.push(users[i3]);		
+							}
 					
-					for(i2 in clients){	
-						for(i3 in users){
-							if(users[i3].ip==javaSocket.remoteAddress){
-								userKey=users[i3].userKey;						
-							}
 						}
-						for(i3 in clients){
-							clients[i3].emit("userReady", userKey );	
+						console.log("+++++++");
+						for(index in myTeam){
+							console.log("+++++SENDING: "+givenUser);
+						}
+						socket.sockets.emit( 'updateNewUser',  givenUser, myTeam );
 
-						}
-					}	
+						
+					//}	
 				}else if(i=="cancel" && info[i]=="true"){
-					for(i2 in clients){
+					var myTeam=[];
+					var team;
+					var givenUser={};
+					//for(i2 in clients){	
 						for(i3 in users){
 							if(users[i3].ip==javaSocket.remoteAddress){
-								userKey=users[i3].userKey;						
+								//userKey=users[i3].userKey;
+								team = users[i3].team;	
+								givenUser=users[i3];
+								users[i3].ready=false;					
 							}
+								
 						}
-						for(i3 in clients){
-							clients[i3].emit("userNotReady", userKey );	
+						for(i3 in users){
+							if(users[i3].team==team){
+								myTeam.push(users[i3]);		
+							}
+					
+						}
+						
+						socket.sockets.emit( 'updateNewUser',  givenUser, myTeam );
 
-						}
-					}	
+						
+						
+					//}	
 				}		
 			}
 

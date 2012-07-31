@@ -9,7 +9,7 @@
 	* Will the game flow logic be client or server side?
 */
 // Connect to the server.
-var socket = io.connect('193.156.105.142:7541');
+var socket = io.connect('193.156.105.162:7541');
 
 function getCookie(c_name)
 {

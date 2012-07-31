@@ -80,16 +80,14 @@ public class StartDevices {
 		    	kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant); 	
 		    	KinectPoseHandler poseHandler = new KinectPoseHandler();
 		    	kumLauncher.addListener(poseHandler);    
-		    	Thread t1= new Thread(poseHandler);
-		    	t1.start();
+		    
 		    	
 			}else if(args[i].equalsIgnoreCase("reachWithBothHands")){
 				KinectUserReachWithBothHandsLauncher kurwbhLauncher;
 				kurwbhLauncher= dm.getKinectUserReachWithBothHandsLauncher(theUserIWant);
 				KinectPoseHandler poseHandler = new KinectPoseHandler();
 				kurwbhLauncher.addListener(poseHandler);
-				Thread t1= new Thread(poseHandler);
-		    	t1.start();
+			
 				
 			}
 			else if(args[i].equalsIgnoreCase("kinectHug")){
@@ -97,8 +95,7 @@ public class StartDevices {
 				kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
 				KinectPoseHandler poseHandler = new KinectPoseHandler();
 				kuhLauncher.addListener(poseHandler);
-				Thread t1= new Thread(poseHandler);
-		    	t1.start();
+			
 				
 			}else if(args[i].equalsIgnoreCase("gameControl")){
 				KinectUserGameControlLauncher kgcLauncher;
@@ -107,8 +104,7 @@ public class StartDevices {
 		    	KinectPoseHandler poseHandler = new KinectPoseHandler();
 		    	kgcLauncher.addListener(poseHandler);
 		    	
-		    	Thread t1= new Thread(poseHandler);
-		    	t1.start();
+		 
 				
 			}else if(args[i].equalsIgnoreCase("outOfScopeDetection")){
 					
@@ -146,9 +142,7 @@ public class StartDevices {
 		    	kgcLauncher.addListener(poseHandler);
 		    	kurwbhLauncher.addListener(poseHandler);
 		    	
-		    	Thread t1= new Thread(poseHandler);
-		    	t1.start();
-		    	
+		    	   	
 		    	
 		    	
 		    	
