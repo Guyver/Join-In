@@ -838,6 +838,13 @@ socket.on('updateNewUser',function(user) {
 });
 
 
+socket.on( 'pause' , function( value ) {
+	
+	paused = value;
+});
+
+
+
 /**	@Name:	Resize
 	@Brief:	Called from the dom's resize listener.
 	@Arguments:N/A
