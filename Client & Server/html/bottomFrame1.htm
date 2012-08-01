@@ -58,50 +58,54 @@
 		 
 		var socket= io.connect('193.156.105.162:7541');
 
-
+/*
 		socket.on('updateNewUser',function(user, myTeam) {
 
-			console.log("Update for user: "+user.userKey);
-			var frames = window.parent.frames;
+				
+				var frames = window.parent.frames;
+				var team;
 		
-			frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
-			//if(g_ready[user.userKey]==true){
-			for(i in myTeam){
-				if(myTeam[i].ready==true){		
-					var divName= "div_"+myTeam[i].userKey;
-					if(frames[0].document.getElementById(divName)!=null){
-						frames[0].document.getElementById(divName).style.backgroundColor='green';
-					} 	
-				}
-			}				
-		});
+				frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
+				
 
 		
-		//
-		//
-		//
-		socket.on("userReady", function( userKey ){
-			console.log("[Bottom] Ready the user: "+userKey);
-			var frames = window.parent.frames; 
+				for(i in myTeam){
+					team=JSON.parse( myTeam[i].team );
+				
+					
+					if(JSON.parse( myTeam[i].ready )==true){
+							
+						var divName= "div_"+JSON.parse( myTeam[i].userKey );
+						
+						if(frames[0].document.getElementById(divName)!=null){
+							frames[0].document.getElementById(divName).style.backgroundColor='green';
+						} 	
+					}
+				}	
 			
-			var divName= "div_"+userKey;
-			frames[0].document.getElementById(divName).style.backgroundColor='green'; 	
-			checkIfAllConnectedUsersAreReady();		
+	
 		});
+		socket.on('updateGoneUser',function(user) {
+
+				
+				var frames = window.parent.frames;
+
+				frames[0].document.getElementById(user.userKey).src=user.disconnectedImageUrl;
+				
+				var divName= "div_"+JSON.parse( user.userKey );
+				
+				if(frames[0].document.getElementById(divName)!=null){
+					frames[0].document.getElementById(divName).style.backgroundColor='grey';
+				} 	
+					
+			
 		
-		
-		//
-		//
-		//
-		socket.on("userNotReady", function(userKey){
-		
-			var frames = window.parent.frames;
-		
-			var divName= "div_"+userKey;
-			frames[0].document.getElementById(divName).style.backgroundColor='grey'; 	
 		});
+*/
+			
 
-
+		
+		
 		//
 		//
 		//

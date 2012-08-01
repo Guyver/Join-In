@@ -142,7 +142,7 @@ socket.sockets.on( 'connection', function( client ){
 		
 		var clientIPAddress=client.handshake.address.address;
 		
-
+		
 		usersModel.findOne({userKey:userKeyParam}, function (err, doc) {
 			
 			 nameAux=doc.name;
@@ -175,28 +175,42 @@ socket.sockets.on( 'connection', function( client ){
 			
 			// Store me in the map format.
 			users[ clientIPAddress ] =  map ;	
+			//-------------------------------
 			
-
-			var myTeam=[];
+			var myTeam={};
 			//update the green bar of the others about me
 			for(index in users){
-				if(users[index].team==team){
-					myTeam.push(users[index]);		
+			
+				console.log("The user "+users[index].userKey+ " is ready =  "+users[index].ready);
+				console.log("Comparing the teams: "+users[index].team+" and "+team);	
+				 
+				if((users[index].team)-(team)==0){
+					console.log("OK; "+users[index].team+" and "+team+" are equal");
+					myTeam[index]=users[index];
+					console.log("Assigned ;) ");		
+				}else{
+					console.log("No, "+users[index].team+" and "+team+" aren't equal");	
 				}
-								
+							
 			}	
-			socket.sockets.emit( 'updateNewUser',  users[index], myTeam );
-		});
 
+			socket.sockets.emit( 'updateNewUser',  users[clientIPAddress], myTeam );
+			//-------------------------------	
+		});
+		
+				
 	}
+	
 	client.on('giveMeConnectedUsers', function(team) {
 		var aux = {};
 		
 		for ( index in users){
 			if(users[index].team==team){
 				aux[ index ] = users[ index ];
+				console.log("Asigning "+index);
 			}
 		}
+
 		client.emit( 'hereYouAreTheConnectedUsers', aux);
 
 	});
@@ -256,27 +270,15 @@ socket.sockets.on( 'connection', function( client ){
 				usersAux[ index ] = users[ index ];
 				}
 			
-				for (i in users){
-					console.log("i vale "+i+" y users "+users[i]);
-				}
-
-		  		client.emit( 'sendingUserPictures', imagesAux, usersAux);
-				images= imagesAux;
-				console.log("Got here");
 				
 
-				registerUser(userKeyParam);
-			
-				//Update the green bar of the previous ready people
-				/*for( i in users){
-					console.log("I'm iterating over users "+i);
-					console.log("The team is: "+users[i].team+"and it maches"+currentTeam);
-					if(users[i]!=null && users[i]!=undefined && users[i].team==currentTeam){
-						console.log("Sending userReady signal and "+i);
-						client.emit("userReady", i);
+		  		
+				client.emit( 'sendingUserPictures', imagesAux, usersAux);
+				images= imagesAux;
 
-					}
-				}*/
+				registerUser(userKeyParam);
+				
+				
 			});
 	});
 	});
@@ -284,7 +286,9 @@ socket.sockets.on( 'connection', function( client ){
 	
 	client.on( 'registerMeInServerFirstPage', function( userKeyParam ){
 		
-		registerUser(userKeyParam);	
+		registerUser(userKeyParam);
+
+		
 	});
 	// 				(2)
 	// STORE ME AS A USER.
@@ -420,6 +424,19 @@ socket.sockets.on( 'connection', function( client ){
 	//
 	client.on('disconnect', function(){		
 		clientsConnected [ client.handshake.address.address ]=false;
+		
+		//---Report everybody that they have to change my green bar to grey
+		var givenUser={};		
+		for(i3 in users){
+			if(users[i3].ip==client.handshake.address.address){		
+				givenUser=users[i3];			
+			}
+				
+		}
+		socket.sockets.emit( 'updateGoneUser',  givenUser );
+		//-----	
+			
+		
 		// Tell the users that some one has quit so tey can remve from their scenes.
 		delete users[ client.handshake.address.address ];
 	});
@@ -465,9 +482,11 @@ javaServer.on('connection', function ( javaSocket ) {
 		
 		newlineIndex = dataBuffer.indexOf( '\n' );
 		
-		if(! clientsConnected [ javaSocket.remoteAddress ] ||  clientsConnected [ javaSocket.remoteAddress ] == undefined ||  clientsConnected [ javaSocket.remoteAddress ] == null ){
+		if( !(clientsConnected [ javaSocket.remoteAddress ] ||  clientsConnected [ javaSocket.remoteAddress ] == undefined ||  clientsConnected [ javaSocket.remoteAddress ] == null) ){
 			clientsConnected [ javaSocket.remoteAddress ]= true;
-			clients[ javaSocket.remoteAddress ].emit( 'sandraHasConnected' );
+			if(clients[ javaSocket.remoteAddress ]!=undefined && clients[ javaSocket.remoteAddress ]!=null){
+				clients[ javaSocket.remoteAddress ].emit( 'sandraHasConnected' );
+			}
 		}
 
 		if( newlineIndex == -1){
@@ -479,8 +498,9 @@ javaServer.on('connection', function ( javaSocket ) {
 		// Store the kinect data locally on the server.
 		if( users[javaSocket.remoteAddress ] !== undefined){
 
-		var info = JSON.parse( dataBuffer.slice(0, newlineIndex) );
+			var info = JSON.parse( dataBuffer.slice(0, newlineIndex) );
 			var parsedData= JSON.parse( dataBuffer.slice(0, newlineIndex) );
+
 			if(parsedData!=null){
 				users[ javaSocket.remoteAddress ].kinect = parsedData;
 			}
@@ -495,36 +515,31 @@ javaServer.on('connection', function ( javaSocket ) {
 					console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++RESUMED++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 				}		
 				if(i=="accept" && info[i]=="true"){
-					var myTeam=[];
+					var myTeam={};
 					var team;
 					var givenUser={};
-					//for(i2 in clients){	
+					for(i2 in clients){	
 						for(i3 in users){
 							if(users[i3].ip==javaSocket.remoteAddress){
 								//userKey=users[i3].userKey;
 								team = users[i3].team;	
 								givenUser=users[i3];
-								console.log("+++++User: "+i3+" set to true");
+								
 								users[i3].ready=true;					
 							}
-								
 						}
 						for(i3 in users){
 							if(users[i3].team==team){
-								myTeam.push(users[i3]);		
+								
+								myTeam[i3]=users[i3];		
 							}
-					
-						}
-						console.log("+++++++");
-						for(index in myTeam){
-							console.log("+++++SENDING: "+givenUser);
 						}
 						socket.sockets.emit( 'updateNewUser',  givenUser, myTeam );
 
 						
-					//}	
+					}	
 				}else if(i=="cancel" && info[i]=="true"){
-					var myTeam=[];
+					var myTeam={};
 					var team;
 					var givenUser={};
 					//for(i2 in clients){	
@@ -533,13 +548,15 @@ javaServer.on('connection', function ( javaSocket ) {
 								//userKey=users[i3].userKey;
 								team = users[i3].team;	
 								givenUser=users[i3];
+								
 								users[i3].ready=false;					
 							}
 								
 						}
 						for(i3 in users){
 							if(users[i3].team==team){
-								myTeam.push(users[i3]);		
+								
+								myTeam[i3]=users[i3];		
 							}
 					
 						}
@@ -547,15 +564,13 @@ javaServer.on('connection', function ( javaSocket ) {
 						socket.sockets.emit( 'updateNewUser',  givenUser, myTeam );
 
 						
-						
-					//}	
-				}		
+					}	
+				//}		
 			}
 
 		}
 
-
-        dataBuffer = dataBuffer.slice(newlineIndex + 1);	
+        	dataBuffer = dataBuffer.slice(newlineIndex + 1);	
 		javaSocket.write(  "{continue:true}\n" );
 	
 		
@@ -564,8 +579,8 @@ javaServer.on('connection', function ( javaSocket ) {
 	// User has disconnected...
     javaSocket.on('close', function() {
 		
-		//users[ javaSocket.address().address ].visible = false;
-		//delete interfaces[ javaSocket.remoteAddress  ];
+	//users[ javaSocket.address().address ].visible = false;
+	
     });
 });
 

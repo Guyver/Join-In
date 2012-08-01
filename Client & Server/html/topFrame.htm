@@ -63,55 +63,52 @@
 	//
 	//
 	//
+	
+	
+	
 	socket.on('updateNewUser',function(user, myTeam) {
 
-		console.log("[TOP]Update for user: "+user.userKey);
-		var frames = window.parent.frames;
-		var team;
+				
+				var frames = window.parent.frames;
+				var team;
 		
-		frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
-		//if(g_ready[user.userKey]==true){
+				frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
+				
 
 		
-		for(i in myTeam){
-			team=myTeam[i].team;
-			console.log("Iterating in myTeam with i "+i);
-			if(myTeam[i].ready==true){
-				console.log("myTeam[i].ready == true so...");		
-				var divName= "div_"+myTeam[i].userKey;
-				console.log("myTeam[i].userKey is "+myTeam[i].userKey);	
+				for(i in myTeam){
+					team=JSON.parse( myTeam[i].team );
+				
+					
+					if(JSON.parse( myTeam[i].ready )==true){
+							
+						var divName= "div_"+JSON.parse( myTeam[i].userKey );
+						
+						if(frames[0].document.getElementById(divName)!=null){
+							frames[0].document.getElementById(divName).style.backgroundColor='green';
+						} 	
+					}
+				}	
+			
+		checkIfAllConnectedUsersAreReady(team);
+		});
+		socket.on('updateGoneUser',function(user) {
+
+				
+				var frames = window.parent.frames;
+
+				frames[0].document.getElementById(user.userKey).src=user.disconnectedImageUrl;
+				
+				var divName= "div_"+JSON.parse( user.userKey );
+				
 				if(frames[0].document.getElementById(divName)!=null){
-					frames[0].document.getElementById(divName).style.backgroundColor='green';
+					frames[0].document.getElementById(divName).style.backgroundColor='grey';
 				} 	
-			}
-		}	
-		//checkIfAllConnectedUsersAreReady(team);			
-	});
+					
+			
+			
+		});
 	
-	
-	//
-	//
-	//
-	socket.on("userReady", function(userKey){
-		console.log("[Top] Ready the user: "+userKey);
-		//g_ready[userKey]=true;
-		var divName= "div_"+userKey;
-		document.getElementById(divName).style.backgroundColor='green'; 
-		checkIfAllConnectedUsersAreReady();		
-	});
-	
-	
-	//
-	//
-	//
-	socket.on('userNotReady', function(userKey){
-		//g_ready[userKey]=false;
-		var divName= "div_"+userKey;
-		document.getElementById(divName).style.backgroundColor='grey'; 
-	});
-
-	//
-	//
 	//
 	function checkIfAllConnectedUsersAreReady(team){
 		socket.emit('giveMeConnectedUsers', team);
@@ -126,10 +123,10 @@
 		var allReady=true;
 		var frames = window.parent.frames;	
 
-		console.log("here you are");
+		console.log("[TOP]here you are");
 
 		for(i in myTeam){
-			
+			console.log("Iterating in my team "+i);
 			var parsedUserKey=JSON.parse( myTeam[i].userKey );
 	
 			var divName= "div_"+parsedUserKey;
