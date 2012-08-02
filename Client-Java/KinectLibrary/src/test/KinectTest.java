@@ -59,19 +59,19 @@ public class KinectTest implements IKinectDataListener, IKinectUserOutOfScopeLis
 	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose) {
 		
 		if(km!=null){
-		System.out.println("HAS SALIDO!!!!!!!!! ");
-		
-		km.disconnect();
-		
-		
-
-		try {
-			km.connect();
-		
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			System.out.println("HAS SALIDO!!!!!!!!! ");
+			
+			km.disconnect();
+			
+			
+	
+			try {
+				km.connect();
+			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

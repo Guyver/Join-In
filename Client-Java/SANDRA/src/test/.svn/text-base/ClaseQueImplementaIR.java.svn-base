@@ -1,0 +1,19 @@
+package test;
+
+import iservices.IWiiMoteIRService;
+
+import services.WiiMoteServiceIREvent;
+
+public class ClaseQueImplementaIR implements IWiiMoteIRService {
+
+	@Override
+	public void iRReceived(WiiMoteServiceIREvent event) {
+		System.out.println("Longitud ="+event.getCoordinates().length);
+		for(int i = 0; i< event.getCoordinates().length; i++){
+			if(event.isValid(i))
+			System.out.println(event.getCoordinates()[i][0]);
+			System.out.println(event.getCoordinates()[i][1]);
+
+		}	}
+
+}

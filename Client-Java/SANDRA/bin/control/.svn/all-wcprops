@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/CatedraTelefonica/!svn/ver/176/WonderHealth/software/librerias/CommModule/src/control
+END
+IListenerCommModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/CatedraTelefonica/!svn/ver/176/WonderHealth/software/librerias/CommModule/src/control/IListenerCommModule.java
+END
+LauncherWrapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/CatedraTelefonica/!svn/ver/176/WonderHealth/software/librerias/CommModule/src/control/LauncherWrapper.java
+END
+DeviceManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/CatedraTelefonica/!svn/ver/176/WonderHealth/software/librerias/CommModule/src/control/DeviceManager.java
+END
+IEventCommModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/CatedraTelefonica/!svn/ver/176/WonderHealth/software/librerias/CommModule/src/control/IEventCommModule.java
+END

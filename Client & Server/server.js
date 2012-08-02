@@ -25,7 +25,7 @@ var server = http.createServer( function ( request , response ) {
     var filePath = '.' + request.url;
 
     if ( filePath == './' ){// Just the root, localtion of server.js. Will only enter here initally.
-        filePath = './html/index.htm';// Serve html page.
+        filePath = './html/index.html';// Serve html page.
 	}
 	
     var extname = path.extname( filePath );
@@ -88,14 +88,10 @@ var server = http.createServer( function ( request , response ) {
 
 var socket = io.listen( server ); 		// Socket IO server instance.
 var users = [];							// List of connected players.
-var userCount = 0;						// Number of users connected.
-//var map = [];							// Container for the player data.
-var rooms = [];							// Must be implemented to seperate players.
+var userCount = 0;						// Number of users connected.						// Must be implemented to seperate players.
 // User group final score.
 var topScore = 0;
-//var connected = [];
 var clients=[];
-//var g_id;
 var images=[];
 //
 var totalClients = 0;
@@ -201,6 +197,21 @@ socket.sockets.on( 'connection', function( client ){
 				
 	}
 	
+	client.on('giveMeHugs', function(flag) {
+		console.log("*******************");
+		
+		var giveMeHugsMap;
+		if(flag){
+			giveMeHugsMap = "{device:kinect,action:start,type:hug}\n" ;
+			console.log("Enviado lo que quieres");
+		}else{
+			giveMeHugsMap = "{device:kinect,action:stop,type:hug}\n" ;
+		}
+	
+		javaSockets[client.handshake.address.address].write(giveMeHugsMap);
+	});
+
+
 	client.on('giveMeConnectedUsers', function(team) {
 		var aux = {};
 		
@@ -449,12 +460,15 @@ server.listen( clientPort );
 
 var javaPort = 7540;
 var dataBuffer = "";
-var newlineIndex = 0
+var newlineIndex = 0;
 var javaServer = require('net').createServer();
+var javaSockets = [];
 
 javaServer.on('listening', function () {
 
     console.log('Server is listening on for kinect data on :' + javaPort);
+   
+
 });
 
 javaServer.on('error', function ( e ) {
@@ -473,7 +487,7 @@ javaServer.on('connection', function ( javaSocket ) {
 	// We're ready to stream. When the library gets a '\n' it begins to send the data...
 		
 	javaSocket.write( "{continue:true}\n");
-
+	javaSockets[javaSocket.remoteAddress]=javaSocket;
 	//
 	// DATA RECIEVED FROM THE KINECT.
 	//
@@ -510,8 +524,10 @@ javaServer.on('connection', function ( javaSocket ) {
 			for(i in info){
 			
 				if(i=="pause" && info[i]=="true"){
+					clients[ javaSocket.remoteAddress ].emit("pause", true);
 					console.log("-----------------------------------------------------PAUSED-----------------------------------------------------");
 				}else if(i=="resume" && info[i]=="true"){
+					clients[ javaSocket.remoteAddress ].emit("pause", false);
 					console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++RESUMED++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 				}		
 				if(i=="accept" && info[i]=="true"){
@@ -521,7 +537,7 @@ javaServer.on('connection', function ( javaSocket ) {
 					for(i2 in clients){	
 						for(i3 in users){
 							if(users[i3].ip==javaSocket.remoteAddress){
-								//userKey=users[i3].userKey;
+							
 								team = users[i3].team;	
 								givenUser=users[i3];
 								
@@ -545,7 +561,7 @@ javaServer.on('connection', function ( javaSocket ) {
 					//for(i2 in clients){	
 						for(i3 in users){
 							if(users[i3].ip==javaSocket.remoteAddress){
-								//userKey=users[i3].userKey;
+								
 								team = users[i3].team;	
 								givenUser=users[i3];
 								
