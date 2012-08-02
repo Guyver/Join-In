@@ -177,6 +177,10 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 			return isRightHandBeneathRightElbowSeparatedFromRightHip(ksse);
 		}else if(poseToMatch.name().compareTo(KinectPoseEnum.HANDS_ABOVE_SHOULDERS_PSI_POSE.name())==0){
 				return isHandsAboveShouldersPsiPose(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.RIGHT_HAND_IN_FRONT_OF_THE_USER.name())==0){
+			return isRightHandInFrontOfTheUser50cm(ksse);
+		}else if(poseToMatch.name().compareTo(KinectPoseEnum.LEFT_HAND_IN_FRONT_OF_THE_USER.name())==0){
+			return isLeftHandInFrontOfTheUser50cm(ksse);
 		}else{
 			return false;
 		}
@@ -230,6 +234,45 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 		boolean isTheRequestedPose=false;
 		
 		if(ksse.getRightHand().getY()>ksse.getRightShoulder().getY()&& ksse.getRightHand().getX()>ksse.getRightShoulder().getX()){
+			isTheRequestedPose=true;
+		}
+		
+		return isTheRequestedPose;
+	}
+	/**
+	 * Specific algorithm to detect whether the user has their left hand streched in front of them.
+	 * 
+	 * 
+	 * @param ksse
+	 *            The KinectSkeletonServiceEvent containing the Skeleton data of
+	 *            the user.
+	 * @return True if the user is doing the pose. False otherwise.
+	 */
+	private boolean isLeftHandInFrontOfTheUser50cm(KinectSkeletonServiceEvent ksse){
+		
+		boolean isTheRequestedPose=false;
+		
+		double correctedTorso= ksse.getTorso().getZ()-500.0;
+		if(ksse.getLeftHand().getZ()<correctedTorso && ksse.getLeftHand().getZ()!=0 && ksse.getTorso().getZ()!=0){
+			isTheRequestedPose=true;
+		}
+		
+		return isTheRequestedPose;
+	}
+	/**
+	 * Specific algorithm to detect whether the user has their right hand streched in front of them.
+	 * 
+	 * 
+	 * @param ksse
+	 *            The KinectSkeletonServiceEvent containing the Skeleton data of
+	 *            the user.
+	 * @return True if the user is doing the pose. False otherwise.
+	 */
+	private boolean isRightHandInFrontOfTheUser50cm(KinectSkeletonServiceEvent ksse){
+		boolean isTheRequestedPose=false;
+		
+		double correctedTorso= ksse.getTorso().getZ()-500.0;
+		if(ksse.getRightHand().getZ()<correctedTorso && ksse.getRightHand().getZ()!=0 && ksse.getTorso().getZ()!=0){
 			isTheRequestedPose=true;
 		}
 		

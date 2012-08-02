@@ -202,8 +202,8 @@ public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonSer
 		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.HANDS_ABOVE_SHOULDERS_PSI_POSE.name())==0){
 			resume=true;
 			pause=false;
-		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER.name())==0 ||
-				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER.name())==0){
+		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_IN_FRONT_OF_THE_USER.name())==0 ||
+				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_IN_FRONT_OF_THE_USER.name())==0){
 			accept=true;
 			if(lastAccept==false){
 				lastTimeAccept=System.currentTimeMillis();

@@ -50,8 +50,28 @@ public class KinectUserGameControlLauncher extends LauncherWrapper {
 	 * The launcher of the psi-pose
 	 */
 	KinectPoseLauncher kplHandsAboveShouldersPsiPose;
-	
-	
+	/**
+	 * The launcher of the left hand in front of the user pose
+	 */
+	KinectPoseLauncher kplLeftHandInFrontOfTheUser;
+	/**
+	 * The launcher of the right hand in front of the user pose
+	 */
+	KinectPoseLauncher kplRightHandInFrontOfTheUser;
+	/**
+	 * 
+	 * @return the launcher of the left hand in front of the user pose
+	 */
+	public KinectPoseLauncher getKinectPoseLauncherLeftHandInFrontOfTheUser(){
+		return kplLeftHandInFrontOfTheUser;
+	}
+	/**
+	 * 
+	 * @return the launcher of the right hand in front of the user pose
+	 */
+	public KinectPoseLauncher getKinectPoseLauncherRightHandInFrontOfTheUser(){
+		return kplRightHandInFrontOfTheUser;
+	}
 	/**
 	 * 
 	 * @return the launcher of the crossed hands above the user's shoulders pose
@@ -109,6 +129,9 @@ public class KinectUserGameControlLauncher extends LauncherWrapper {
 		kplRightHandAboveRightShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER);
 		kplLeftHandAboveLeftShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER);
 		kplHandsAboveShouldersPsiPose= dm.getKinectPoseLauncher(userId, KinectPoseEnum.HANDS_ABOVE_SHOULDERS_PSI_POSE);
+		kplLeftHandInFrontOfTheUser= dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_IN_FRONT_OF_THE_USER);
+		kplRightHandInFrontOfTheUser= dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_IN_FRONT_OF_THE_USER);
+
 		
 	}
 	
@@ -140,6 +163,8 @@ public class KinectUserGameControlLauncher extends LauncherWrapper {
 		kplRightHandAboveRightShoulder.addListener(l);
 		kplLeftHandAboveLeftShoulder.addListener(l);
 		kplHandsAboveShouldersPsiPose.addListener(l);
+		kplLeftHandInFrontOfTheUser.addListener(l);
+		kplRightHandInFrontOfTheUser.addListener(l);
 	}
 
 
