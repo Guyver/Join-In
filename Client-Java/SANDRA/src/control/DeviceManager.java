@@ -32,6 +32,7 @@ import org.wiigee.control.WiimoteWiigee;
 import org.wiigee.device.Wiimote;
 
 
+
 import launchers.*;
 
 import IRGlancePackage.IRGlance;
@@ -119,11 +120,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * This semamphore is used to ensure that we do not try to start up the Kinect in two places at the same time.
 	 */
 	private Semaphore sem ; 
-	
-	/**
-	 * This field represents the maximum number of users that the Kinect can track.
-	 */
-	private int maximumNumberOfKinectUsers; 
+
 	
 	/**
 	 * This static field allows handling with the Kinect pose detection manager.
@@ -131,9 +128,8 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	private static KinectPoseManager kinectPoseManager;
 	
 	
-	/*
-	 * 
-	 * The createdXXXXLaunchers represent the launchers for each type of information that can be reported. 
+	/**
+	 * * The createdXXXXLaunchers represent the launchers for each type of information that can be reported. 
 	 * We store their reference here so that we can use DeviceManager to add and remove functionalities in run-time. 
 	 */
 	
@@ -174,33 +170,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	
 		return dm;
 	}
-	/**
-	 * 
-	 * Returns a new instance of DeviceManager if it did not exist or the
-	 * instance that was created if there was a created instance already.
-	 * 
-	 * @param ipAddressParam
-	 *            The string containing the ipAddress of the socket we want to
-	 *            open. For example: "193.156.105.166"
-	 * @param portParam
-	 *            The port number of the IP address that we want to open the
-	 *            socket. For example: 7540
-	 * @param maximumNumberOfKinectusers The maximum number of users that the Kinect can track.
-	 * @return DeviceManager
-	 */
-	static public DeviceManager getDeviceManager(String ipAddressParam,
-			int portParam, int maximumNumberOfKinectUsers) {
-		System.setProperty("bluecove.jsr82.psm_minimum_off", "true");
-		if (dm == null) {
-			dm = new DeviceManager();
-		}
-		dm.setIpAddress(ipAddressParam);
-		dm.setPort(portParam);
-		kinectPoseManager = new KinectPoseManager();
-		SocketManager.getSocket(ipAddressParam, portParam);
-		dm.setMaximumNumberOfKinectUsers(maximumNumberOfKinectUsers);
-		return dm;
-	}
+	
 	/**
 	 * 
 	 * Returns a new instance of DeviceManager if it did not exist or the
@@ -225,7 +195,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		dm.setPort(portParam);
 		kinectPoseManager = new KinectPoseManager();
 		SocketManager.getSocket(ipAddressParam, portParam);
-		dm.setMaximumNumberOfKinectUsers(1);
+	
 		return dm;
 	}
 	/**
@@ -940,16 +910,25 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * notified about joint-related events. This function connects the Kinect
 	 * device if it was not connected already.
 	 * 
-	 * @param userId
-	 *            The user we want to track.
 	 * @return The reference to the KinectSkeletonLauncher object.
 	 * @throws Exception
 	 */
-	public KinectSkeletonLauncher getKinectSkeletonLauncher(int userId) {
+	
+	
+	
+	
+
+	
+	
+
+
+		
+		
+	public KinectSkeletonLauncher getKinectSkeletonLauncher() {
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
+		
 		kinectCounter++;
-		createdKinectSkeletonLauncher = new KinectSkeletonLauncher(userId, true);
+		createdKinectSkeletonLauncher = new KinectSkeletonLauncher( true);
 		kinectManager.addKinectDataListener(createdKinectSkeletonLauncher);
 		return createdKinectSkeletonLauncher;
 	}
@@ -959,14 +938,12 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * notified about outOfScope-related events. This function connects the Kinect
 	 * device if it was not connected already.
 	 * 
-	 * @param userId
-	 *            The user we want to track. It is only useful if the Kinect wasn't running yet.
 	 * @return The reference to the KinectUserOutOfScopeLauncher object.
 	 * @throws Exception
 	 */
-	public KinectUserOutOfScopeLauncher getKinectUserOutOfScopeLauncher(int userId) { 	
+	public KinectUserOutOfScopeLauncher getKinectUserOutOfScopeLauncher() { 	
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
+	
 		kinectCounter++;
 		createdKinectUserOutOfScopeLauncher = new KinectUserOutOfScopeLauncher();
 		kinectManager.addKinectUserOutOfScopeListener(createdKinectUserOutOfScopeLauncher);
@@ -1094,8 +1071,6 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * time expires. This function connects the Kinect device if it was not
 	 * connected already.
 	 * 
-	 * @param userId
-	 *            The user we want to track.
 	 * @param joint
 	 *            The joint of the user that we want to track.
 	 * @param time
@@ -1105,14 +1080,13 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 *         listeners.
 	 */
 	public KinectAbsoluteSpaceForATimeLauncher getKinectAbsoluteSpaceForATimeLauncher(
-			int userId, SkeletonJoint joint, long time) {
+	 SkeletonJoint joint, long time) {
 
 		KinectAbsoluteSpaceForATimeLauncher kasfatl = null;
 		kinectStartUpKinectIfNeeded();
 		kinectCounter++;
-		waitForUserIsCalibrated(userId);
-		waitForJointReady(userId, joint);
-		kasfatl = new KinectAbsoluteSpaceForATimeLauncher(userId, joint, time);
+		waitForJointReady( joint);
+		kasfatl = new KinectAbsoluteSpaceForATimeLauncher( joint, time);
 		return kasfatl;
 	}
 
@@ -1123,8 +1097,6 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * joint has gone over throughout the given time. This function connects the
 	 * Kinect device if it was not connected already.
 	 * 
-	 * @param userId
-	 *            The user we want to track.
 	 * @param joint
 	 *            The joint of the user that we want to track.
 	 * @param time
@@ -1134,15 +1106,13 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 *         listeners.
 	 */
 	public KinectTotalSpaceTravelledForATimeLauncher getKinectTotalSpaceTravelledForATimeLauncher(
-			int userId, SkeletonJoint joint, long time) {
+			 SkeletonJoint joint, long time) {
 		KinectTotalSpaceTravelledForATimeLauncher ktstfat = null;
 		kinectStartUpKinectIfNeeded();
 		kinectCounter++;
-		waitForUserIsCalibrated(userId);
-		waitForJointReady(userId, joint);
+		waitForJointReady( joint);
 
-		ktstfat = new KinectTotalSpaceTravelledForATimeLauncher(userId, joint,
-				time);
+		ktstfat = new KinectTotalSpaceTravelledForATimeLauncher(  joint,	time);
 		return ktstfat;
 
 	}
@@ -1153,8 +1123,6 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * sphere whose center and radius are given as parameters. This function
 	 * connects the Kinect device if it was not connected already.
 	 * 
-	 * @param userId
-	 *            The user we want to track.
 	 * @param joint
 	 *            The joint of the user that we want to track.
 	 * @param sphereCenter
@@ -1166,59 +1134,26 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 *         listeners.
 	 */
 	public KinectUserJointReachPointLauncher getKinectUserJointReachPointLauncher(
-			int userId, SkeletonJoint joint, Point3D sphereCenter,
+			 SkeletonJoint joint, Point3D sphereCenter,
 			Point3D radius) {
 		KinectUserJointReachPointLauncher kujrpl = null;
 		kinectStartUpKinectIfNeeded();
 		kinectCounter++;
-		waitForUserIsCalibrated(userId);
-		kujrpl = new KinectUserJointReachPointLauncher(userId, joint,
+		kujrpl = new KinectUserJointReachPointLauncher( joint,
 				sphereCenter, radius);
 		kinectManager.addKinectDataListener(kujrpl);
 		return kujrpl;
 	}
-	/**
-	 * Performs an active waiting (stops the execution of the thread) until the
-	 * number of of users is higher than 0. If the parameter is a higher than 0
-	 * value, then the function waits until the skeleton of that user is
-	 * calibrated. This function connects the Kinect device if it was not
-	 * connected already.
-	 * 
-	 * @param userId
-	 *            The user we want to make sure his or her skeleton is
-	 *            calibrated before continuing. If it is value is lower than
-	 *            zero, the function will only waits until any user is detected
-	 *            (but it will not wait for his or her skeleton calibration).
-	 */
-	public void waitForUserIsCalibrated(int userId) {
-		
-		kinectStartUpKinectIfNeeded();
-		while (kinectManager.getUserGenerator().getNumberOfUsers() <= 0) {
-			// Active wait for an user
-		}
-		if (userId != -1) {
-			try {
-				while (!kinectManager.getUserGenerator().getSkeletonCapability().isSkeletonCalibrated(userId)) {
-					// Active wait for the calibration of the user's skeleton
-				}
-			} catch (StatusException e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
+	
 	/**
 	 * Performs an active waiting (stops the execution of the thread) until the
 	 * number of of users is higher than 0.
 	 * 
-	 * @param userId
-	 *            The user we want to make sure his or her skeleton is detected
-	 *            before continuing.
 	 */
-	public void waitForUserIsDetected(int userId) {
+	public void waitForUserIsDetected() {
 		kinectStartUpKinectIfNeeded();
 		while (kinectManager.getUserGenerator().getNumberOfUsers() <= 0) {
-			// Active wait for an user
+			
 		}
 	}
 	/**
@@ -1226,20 +1161,18 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * given joint of the given user is ready (its value will be different than
 	 * zero).
 	 * 
-	 * @param userId
-	 *            The user whose his or her joint we want to make sure that is
-	 *            ready before continuing.
 	 * @param joint
 	 *            The joint of the user we want to make sure that is ready
 	 *            before continuing.getKinectPoseLauncherTouchingEar
 	 */
-	public void waitForJointReady(int userId, SkeletonJoint joint) {
-		Vector3d currentPoint = kinectManager.getSkeletonManager().getJoint3D(
-				userId, joint);
+	
+	public void waitForJointReady( SkeletonJoint joint) {
+	
+		Vector3d currentPoint = kinectManager.getSkeletonManager().getJoint3D(	joint);
 		while (currentPoint.getX() == 0.0 && currentPoint.getY() == 0.0
 				&& currentPoint.getZ() == 0.0) {
-			currentPoint = kinectManager.getSkeletonManager().getJoint3D(
-					userId, joint);
+		
+			currentPoint = kinectManager.getSkeletonManager().getJoint3D( joint);
 		}
 	}
 
@@ -1250,16 +1183,16 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	 * @return Returns true if the Kinect has been tilted so that the player can
 	 *         be seen correctly. False otherwise.
 	 */
-	public double adjustKinectForTheBestTilt(int userId) {
+	public double adjustKinectForTheBestTilt() {
 		boolean notAtLimit = true;
 		double accuracyPercentage = 0.0;
 		// For a Y resolution of 480, accuracy won't be higher than 240, so,
 		// we initialise it to a high value that
 		// we know we will never reach.
-
+		
 		double accuracy = 481;
 		try {
-			waitForUserIsCalibrated(userId);
+			
 			int angle = 0;
 			while (kinectManager.getMotorCommunicator().getStatus()
 					.compareTo(MotorStatus.MOVING) == 0) {
@@ -1267,7 +1200,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 			}
 			angle = kinectManager.getMotorCommunicator().getAngle();
 
-			Point3D massCenter = kinectManager.getDepthGenerator().convertRealWorldToProjective(kinectManager.getUserGenerator().getUserCoM(userId));
+			Point3D massCenter = kinectManager.getDepthGenerator().convertRealWorldToProjective(kinectManager.getUserGenerator().getUserCoM(1));
 
 			double middlePointY = kinectManager.getYResolution() / 2;
 
@@ -1313,7 +1246,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 						massCenter = kinectManager.getDepthGenerator()
 								.convertRealWorldToProjective(
 										kinectManager.getUserGenerator()
-												.getUserCoM(userId));
+												.getUserCoM(1));
 					} catch (Exception e) {
 
 					}
@@ -1366,7 +1299,7 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 		try {
 			sem.acquire();
 			if (kinectManager == null) {
-				kinectManager = new KinectManager(maximumNumberOfKinectUsers);
+				kinectManager = new KinectManager();
 				try {
 					kinectManager.connect();
 				} catch (Exception e) {
@@ -1382,20 +1315,19 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	}
 	/**
 	 * 
-	 * @param userId The ID label of the user we want to detect the pose to.
 	 * @param kinectPose The KinectPose that we want to be detected.
-	 * @return A KinectPoseLauncher which will notify its listeners when the user with ID label userId performs the pose kinectPose. 
+	 * @return A KinectPoseLauncher which will notify its listeners when any user performs the pose kinectPose. 
 	 */
-	public KinectPoseLauncher getKinectPoseLauncher(int userId, KinectPoseEnum kinectPose) { 
+	public KinectPoseLauncher getKinectPoseLauncher( KinectPoseEnum kinectPose) { 
 			
 		kinectStartUpKinectIfNeeded();	
-		dm.waitForUserIsCalibrated(userId);
+
 		kinectCounter++;
-		createdKinectPoseLauncher = new KinectPoseLauncher(userId, kinectPose);
+		createdKinectPoseLauncher = new KinectPoseLauncher(kinectPose);
 	
 		try {
 			
-			createdKinectPoseLauncher.setPrivateKinectSkeletonLauncher(new KinectSkeletonLauncher(userId, false));
+			createdKinectPoseLauncher.setPrivateKinectSkeletonLauncher(new KinectSkeletonLauncher( false));
 			kinectManager.addKinectDataListener(createdKinectPoseLauncher.getPrivateKinectSkeletonLauncher());
 			createdKinectPoseLauncher.getPrivateKinectSkeletonLauncher().addListener(kinectPoseManager);
 			
@@ -1408,78 +1340,55 @@ public class DeviceManager implements WiiBoardDiscoveryListener {
 	}
 	/**
 	 * 
-	 * @param userId The ID label of the user we want to detect the pose to.
-	 * @return A KinectUserMovementLauncher which will notify its listeners when the user with ID label userId performs any pose related with the movement of the user. 
+	 * @return A KinectUserMovementLauncher which will notify its listeners when any user performs any pose related with the movement of the user. 
 	 */
-	public KinectUserMovementLauncher getKinectUserMovementLauncher(int userId) { 
+	public KinectUserMovementLauncher getKinectUserMovementLauncher() { 
 	
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
-		createdKinectUserMovementLauncher = new KinectUserMovementLauncher(userId);			
+		createdKinectUserMovementLauncher = new KinectUserMovementLauncher();			
 		return createdKinectUserMovementLauncher;
 	}
 	/**
 	 * 
-	 * @param userId The ID label of the user we want to detect the pose to.
-	 * @return A KinectUserReachWithBothHandsLauncher which will notify its listeners when the user with ID label userId performs any pose related with the movement of the user. 
+	 * @return A KinectUserReachWithBothHandsLauncher which will notify its listeners when any user performs any pose related with the movement of the user. 
 	 */
-	public KinectUserReachWithBothHandsLauncher getKinectUserReachWithBothHandsLauncher(int userId){
+	public KinectUserReachWithBothHandsLauncher getKinectUserReachWithBothHandsLauncher(){
 				
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
-		createdKinectUserReachWithBothHandsLauncher = new KinectUserReachWithBothHandsLauncher(userId);
+		createdKinectUserReachWithBothHandsLauncher = new KinectUserReachWithBothHandsLauncher();
 		return createdKinectUserReachWithBothHandsLauncher;		
 		
 	}
 	/**
 	 * 
-	 * @param userId The ID label of the user we want to detect the pose to.
-	 * @return A KinectUserMovementLauncher which will notify its listeners when the user with ID label userId performs a hug. 
+	 * @return A KinectUserMovementLauncher which will notify its listeners when any user performs a hug. 
 	 */
-	public KinectUserHugLauncher getKinectUserHugLauncher(int userId) { 
+	public KinectUserHugLauncher getKinectUserHugLauncher() { 
 		// We allow to exist only one Kinect device
-	
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
-		createdKinectUserHugLauncher = new KinectUserHugLauncher(userId);
+		createdKinectUserHugLauncher = new KinectUserHugLauncher();
 		return createdKinectUserHugLauncher;
 	}
 	/**
 	 * 
-	 * @param userId The ID label of the user we want to detect the pose to.
-	 * @return A KinectUserGameControlLauncher which will notify its listeners when the user with ID label userId performs any pose related with the control of the menus of the game. 
+	 * @return A KinectUserGameControlLauncher which will notify its listeners when any user performs any pose related with the control of the menus of the game. 
 	 */
-	public KinectUserGameControlLauncher getKinectUserGameControlLauncher(int userId){	
+	public KinectUserGameControlLauncher getKinectUserGameControlLauncher(){	
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
-		createdKinectUserGameControlLauncher = new KinectUserGameControlLauncher(userId);	
+		createdKinectUserGameControlLauncher = new KinectUserGameControlLauncher();	
 		return createdKinectUserGameControlLauncher;		
 	}
 
 	/**
 	 * 
-	 * @param userId The ID label of the user we want to detect the pose to.
-	 * @return A KinectUserPickedUpFromSidesLauncher which will notify its listeners when the user with ID label userId performs either a pose of picking up from the left side or a pose of picking up from the right side. 
+	 * @return A KinectUserPickedUpFromSidesLauncher which will notify its listeners when the user with ID label any user performs either a pose of picking up from the left side or a pose of picking up from the right side. 
 	 */	
-	public KinectUserPickedUpFromSidesLauncher getKinectUserPickedUpFromSidesLauncher(int userId){			
+	public KinectUserPickedUpFromSidesLauncher getKinectUserPickedUpFromSidesLauncher(){			
 		kinectStartUpKinectIfNeeded();
-		dm.waitForUserIsCalibrated(userId);
-		createdKinectUserPickedUpFromSidesLauncher = new KinectUserPickedUpFromSidesLauncher(userId);
+		createdKinectUserPickedUpFromSidesLauncher = new KinectUserPickedUpFromSidesLauncher();
 		return createdKinectUserPickedUpFromSidesLauncher;
 	}		
-	/**
-	 * @return the maximumNumberOfKinectUsers
-	 */
-	public int getMaximumNumberOfKinectUsers() {
-		return maximumNumberOfKinectUsers;
-	}
-
-	/**
-	 * @param the maximumNumberOfKinectUsers to set
-	 */
-	public void setMaximumNumberOfKinectUsers(int maximumNumberOfKinectUsers) {
-		this.maximumNumberOfKinectUsers = maximumNumberOfKinectUsers;
-	}
+	
 	/**
 	 * 
 	 * @return the map of launchers of WiiMote accelerations events

@@ -1,4 +1,7 @@
 control
+handlers
 iservices
+kinectThreads
 launchers
+run
 services

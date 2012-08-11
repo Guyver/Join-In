@@ -23,7 +23,7 @@ import java.util.EventListener;
 public interface IKinectUserOutOfScopeListener extends EventListener{
 	/**
 	 * Must be implemented to manage the KinectOutOfScope events.
-	 * @param ne The new Kinect event.
+	 * @param kuoose The new Kinect out of scope event.
 	 */
 	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose);
 }

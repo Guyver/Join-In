@@ -28,10 +28,6 @@ import control.IEventCommModule;
 public class KinectAbsoluteSpaceForATimeServiceEvent  implements IEventCommModule{
 
 	/**
-	 * Represents the user we are going to track to see whether her joint reaches the specified point.
-	 */
-	private int userId;
-	/**
 	 * Represents the user's joint which we are going to track to see whether it reaches the specified point.
 	 */
 	private SkeletonJoint joint;
@@ -46,32 +42,18 @@ public class KinectAbsoluteSpaceForATimeServiceEvent  implements IEventCommModul
 	
 	/**
 	 * Sets the field of this class with the given parameters.
-	 * @param userId The identifier which determines which user the values refer to. 
 	 * @param joint The joint of the user we are tracking to see whether it reaches the point.
-	 * @param pont The point to reach by the user's joint.
+	 * @param space The point to reach by the user's joint.
 	 * @param time The time throughout which the space was calculated.
 	 */	
-	public KinectAbsoluteSpaceForATimeServiceEvent(int userId, SkeletonJoint joint, Vector3d space, long time){
-		this.setUserId(userId);
+	public KinectAbsoluteSpaceForATimeServiceEvent( SkeletonJoint joint, Vector3d space, long time){
+
 		this.setJoint(joint);
 		this.setSpace (space);
 		this.setTime(time);
 	}
 
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-
+	
 	/**
 	 * @return the joint
 	 */

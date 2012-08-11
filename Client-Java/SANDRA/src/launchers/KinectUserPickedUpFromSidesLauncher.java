@@ -26,10 +26,7 @@ import control.LauncherWrapper;
  * @author Santiago Hors Fraile
  */
 public class KinectUserPickedUpFromSidesLauncher extends LauncherWrapper {
-	/**
-	 * This field represents the the ID label of the users we want to get the poses of.
-	 */
-	private int userId;
+
 	/**
 	 * This field represents the launcher of the events of having the left shoulder lower and closer to the camera than the right shoulder.
 	 */
@@ -55,34 +52,20 @@ public class KinectUserPickedUpFromSidesLauncher extends LauncherWrapper {
 	}
 
 	/**
-	 * Constructor with parameter.
-	 * @param userId The user's label we want to track his/her skeleton to.
+	 * Default constructor.
 	 */
-	public KinectUserPickedUpFromSidesLauncher(int userId){
-		setUserId(userId);
+	public KinectUserPickedUpFromSidesLauncher(){
+
 		DeviceManager dm = DeviceManager.getDeviceManager();
-		kplLeftShoulderLowerAndCloser= dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_SHOULDER_LOWER_AND_CLOSER);
-		kplRightShoulderLowerAndCloser= dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_SHOULDER_LOWER_AND_CLOSER);
+		kplLeftShoulderLowerAndCloser= dm.getKinectPoseLauncher( KinectPoseEnum.LEFT_SHOULDER_LOWER_AND_CLOSER);
+		kplRightShoulderLowerAndCloser= dm.getKinectPoseLauncher( KinectPoseEnum.RIGHT_SHOULDER_LOWER_AND_CLOSER);
     
     
 
 	}
 	
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-
+	
 
 
 	/**

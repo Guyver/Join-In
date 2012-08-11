@@ -35,11 +35,7 @@ import control.DeviceManager;
  */
 public class KinectAbsoluteSpaceForATime implements Runnable {
 
-	/**
-	 * This attribute represents the user ID whose movement data we want to know
-	 * about.
-	 */
-	int userId;
+	
 	/**
 	 * This attribute represents the specific joint we want to track from the
 	 * user.
@@ -60,8 +56,6 @@ public class KinectAbsoluteSpaceForATime implements Runnable {
 	 * This constructor assigns the user identification label, the joint we want
 	 * to track, the time throughout we want to track.
 	 * 
-	 * @param userId
-	 *            The user we refer to.
 	 * @param joint
 	 *            The joint we want to track.
 	 * @param time
@@ -69,9 +63,9 @@ public class KinectAbsoluteSpaceForATime implements Runnable {
 	 *            user's joint.
 	 * @param launcher
 	 */
-	public KinectAbsoluteSpaceForATime(int userId, SkeletonJoint joint,
+	public KinectAbsoluteSpaceForATime(SkeletonJoint joint,
 			long time, KinectAbsoluteSpaceForATimeLauncher launcher) {
-		this.userId = userId;
+
 		this.joint = joint;
 		this.time = time;
 		this.launcher = launcher;
@@ -82,23 +76,27 @@ public class KinectAbsoluteSpaceForATime implements Runnable {
 	public void run() {
 		KinectManager kinectManager = DeviceManager.getDeviceManager()
 				.getKinectManager();
+		/*Vector3d initialPosition = kinectManager.getSkeletonManager()
+				.getJoint3D(userId, joint);*/
 		Vector3d initialPosition = kinectManager.getSkeletonManager()
-				.getJoint3D(userId, joint);
+				.getJoint3D( joint);
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
+		/*Vector3d finalPosition = kinectManager.getSkeletonManager().getJoint3D(
+				userId, joint);*/
 		Vector3d finalPosition = kinectManager.getSkeletonManager().getJoint3D(
-				userId, joint);
+				 joint);
 		Vector3d result = new Vector3d( Math.abs(finalPosition.getX()
 				- initialPosition.getX()),  Math.abs(finalPosition
 				.getY() - finalPosition.getY()),  Math.abs(finalPosition
 				.getZ() - finalPosition.getZ()));
 
 		KinectAbsoluteSpaceForATimeEvent ke = new KinectAbsoluteSpaceForATimeEvent(
-				userId, joint, result);
+				 joint, result);
 		launcher.kinectAbsoluteSpaceForATimeUpdate(ke);
 		launcher.setRunning(false);
 	}

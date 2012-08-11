@@ -31,10 +31,7 @@ import control.LauncherWrapper;
  */
 public class KinectUserHugLauncher extends LauncherWrapper {
 
-	/**
-	 * This field represents the the ID label of the users we want to get the poses of.
-	 */
-	private int userId;
+
 	/**
 	 * This field represents the launcher of events of the pose "opened hug".
 	 */
@@ -60,14 +57,13 @@ public class KinectUserHugLauncher extends LauncherWrapper {
 	}
 	
 	/**
-	 * Constructor with parameter.
-	 * @param userId The user's label we want to track his/her skeleton to.
+	 * Default constructor.
 	 */
-	public KinectUserHugLauncher(int userId){
-		setUserId(userId);
+	public KinectUserHugLauncher(){
+
 		DeviceManager dm = DeviceManager.getDeviceManager();  
-    	kplOpenedHug = dm.getKinectPoseLauncher(userId,  KinectPoseEnum.OPENED_HUG);
-    	kplClosedHug = dm.getKinectPoseLauncher(userId, KinectPoseEnum.CLOSED_HUG);
+    	kplOpenedHug = dm.getKinectPoseLauncher(  KinectPoseEnum.OPENED_HUG);
+    	kplClosedHug = dm.getKinectPoseLauncher( KinectPoseEnum.CLOSED_HUG);
     	
 	}
 	
@@ -81,20 +77,7 @@ public class KinectUserHugLauncher extends LauncherWrapper {
 			DeviceManager.getDeviceManager().dropKinect(this);
 		}
 	}
-	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
 
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 	/**
 	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
 	 * @param l The listener that have to be added.

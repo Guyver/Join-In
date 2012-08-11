@@ -26,10 +26,7 @@ import control.IEventCommModule;
  */
 public class KinectUserJointReachPointServiceEvent  implements IEventCommModule{
 
-	/**
-	 * Represents the user we are going to track to see whether her joint reaches the specified point.
-	 */
-	private int userId;
+
 	/**
 	 * Represents the user's joint which we are going to track to see whether it reaches the specified point.
 	 */
@@ -48,13 +45,12 @@ public class KinectUserJointReachPointServiceEvent  implements IEventCommModule{
 	private Point3D triggeringPoint;
 	/**
 	 * Sets the field of this class with the given parameters.
-	 * @param userId The identifier which determines which user the values refer to. 
 	 * @param joint The joint of the user we are tracking to see whether it reaches the point.
 	 * @param sphereCenter The center of the virtual sphere which the user's joint must reach. 
 	 * @param radius The radius of the virtual sphere. 
 	 */
-	public KinectUserJointReachPointServiceEvent(int userId, SkeletonJoint joint, Point3D sphereCenter, Point3D radius, Point3D triggeringPoint){
-		this.setUserId(userId);
+	public KinectUserJointReachPointServiceEvent( SkeletonJoint joint, Point3D sphereCenter, Point3D radius, Point3D triggeringPoint){
+	
 		this.setJoint(joint);
 		this.setSphereCenter(sphereCenter);
 		this.setRadius(radius);
@@ -62,19 +58,7 @@ public class KinectUserJointReachPointServiceEvent  implements IEventCommModule{
 		
 	}
 
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+	
 
 	/**
 	 * @return the joint

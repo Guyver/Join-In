@@ -37,10 +37,7 @@ import control.LauncherWrapper;
  */
 public class KinectAbsoluteSpaceForATimeLauncher extends LauncherWrapper implements IKinectAbsoluteSpaceForATimeListener{
 	
-	/**
-	 * The user's label ID whose joint we want calculate the space it goes over throughout the given time.
-	 */
-	private int userId;
+
 	/**
 	 * The user's joint we want to calculate the space it goes over throughout the given time.
 	 */
@@ -56,12 +53,11 @@ public class KinectAbsoluteSpaceForATimeLauncher extends LauncherWrapper impleme
 
 	/**
 	 * Creates a new KinectAbsoluteSpaceForATimeLauncher and initializes it with the given parameters.
-	 * @param userId The user's label ID whose joint we want calculate the space it goes over throughout the given time.
 	 * @param joint The user's joint we want to calculate the space it goes over throughout the given time.
 	 * @param time The time throughout we are going to track the user's joint.
 	 */
-	public KinectAbsoluteSpaceForATimeLauncher(int userId, SkeletonJoint joint, long time) {
-		this.userId=userId;
+	public KinectAbsoluteSpaceForATimeLauncher(SkeletonJoint joint, long time) {
+
 		this.joint=joint;
 		this.time=time;
 		this.running=false;
@@ -71,7 +67,7 @@ public class KinectAbsoluteSpaceForATimeLauncher extends LauncherWrapper impleme
 	 */
 	public void startCounting(){
 		running=true;
-		Thread t1 = new Thread(new KinectAbsoluteSpaceForATime(userId, joint, time,this));
+		Thread t1 = new Thread(new KinectAbsoluteSpaceForATime(  joint, time,this));
 		t1.start();
 	
 	}
@@ -81,7 +77,7 @@ public class KinectAbsoluteSpaceForATimeLauncher extends LauncherWrapper impleme
 	 */
 	public void startCounting(long overwrittenTime){
 		running=true;
-		Thread t1 = new Thread(new KinectAbsoluteSpaceForATime(userId, joint, overwrittenTime, this));
+		Thread t1 = new Thread(new KinectAbsoluteSpaceForATime( joint, overwrittenTime, this));
 		t1.start();
 	
 	}
@@ -108,11 +104,11 @@ public class KinectAbsoluteSpaceForATimeLauncher extends LauncherWrapper impleme
 	}
 	/**
 	 * Throws the given KinectAbsoluteSpaceForATimeEvent to listeners in the listenerList as a KinectAbsoluteSpaceForATimeServiceService.
-	 * @param event The KinectAbsoluteSpaceForATimeServiceEvent.
+	 * @param ke The KinectAbsoluteSpaceForATimeServiceEvent.
 	 */
 	@Override
 	public void kinectAbsoluteSpaceForATimeUpdate(KinectAbsoluteSpaceForATimeEvent ke) {
-		KinectAbsoluteSpaceForATimeServiceEvent se = new KinectAbsoluteSpaceForATimeServiceEvent(ke.getUserId(),ke.getJoint(),ke.getSpace(),time);		
+		KinectAbsoluteSpaceForATimeServiceEvent se = new KinectAbsoluteSpaceForATimeServiceEvent(ke.getJoint(),ke.getSpace(),time);		
 		Iterator<IListenerCommModule> it = super.listenersList.iterator();
 		while(it.hasNext()){
 			IKinectAbsoluteSpaceForATimeService l = (IKinectAbsoluteSpaceForATimeService)it.next();
@@ -135,19 +131,7 @@ public class KinectAbsoluteSpaceForATimeLauncher extends LauncherWrapper impleme
 		this.running = running;
 	}
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
 
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 
 	/**
 	 * @return the joint

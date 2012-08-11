@@ -30,11 +30,9 @@ public class KinectTest implements IKinectDataListener, IKinectUserOutOfScopeLis
 	public void testing(){
 		
 		KinectTest tes = new KinectTest();
-		km = new KinectManager(1);
+		km = new KinectManager();
 		km.addKinectDataListener(tes);
-		
 		km.addKinectUserOutOfScopeListener(tes);
-
 		try {
 			km.connect();
 		} catch (Exception e) {
@@ -49,8 +47,8 @@ public class KinectTest implements IKinectDataListener, IKinectUserOutOfScopeLis
 	public void kinectUpdate(KinectDataEvent ke) {
 		
 		
-		if(ke.getKinectData().getSkeletonManager().getJoint3D(1, SkeletonJoint.RIGHT_HAND).getX()!=0.0){
-			System.out.println(ke.getKinectData().getSkeletonManager().getJoint3D(1, SkeletonJoint.RIGHT_HAND));
+		if(ke.getKinectData().getSkeletonManager().getJoint3D(SkeletonJoint.RIGHT_HAND).getX()!=0.0){
+			System.out.println(ke.getKinectData().getSkeletonManager().getJoint3D( SkeletonJoint.RIGHT_HAND));
 		}
 	
 	}
@@ -59,17 +57,12 @@ public class KinectTest implements IKinectDataListener, IKinectUserOutOfScopeLis
 	public void kinectUpdate(KinectUserOutOfScopeEvent kuoose) {
 		
 		if(km!=null){
-			System.out.println("HAS SALIDO!!!!!!!!! ");
-			
+			System.out.println("You're out!!!!!!!!! ");		
 			km.disconnect();
-			
-			
-	
 			try {
-				km.connect();
-			
+				km.connect();	
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}

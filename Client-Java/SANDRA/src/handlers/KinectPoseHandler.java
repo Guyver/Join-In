@@ -30,8 +30,10 @@ import iservices.IKinectSkeletonService;
  */
 public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonService {
 	
-	
-	String currentMovementState="";
+	/**
+	 * Represents the current movement state.
+	 */
+	private String currentMovementState="";
 	/**
 	 * Represents whether the user's left leg is risen.
 	 */
@@ -212,6 +214,7 @@ public class KinectPoseHandler implements IKinectPoseService, IKinectSkeletonSer
 		}else if(se.getKinectPose().name().compareTo(KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_FROM_LEFT_HIP.name())==0||
 				se.getKinectPose().name().compareTo(KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPARATED_FROM_RIGHT_HIP.name())==0){
 			cancel=true;
+			
 			if(lastCancel==false){
 				lastTimeCancel=System.currentTimeMillis();
 			}

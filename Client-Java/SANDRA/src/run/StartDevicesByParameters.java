@@ -86,47 +86,45 @@ public class StartDevicesByParameters {
 
 	public StartDevicesByParameters(String[] args) throws Exception
 	{    
-		//This variable may be modified in future version if we allow that two or more users use the same Kinect device at the same time
-		int maximumNumberOfKinectUsers =1;
-		//By default, I'm interested on the user whose label is '1'
-		int theUserIWant=1;
+	
+		
 		//Get the IP
 		String serverIP= args[0];
 		//Get the Port
 		short serverPort= Short.parseShort(args[1]);
 		//Get the device manager
-		DeviceManager dm = DeviceManager.getDeviceManager(serverIP, serverPort, maximumNumberOfKinectUsers);
+		DeviceManager dm = DeviceManager.getDeviceManager(serverIP, serverPort);
    	 	
 		//Iterate over the rest of the parameters to run the requested services
 		for(int i=2; i<args.length; i++){
 		
 			if(args[i].equalsIgnoreCase("kinectMovements")){
-				KinectUserMovementLauncher kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant); 	
+				KinectUserMovementLauncher kumLauncher= dm.getKinectUserMovementLauncher(); 	
 		    	KinectPoseHandler poseHandler = new KinectPoseHandler();
 		    	kumLauncher.addListener(poseHandler);    
 		    
 		    	
 			}else if(args[i].equalsIgnoreCase("reachWithBothHands")){
-				KinectUserReachWithBothHandsLauncher kurwbhLauncher= dm.getKinectUserReachWithBothHandsLauncher(theUserIWant);
+				KinectUserReachWithBothHandsLauncher kurwbhLauncher= dm.getKinectUserReachWithBothHandsLauncher();
 				KinectPoseHandler poseHandler = new KinectPoseHandler();
 				kurwbhLauncher.addListener(poseHandler);
 	
 			}
 			else if(args[i].equalsIgnoreCase("kinectHug")){
-				KinectUserHugLauncher kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
+				KinectUserHugLauncher kuhLauncher= dm.getKinectUserHugLauncher();
 				KinectPoseHandler poseHandler = new KinectPoseHandler();
 				kuhLauncher.addListener(poseHandler);
 	
 			}else if(args[i].equalsIgnoreCase("gameControl")){
-				KinectUserGameControlLauncher kgcLauncher= dm.getKinectUserGameControlLauncher(theUserIWant);
+				KinectUserGameControlLauncher kgcLauncher= dm.getKinectUserGameControlLauncher();
 		    	KinectPoseHandler poseHandler = new KinectPoseHandler();
 		    	kgcLauncher.addListener(poseHandler);
 	
 			}else if(args[i].equalsIgnoreCase("outOfScopeDetection")){		
-			   	DeviceManager.getDeviceManager().getKinectUserOutOfScopeLauncher(1).addListener(new KinectUserOutOfScopeHandler());	
+			   	DeviceManager.getDeviceManager().getKinectUserOutOfScopeLauncher().addListener(new KinectUserOutOfScopeHandler());	
 			
 			}else if(args[i].equalsIgnoreCase("kinectJoints")){
-				KinectSkeletonLauncher ksl= dm.getKinectSkeletonLauncher(theUserIWant);
+				KinectSkeletonLauncher ksl= dm.getKinectSkeletonLauncher();
 				KinectSkeletonJointsHandler cqaks= new KinectSkeletonJointsHandler();
 				ksl.addListener(cqaks);
 				
@@ -137,10 +135,10 @@ public class StartDevicesByParameters {
 				
 			}else if(args[i].equalsIgnoreCase("kinectAll")){
 				
-		    	KinectUserMovementLauncher kumLauncher= dm.getKinectUserMovementLauncher(theUserIWant);
-		    	KinectUserHugLauncher kuhLauncher= dm.getKinectUserHugLauncher(theUserIWant);
-		    	KinectUserGameControlLauncher kgcLauncher= dm.getKinectUserGameControlLauncher(theUserIWant);
-		    	KinectUserReachWithBothHandsLauncher kurwbhLauncher= dm.getKinectUserReachWithBothHandsLauncher(theUserIWant);
+		    	KinectUserMovementLauncher kumLauncher= dm.getKinectUserMovementLauncher();
+		    	KinectUserHugLauncher kuhLauncher= dm.getKinectUserHugLauncher();
+		    	KinectUserGameControlLauncher kgcLauncher= dm.getKinectUserGameControlLauncher();
+		    	KinectUserReachWithBothHandsLauncher kurwbhLauncher= dm.getKinectUserReachWithBothHandsLauncher();
 		    	
 		    	KinectPoseHandler poseHandler = new KinectPoseHandler();
 		      	
@@ -149,7 +147,7 @@ public class StartDevicesByParameters {
 		    	kgcLauncher.addListener(poseHandler);
 		    	kurwbhLauncher.addListener(poseHandler);
 		    
-		    	KinectSkeletonLauncher ksl= dm.getKinectSkeletonLauncher(theUserIWant);
+		    	KinectSkeletonLauncher ksl= dm.getKinectSkeletonLauncher();
 				KinectSkeletonJointsHandler cqaks= new KinectSkeletonJointsHandler();
 				ksl.addListener(cqaks);
 				

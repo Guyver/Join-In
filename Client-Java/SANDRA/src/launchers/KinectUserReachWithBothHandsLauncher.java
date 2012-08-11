@@ -36,11 +36,10 @@ public class KinectUserReachWithBothHandsLauncher extends LauncherWrapper {
 	}	
 	
 	/**
-	 * Constructor with parameters
-	 * @param userId The ID label of the user we want to track.
+	 * Default constructor
 	 */
-	public KinectUserReachWithBothHandsLauncher(int userId){  
-		DeviceManager.getDeviceManager().getKinectSkeletonLauncher(userId);
+	public KinectUserReachWithBothHandsLauncher(){  
+		DeviceManager.getDeviceManager().getKinectSkeletonLauncher();
 	}
 	
 	/**

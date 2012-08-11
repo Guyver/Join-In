@@ -24,30 +24,35 @@ import control.IEventCommModule;
  */
 public class KinectPoseServiceEvent implements IEventCommModule  {
 	
-	private int userId;
+	//private int userId;
 	private KinectPoseEnum kinectPose;
 	private boolean posing;
 
 	
-	public KinectPoseServiceEvent(int userId, KinectPoseEnum kinectPose, boolean posing){
+	/*public KinectPoseServiceEvent(int userId, KinectPoseEnum kinectPose, boolean posing){
 		this.setKinectPose(kinectPose);
 		this.setUserId(userId);
 		this.setPosing(posing);
 	
+	}*/
+	public KinectPoseServiceEvent( KinectPoseEnum kinectPose, boolean posing){
+	this.setKinectPose(kinectPose);
+	//this.setUserId(userId);
+	this.setPosing(posing);
+
 	}
-	
 	/**
 	 * @return the userId
 	 */
-	public int getUserId() {
-		return userId;
-	}
+	//public int getUserId() {
+	//	return userId;
+	//}
 	/**
 	 * @param userId the userId to set
 	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+	//public void setUserId(int userId) {
+	//	this.userId = userId;
+	//}
 	/**
 	 * @return the kinectPose
 	 */

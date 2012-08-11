@@ -19,8 +19,7 @@ import iservices.*;
 
 import java.util.Iterator;
 
-
-import kinectThreads.KinectEnhacedSkeletonLauncher;
+import kinectThreads.KinectEnhancedSkeletonLauncher;
 
 import KinectPackage.IKinectDataListener;
 import KinectPackage.KinectDataEvent;
@@ -45,11 +44,8 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectDa
 	/**
 	 * This object privides more functionalities to the Launcher, including the Thread-running capability to send the data to the server.
 	 */
-	private KinectEnhacedSkeletonLauncher kinectEnhacedSkeletonLauncher;
-	/**
-	 * The user's label we want to track his/her skeleton to. 
-	 */
-	private int userId;
+	private KinectEnhancedSkeletonLauncher kinectEnhancedSkeletonLauncher;
+
 	
 	/**
 	 * Adds a listener to the list of listeners of the superclass LauncherWrapper.
@@ -76,7 +72,7 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectDa
 	//Specific functions
 	/**
 	 * Throws the given KinectEvent to all listeners in the listenerList as a KinectServiceEvent.
-	 * @param ne The KinectEvent.
+	 * @param ke The Kinect Data Event.
 	 */	
 
 	@Override
@@ -88,8 +84,8 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectDa
 		while(it.hasNext()){
 			IKinectSkeletonService l = (IKinectSkeletonService)it.next();
 			l.kinectUpdate(se);
-			if(kinectEnhacedSkeletonLauncher!=null){
-				kinectEnhacedSkeletonLauncher.setLastKinectSkeletonServiceEvent(se);
+			if(kinectEnhancedSkeletonLauncher!=null){
+				kinectEnhancedSkeletonLauncher.setLastKinectSkeletonServiceEvent(se);
 			}
 		}		
 	}
@@ -97,61 +93,30 @@ public class KinectSkeletonLauncher extends LauncherWrapper implements IKinectDa
 	 * Default constructor
 	 */
 	public KinectSkeletonLauncher(){
-		setUserId(1);
-		kinectEnhacedSkeletonLauncher=null;
+	
+		kinectEnhancedSkeletonLauncher=null;
 		t1=null;
 	
 		
 	}
-	/**
-	 * Constructor with parameter. We assume the the skeleton launcher does not have to send the SkeletonJointData through the socket.
-	 * @param userId The user's label we want to track his/her skeleton to.
-	 */
-	public KinectSkeletonLauncher(int userId){
-		
-		
-		setUserId(userId);
-		
-	}
+
 	/**
 	 * Constructor with parameter.
-	 * @param userId The user's label we want to track his/her skeleton to.
 	 * @param sendSkeletonJointDataToSocket A boolean parameter that represents whether the skeleton launcher has to send the SkeletonJointData through the socket or not.
 	 */
-	public KinectSkeletonLauncher(int userId, boolean sendSkeletonJointDataToSocket){
-		
-		
-		setUserId(userId);
+	public KinectSkeletonLauncher( boolean sendSkeletonJointDataToSocket){
 		if(sendSkeletonJointDataToSocket){
 			restartSendingThread();
 		}
-		
-	}
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		
-	
-		this.userId = userId;	
-		
-	
 	}
 	/**
 	 * This function (re)starts the thread which sends the data to the server through the socket.
 	 */
 	public void restartSendingThread(){
-	kinectEnhacedSkeletonLauncher= new KinectEnhacedSkeletonLauncher(userId);
-	t1 = new Thread(kinectEnhacedSkeletonLauncher);
-	t1.start();
-}
+		kinectEnhancedSkeletonLauncher= new KinectEnhancedSkeletonLauncher();
+		t1 = new Thread(kinectEnhancedSkeletonLauncher);
+		t1.start();
+	}
 
 	
 	

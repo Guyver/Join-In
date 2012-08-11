@@ -22,10 +22,7 @@ import org.OpenNI.SkeletonJoint;
 
 public class KinectTotalSpaceTravelledForATimeEvent {
 
-	/**
-	 * The user's ID label  
-	 */
-	private int userId;
+	
 	/**
 	 * The user's joint
 	 */
@@ -37,29 +34,16 @@ public class KinectTotalSpaceTravelledForATimeEvent {
 	
 	/**
 	 * Creates a new KinectTotalSpaceTravelledForATimeEvent object with the given parameters.
-	 * @param userId The user's ID label.
 	 * @param joint The user's joint.
-	 * @param point The space that the user's joint has moved.
+	 * @param space The space that the user's joint has moved.
 	 */
-	public KinectTotalSpaceTravelledForATimeEvent(int userId, SkeletonJoint joint,Vector3d space) {
-		this.setUserId(userId);
+	public KinectTotalSpaceTravelledForATimeEvent(SkeletonJoint joint,Vector3d space) {
+		
 		this.setJoint(joint);
 		this.setSpace(space);
 	}
 
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+	
 
 	/**
 	 * @return the space
@@ -69,7 +53,7 @@ public class KinectTotalSpaceTravelledForATimeEvent {
 	}
 
 	/**
-	 * @param point the space to set
+	 * @param space the space to set
 	 */
 	public void setSpace(Vector3d space) {
 		this.space = space;

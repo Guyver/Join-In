@@ -36,10 +36,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	private MotorCommunicator motorCommunicator;
 	private DepthGenerator depthGenerator;
 	private ImageGenerator imageGenerator;
-	/**
-	 * This field represents the maximum number of users that can be tracked by the Kinect at the same time.
-	 */
-	private int  maximumNumberOfKinectUsers;
+	
 	/**
 	 * This semaphore serializes the KinectEvent firing to the listeners.
 	 */
@@ -195,7 +192,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	 * Default constructor. It sets the maximum number of users that can be tracked by the Kinect at the same time to 1.
 	 */
 	public KinectManager() {
-		this.maximumNumberOfKinectUsers=1;
+		
 		setMotorCommunicator(new MotorCommunicator());
 		
 		configOpenNI();
@@ -203,20 +200,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 		
 		skeletonManager.addKinectUserOutOfScopeListener(this);
 	}
-	/**
-	 * This constructor creates a new KinectManager and sets the maximum number of users that can be tracked by the Kinect at the same time with the given parameter.
-	 * @param maximumNumberOfKinectUsers The maximum number of users that can be tracked by the Kinect at the same time.
-	 */
-	public KinectManager(int maximumNumberOfKinectUsers) {
-		this.maximumNumberOfKinectUsers=maximumNumberOfKinectUsers;
-		setMotorCommunicator(new MotorCommunicator());
-		
-		configOpenNI();
-		sem = new Semaphore(1,true);
-		
-		skeletonManager.addKinectUserOutOfScopeListener(this);
-	}
-
+	
 	/**
 	 * Tries to connect with the Kinect. If it connects to one, the Kinect is
 	 * activated.
@@ -262,7 +246,8 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 			context.setGlobalMirror(true); // set mirror mode
 
 			userGenerator = UserGenerator.create(context);
-			skeletonManager = new SkeletonManager(userGenerator, maximumNumberOfKinectUsers);
+			//skeletonManager = new SkeletonManager(userGenerator, maximumNumberOfKinectUsers);
+			skeletonManager = new SkeletonManager(userGenerator);
 			depthGenerator = DepthGenerator.create(context);
 			imageGenerator = ImageGenerator.create(context);
 
@@ -304,7 +289,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	 */
 	private void fireKinectEvent(KinectDataEvent ke) {
 		try{
-			//sem.acquire();
+			
 			
 			Iterator<IKinectDataListener> it = listenersList.iterator();
 	
@@ -314,7 +299,7 @@ public class KinectManager implements Runnable, IKinectUserOutOfScopeListener{
 	
 				(new Thread(new EventLauncher(kl, ke))).start();
 			}
-			//sem.release();
+			
 		}catch(Exception e){
 			
 			System.out.println("Error at firing the Kinect Event in KinectManager");

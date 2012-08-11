@@ -27,15 +27,11 @@ import control.DeviceManager;
 /**
  * This class implements the logic to calculate the space that a given user's joint has gone over throughout a given time. 
  * 
- * @autor Santiago Hors Fraile
+ * @author Santiago Hors Fraile
  */
 public class KinectTotalSpaceTravelledForATime implements Runnable {
 
-	/**
-	 * This attribute represents the user ID whose movement data we want to know
-	 * about.
-	 */
-	int userId;
+
 	/**
 	 * This attribute represents the specific joint we want to track from the
 	 * user.
@@ -55,8 +51,6 @@ public class KinectTotalSpaceTravelledForATime implements Runnable {
 	 * This constructor assigns the user identification label, the joint we want
 	 * to track, the time throughout we want to track.
 	 * 
-	 * @param userId
-	 *            The user we refer to.
 	 * @param joint
 	 *            The joint we want to track.
 	 * @param time
@@ -64,9 +58,9 @@ public class KinectTotalSpaceTravelledForATime implements Runnable {
 	 *            user's joint.
 	 * @param launcher
 	 */
-	public KinectTotalSpaceTravelledForATime(int userId, SkeletonJoint joint,
+	public KinectTotalSpaceTravelledForATime( SkeletonJoint joint,
 			long time, KinectTotalSpaceTravelledForATimeLauncher launcher) {
-		this.userId = userId;
+
 		this.joint = joint;
 		this.time = time;
 		this.launcher = launcher;
@@ -77,9 +71,8 @@ public class KinectTotalSpaceTravelledForATime implements Runnable {
 		KinectManager kinectManager = DeviceManager.getDeviceManager()
 				.getKinectManager();
 		// Take the position of the joint at this moment
-		Vector3d lastPosition = kinectManager.getSkeletonManager().getJoint3D(
-				userId, joint);
-
+		//Vector3d lastPosition = kinectManager.getSkeletonManager().getJoint3D(userId, joint);
+		Vector3d lastPosition = kinectManager.getSkeletonManager().getJoint3D( joint);
 		Vector3d currentPosition;
 		// Initialize the result
 		Vector3d result = new Vector3d(0, 0, 0);
@@ -87,8 +80,8 @@ public class KinectTotalSpaceTravelledForATime implements Runnable {
 		long initialTime = System.currentTimeMillis();
 		while (System.currentTimeMillis() < initialTime + time) {
 			// We update the final position variable with the current position
-			currentPosition = kinectManager.getSkeletonManager().getJoint3D(userId, joint);
-		
+			//currentPosition = kinectManager.getSkeletonManager().getJoint3D(userId, joint);
+			currentPosition = kinectManager.getSkeletonManager().getJoint3D(joint);
 			// To update the result, we must ensure that the current position is
 			// a valid position (it is different from the past position and it
 			// is different from 0.0,0.0,0.)
@@ -110,7 +103,7 @@ public class KinectTotalSpaceTravelledForATime implements Runnable {
 
 		}
 		
-		KinectTotalSpaceTravelledForATimeEvent ke = new KinectTotalSpaceTravelledForATimeEvent(userId, joint, new Vector3d(result.getX(),result.getY(), result.getZ()));
+		KinectTotalSpaceTravelledForATimeEvent ke = new KinectTotalSpaceTravelledForATimeEvent( joint, new Vector3d(result.getX(),result.getY(), result.getZ()));
 		launcher.kinectTotalSpaceTravelledForATimeUpdate(ke);
 		launcher.setRunning(false);
 	}

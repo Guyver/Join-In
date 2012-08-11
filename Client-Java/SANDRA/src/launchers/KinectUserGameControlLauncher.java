@@ -116,21 +116,20 @@ public class KinectUserGameControlLauncher extends LauncherWrapper {
 	} 
 	
 	/**
-	 * Constructor with parameter.
-	 * @param userId The user's label we want to track his/her skeleton to.
+	 * Default constructor.
 	 */
-	public KinectUserGameControlLauncher(int userId){
+	public KinectUserGameControlLauncher(){
 		
 		DeviceManager dm = DeviceManager.getDeviceManager();  
 
-		kplCrossedHandsAboveShoulders = dm.getKinectPoseLauncher(userId, KinectPoseEnum.CROSSED_HANDS_ABOVE_SHOULDERS);
-		kplRightHandBeneathRightElbowSeparated30CmFromRightHip = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPARATED_FROM_RIGHT_HIP);
-		kplLeftHandBeneathLeftElbowSeparated30CmFromLeftHip = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_FROM_LEFT_HIP);
-		kplRightHandAboveRightShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER);
-		kplLeftHandAboveLeftShoulder = dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER);
-		kplHandsAboveShouldersPsiPose= dm.getKinectPoseLauncher(userId, KinectPoseEnum.HANDS_ABOVE_SHOULDERS_PSI_POSE);
-		kplLeftHandInFrontOfTheUser= dm.getKinectPoseLauncher(userId, KinectPoseEnum.LEFT_HAND_IN_FRONT_OF_THE_USER);
-		kplRightHandInFrontOfTheUser= dm.getKinectPoseLauncher(userId, KinectPoseEnum.RIGHT_HAND_IN_FRONT_OF_THE_USER);
+		kplCrossedHandsAboveShoulders = dm.getKinectPoseLauncher( KinectPoseEnum.CROSSED_HANDS_ABOVE_SHOULDERS);
+		kplRightHandBeneathRightElbowSeparated30CmFromRightHip = dm.getKinectPoseLauncher( KinectPoseEnum.RIGHT_HAND_BENEATH_RIGHT_ELBOW_SEPARATED_FROM_RIGHT_HIP);
+		kplLeftHandBeneathLeftElbowSeparated30CmFromLeftHip = dm.getKinectPoseLauncher( KinectPoseEnum.LEFT_HAND_BENEATH_LEFT_ELBOW_SEPARATED_FROM_LEFT_HIP);
+		kplRightHandAboveRightShoulder = dm.getKinectPoseLauncher( KinectPoseEnum.RIGHT_HAND_ABOVE_RIGHT_SHOULDER);
+		kplLeftHandAboveLeftShoulder = dm.getKinectPoseLauncher( KinectPoseEnum.LEFT_HAND_ABOVE_LEFT_SHOULDER);
+		kplHandsAboveShouldersPsiPose= dm.getKinectPoseLauncher( KinectPoseEnum.HANDS_ABOVE_SHOULDERS_PSI_POSE);
+		kplLeftHandInFrontOfTheUser= dm.getKinectPoseLauncher( KinectPoseEnum.LEFT_HAND_IN_FRONT_OF_THE_USER);
+		kplRightHandInFrontOfTheUser= dm.getKinectPoseLauncher( KinectPoseEnum.RIGHT_HAND_IN_FRONT_OF_THE_USER);
 
 		
 	}

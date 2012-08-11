@@ -40,10 +40,7 @@ import control.LauncherWrapper;
  */
 public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseListener{
 	
-	/**
-	 * This field represents the the ID label of the users we want to get the poses of.
-	 */
-	private int userId;
+
 	/**
 	 * The pose that this launcher is going to be taking care of to report to its listeners
 	 */
@@ -61,12 +58,11 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 	
 	/**
 	 * This constructor creates a new KinectPoseLauncher which will detect the pose kinectPose from the user whose ID label is userId.
-	 * @param userId The ID label of the user that we want to get the pose from.
 	 * @param kinectPose The pose we want to detect.
 	 */
-	public KinectPoseLauncher(int userId, KinectPoseEnum kinectPose){
+	public KinectPoseLauncher(KinectPoseEnum kinectPose){
 		this.setKinectPose(kinectPose);
-		this.setUserId(userId);
+		
 		lastKsse= null;
 	}
 
@@ -91,19 +87,9 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 		}
 	}
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
 
-	/**
-	 * @param userId the userId to setKinectPoseServiceEvent
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+
+
 	/**
 	 * @return the kinectPose
 	 */
@@ -126,7 +112,8 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 			boolean posing;
 			posing= performPoseLogic(ke,this.getKinectPose());
 			if(posing){
-					KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),posing);		
+					//KinectPoseServiceEvent se = new KinectPoseServiceEvent(ke.getUserId(),this.getKinectPose(),posing);	
+					KinectPoseServiceEvent se = new KinectPoseServiceEvent(this.getKinectPose(),posing);		
 					Iterator<IListenerCommModule> it = super.listenersList.iterator();
 					while(it.hasNext()){
 						IKinectPoseService l = (IKinectPoseService)it.next();
@@ -491,14 +478,14 @@ public class KinectPoseLauncher extends LauncherWrapper implements IKinectPoseLi
 		return isTheRequestedPose;
 	}
 	/**
-	 * @return the kinectSkeletonLauncher
+	 * @return the privateKinectSkeletonLauncher
 	 */
 	public KinectSkeletonLauncher getPrivateKinectSkeletonLauncher() {
 		return privateKinectSkeletonLauncher;
 	}
 	/**
-	 * @param kinectSkeletonLauncher
-	 *            the kinectSkeletonLauncher to set
+	 * @param privateKinectSkeletonLauncher
+	 *            the privateKinectSkeletonLauncher to set
 	 */
 	public void setPrivateKinectSkeletonLauncher(
 			KinectSkeletonLauncher privateKinectSkeletonLauncher) {

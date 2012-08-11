@@ -28,11 +28,6 @@ import control.IEventCommModule;
  * @author Santiago Hors Fraile
  */
 public class KinectSkeletonServiceEvent implements IEventCommModule {
-	/**
-	 * Identifies the specific person who is using the Kinect among the
-	 * different possible other people.
-	 */
-	private int userId;
 
 	/**
 	 * Represents the x,y,z position of the left hand of the user who is using
@@ -111,65 +106,49 @@ public class KinectSkeletonServiceEvent implements IEventCommModule {
 	private Vector3d rightFoot;
 
 
+	
 	/**
 	 * Sets the field of this class with the given parameters.
 	 * 
-	 * @param userId
-	 *            The identifier which determines which user the values refer
-	 *            to.
 	 * @param kinectData
 	 *            The data of the Kinect which contains the user's joint
 	 *            poisitions.
 	 */
 	public KinectSkeletonServiceEvent(int userIdParam, KinectData kinectData) {
-	
-		this.setUserId(userIdParam + 1);
+		
+		//this.setUserId(userIdParam + 1);
 		setLeftHand(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.LEFT_HAND)));
+				 SkeletonJoint.LEFT_HAND)));
 		setLeftElbow(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.LEFT_ELBOW)));
-		setLeftShoulder(new Vector3d(kinectData.getSkeletonManager()
-				.getJoint3D(userId, SkeletonJoint.LEFT_SHOULDER)));
+				 SkeletonJoint.LEFT_ELBOW)));
+		setLeftShoulder(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
+				SkeletonJoint.LEFT_SHOULDER)));
 		setLeftHip(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.LEFT_HIP)));
+				 SkeletonJoint.LEFT_HIP)));
 		setLeftKnee(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.LEFT_KNEE)));
+				 SkeletonJoint.LEFT_KNEE)));
 		setLeftFoot(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.LEFT_FOOT)));
-		setHead(new Vector3d(kinectData.getSkeletonManager().getJoint3D(userId,
+				 SkeletonJoint.LEFT_FOOT)));
+		setHead(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
 				SkeletonJoint.HEAD)));
-		setNeck(new Vector3d(kinectData.getSkeletonManager().getJoint3D(userId,
+		setNeck(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
 				SkeletonJoint.NECK)));
 		setTorso(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.TORSO)));
+				 SkeletonJoint.TORSO)));
 		setRightHand(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.RIGHT_HAND)));
+				 SkeletonJoint.RIGHT_HAND)));
 		setRightElbow(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.RIGHT_ELBOW)));
+				 SkeletonJoint.RIGHT_ELBOW)));
 		setRightShoulder(new Vector3d(kinectData.getSkeletonManager()
-				.getJoint3D(userId, SkeletonJoint.RIGHT_SHOULDER)));
+				.getJoint3D( SkeletonJoint.RIGHT_SHOULDER)));
 		setRightHip(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.RIGHT_HIP)));
+				 SkeletonJoint.RIGHT_HIP)));
 		setRightKnee(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.RIGHT_KNEE)));
+				 SkeletonJoint.RIGHT_KNEE)));
 		setRightFoot(new Vector3d(kinectData.getSkeletonManager().getJoint3D(
-				userId, SkeletonJoint.RIGHT_FOOT)));
+				 SkeletonJoint.RIGHT_FOOT)));
 	}
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId
-	 *            the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 
 	/**
 	 * @return the leftHand

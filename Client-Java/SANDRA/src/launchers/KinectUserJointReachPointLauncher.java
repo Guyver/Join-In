@@ -35,10 +35,7 @@ import control.LauncherWrapper;
 
 public class KinectUserJointReachPointLauncher extends LauncherWrapper
 		implements IKinectDataListener {
-	/**
-	 * The user's label ID whose joint we want track.
-	 */
-	private int userId;
+
 	/**
 	 * The user's joint we want to track.
 	 */
@@ -56,8 +53,6 @@ public class KinectUserJointReachPointLauncher extends LauncherWrapper
 	 * Creates a new KinectUserJointReachPointLauncher and initializes it with
 	 * the given parameters.
 	 * 
-	 * @param userId
-	 *            The user's label ID whose joint we want track.
 	 * @param joint
 	 *            The user's joint we want to track.
 	 * @param sphereCenter
@@ -66,9 +61,9 @@ public class KinectUserJointReachPointLauncher extends LauncherWrapper
 	 * @param radius
 	 *            The radius of the virtual sphere.
 	 */
-	public KinectUserJointReachPointLauncher(int userId, SkeletonJoint joint,
+	public KinectUserJointReachPointLauncher( SkeletonJoint joint,
 			Point3D sphereCenter, Point3D radius) {
-		this.setUserId(userId);
+	
 		this.setJoint(joint);
 		this.setSphereCenter(sphereCenter);
 		this.setRadius(radius);
@@ -106,17 +101,27 @@ public class KinectUserJointReachPointLauncher extends LauncherWrapper
 	 */
 	public void kinectUpdate(KinectDataEvent ke) {
 
-		Point3D currentPoint = new Point3D((float) ke.getKinectData()
+		/*Point3D currentPoint = new Point3D((float) ke.getKinectData()
 				.getSkeletonManager().getJoint3D(userId, joint).getX(),
 				(float) ke.getKinectData().getSkeletonManager()
 						.getJoint3D(userId, joint).getY(), (float) ke
 						.getKinectData().getSkeletonManager()
-						.getJoint3D(userId, joint).getZ());
-		KinectUserJointReachPointServiceEvent se = new KinectUserJointReachPointServiceEvent(userId, joint, sphereCenter, radius, currentPoint);
+						.getJoint3D(userId, joint).getZ());*/
+
+		Point3D currentPoint = new Point3D((float) ke.getKinectData()
+				.getSkeletonManager().getJoint3D( joint).getX(),
+				(float) ke.getKinectData().getSkeletonManager()
+						.getJoint3D( joint).getY(), (float) ke
+						.getKinectData().getSkeletonManager()
+						.getJoint3D( joint).getZ());
+		KinectUserJointReachPointServiceEvent se = new KinectUserJointReachPointServiceEvent( joint, sphereCenter, radius, currentPoint);
 		Iterator<IListenerCommModule> it = super.listenersList.iterator();
 
+		/*Vector3d myCurrentPoint = ke.getKinectData().getSkeletonManager()
+				.getJoint3D(userId, joint);*/
+
 		Vector3d myCurrentPoint = ke.getKinectData().getSkeletonManager()
-				.getJoint3D(userId, joint);
+				.getJoint3D( joint);
 
 		if (myCurrentPoint.getX() >= sphereCenter.getX() - radius.getX()
 				&& myCurrentPoint.getX() <= sphereCenter.getX() + radius.getX()
@@ -135,20 +140,7 @@ public class KinectUserJointReachPointLauncher extends LauncherWrapper
 
 	}
 
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId
-	 *            the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+	
 
 	/**
 	 * @return the joint

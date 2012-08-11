@@ -69,11 +69,11 @@ public class SharedSocket implements Runnable{
 	 */
 	static private SharedSocket sharedSocket = null;
 	/**
-	 * This field represents the SocketManager of the socket we have stablished the communication through.
+	 * This field represents the SocketManager of the socket we have established the communication through.
 	 */
 	private SocketManager sm = null;
 	/**
-	 * This field serializes the socket (it is used to syncronize the data which is sent through the socket)
+	 * This field serializes the socket (it is used to synchronize the data which is sent through the socket)
 	 */
 	private static Semaphore sendingSem=null;
 	/**
@@ -115,7 +115,7 @@ public class SharedSocket implements Runnable{
 	        if (sharedSocket == null) {
 	        	//create a new SharedSocket
 	            sharedSocket = new SharedSocket();
-	            //create the synchronizing semaphore with 1 availble slot and the fair condition set to true
+	            //create the synchronizing semaphore with 1 available slot and the fair condition set to true
 	            sendingSem = new Semaphore(1,true);
 	            //create the actionMap where the action values of the devices are going to be stored
 	            actionMap= new ConcurrentHashMap<Object, Object>();
@@ -350,6 +350,7 @@ public class SharedSocket implements Runnable{
 				
 			
 			if(validEvent){	
+				
 				/**
 				 * This map splitting should be done for each service (or group of services) of the devices. 
 				 * But since for the July 2012 demo we only require the Kinect, this task remains pending.
@@ -359,12 +360,15 @@ public class SharedSocket implements Runnable{
 					String sAux="";
 					sAux=gson.toJson(actionMap);
 					System.out.println("Attaching: "+sAux.toString());
+					sm.sendMessage(s);
 					actionMap.clear();
 				}else  if(se instanceof KinectSkeletonServiceEvent ){		
 					sendingSem.acquire();
+					
 					mixedMap.putAll(jointMap);
 					s+= gson.toJson(mixedMap);
 					s+='\n';
+					
 					mixedMap = new ConcurrentHashMap<Object,Object>();
 					sm.sendMessage(s);
 					s="";
@@ -580,25 +584,25 @@ public class SharedSocket implements Runnable{
 					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("start")==0){
 						try{
 							if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("skeleton")==0){
-								DeviceManager.getDeviceManager().getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());						
+								DeviceManager.getDeviceManager().getKinectSkeletonLauncher().addListener(new KinectSkeletonJointsHandler());						
 							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("motor")==0){
 								DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectMotorHandler());
 							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("gameControl")==0){
-								DeviceManager.getDeviceManager().getKinectUserGameControlLauncher(1).addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserGameControlLauncher().addListener(new KinectPoseHandler());	
 							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("hug")==0){
-								DeviceManager.getDeviceManager().getKinectUserHugLauncher(1).addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserHugLauncher().addListener(new KinectPoseHandler());	
 							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("movement")==0){
-								DeviceManager.getDeviceManager().getKinectUserMovementLauncher(1).addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserMovementLauncher().addListener(new KinectPoseHandler());	
 							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("pickedUpFromSides")==0){
-								DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher(1).addListener(new KinectPoseHandler());
+								DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher().addListener(new KinectPoseHandler());
 							}else if(((String)(receivedMessageConcurrentHashMap.get("type"))).compareToIgnoreCase("all")==0){
-								DeviceManager.getDeviceManager().getKinectSkeletonLauncher(1).addListener(new KinectSkeletonJointsHandler());
+								DeviceManager.getDeviceManager().getKinectSkeletonLauncher().addListener(new KinectSkeletonJointsHandler());
 								DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectMotorHandler());
 								DeviceManager.getDeviceManager().getKinectMotorLauncher().addListener(new KinectPoseHandler());
-								DeviceManager.getDeviceManager().getKinectUserGameControlLauncher(1).addListener(new KinectPoseHandler());	
-								DeviceManager.getDeviceManager().getKinectUserHugLauncher(1).addListener(new KinectPoseHandler());	
-								DeviceManager.getDeviceManager().getKinectUserMovementLauncher(1).addListener(new KinectPoseHandler());	
-								DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher(1).addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserGameControlLauncher().addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserHugLauncher().addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserMovementLauncher().addListener(new KinectPoseHandler());	
+								DeviceManager.getDeviceManager().getKinectUserPickedUpFromSidesLauncher().addListener(new KinectPoseHandler());	
 							
 							}
 						}catch(Exception e){
@@ -628,7 +632,7 @@ public class SharedSocket implements Runnable{
 					}
 					if(((String)(receivedMessageConcurrentHashMap.get("action"))).compareToIgnoreCase("autoAdjust")==0){
 						try {
-							DeviceManager.getDeviceManager().adjustKinectForTheBestTilt(1);
+							DeviceManager.getDeviceManager().adjustKinectForTheBestTilt();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

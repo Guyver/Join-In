@@ -23,7 +23,7 @@ import java.util.EventListener;
 public interface IKinectDataListener extends EventListener{
 	/**
 	 * Must be implemented to manage the Kinect events.
-	 * @param ne The new Kinect event.
+	 * @param ke The new Kinect data event.
 	 */
 	public void kinectUpdate(KinectDataEvent ke);
 }

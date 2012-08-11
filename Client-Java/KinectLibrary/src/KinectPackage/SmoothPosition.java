@@ -14,7 +14,9 @@ package KinectPackage;
 */
 
 
-import java.util.*;
+
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.vecmath.*;
 
 
@@ -22,12 +24,12 @@ public class SmoothPosition
 {
   private final static int MAX_POSNS = 10;
 
-  private ArrayList<Vector3d> posns;
+  private CopyOnWriteArrayList<Vector3d> posns;
 
 
   public SmoothPosition()
   {
-    posns = new ArrayList<Vector3d>();
+    posns = new CopyOnWriteArrayList<Vector3d>();
   }  // end of SmoothPosition()
 
 

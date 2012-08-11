@@ -33,7 +33,7 @@ public class KinectTilt implements Runnable {
 		// we know we will never reach.
 		
 		//DeviceManager.getDeviceManager().kinectStartUpKinectIfNeeded();
-		
+	
 		while (kinectManager == null) {
 			//Active wait
 			kinectManager = DeviceManager.getDeviceManager().getKinectManager();
@@ -46,20 +46,20 @@ public class KinectTilt implements Runnable {
 			kinectManager.getMotorCommunicator().setAngle(-20);
 		}
 		System.out.println("Espero a que se detecte un usuario...");
-		DeviceManager.getDeviceManager().waitForUserIsDetected(userId);
-		System.out.println("Detectado un usuario");
+		DeviceManager.getDeviceManager().waitForUserIsDetected();
+		System.out.println("User detected");
 		try {
 			while (kinectManager.getMotorCommunicator().getStatus().compareTo(MotorStatus.MOVING) == 0) {
 			
 			}
-			System.out.println("Espero a que se registre el un usuario...");
-			DeviceManager.getDeviceManager().waitForUserIsCalibrated(userId);
-			System.out.println("Registrado el usuario");
+			//System.out.println("Waiting the user...");
+		//	DeviceManager.getDeviceManager().waitForUserIsCalibrated(userId);
+			//System.out.println("User regiestered");
 			/*while (kinectManager.getMotorCommunicator().getStatus().compareTo(MotorStatus.MOVING) == 0) {
 				
 			}*/
 	
-			while((kinectManager.getSkeletonManager().getJoint3D(userId, SkeletonJoint.TORSO)).getY()==0.0){
+			while((kinectManager.getSkeletonManager().getJoint3D( SkeletonJoint.TORSO)).getY()==0.0){
 				
 			}
 			//Vector3d massCenterVector = kinectManager.getSkeletonManager().getJoint3D(userId, SkeletonJoint.TORSO);
@@ -75,7 +75,7 @@ public class KinectTilt implements Runnable {
 
 			// 1 pixel in x or y equals 0.75 mm
 			double verticalDistanceToAdjustInCm = Math.abs(verticalDistanceToAdjust) * 0.075;
-			System.out.println("EL massCenter Z :" + massCenter.getZ());
+			System.out.println("The massCenter Z :" + massCenter.getZ());
 			System.out.println(massCenter.getZ() + "/(SQR("
 					+ verticalDistanceToAdjustInCm + "*"
 					+ verticalDistanceToAdjustInCm + "+" + massCenter.getZ()
@@ -85,7 +85,7 @@ public class KinectTilt implements Runnable {
 					/ massCenter.getZ())*180/Math.PI;
 
 			
-				System.out.println("El ángulo a mover es " + angleToTilt);
+				System.out.println("The angle to move is " + angleToTilt);
 				kinectManager.getMotorCommunicator().setAngle(kinectManager.getMotorCommunicator().getAngle()+(int)angleToTilt);
 			
 			

@@ -41,10 +41,7 @@ import control.LauncherWrapper;
  */
 public class KinectTotalSpaceTravelledForATimeLauncher extends LauncherWrapper implements IKinectTotalSpaceTravelledForATimeListener{
 	
-	/**
-	 * The user's label ID whose joint we want calculate the space it goes over throughout the given time.
-	 */
-	private int userId;
+
 	/**
 	 * The user's joint we want to calculate the space it goes over throughout the given time.
 	 */
@@ -59,12 +56,11 @@ public class KinectTotalSpaceTravelledForATimeLauncher extends LauncherWrapper i
 	private boolean running;
 	/**
 	 * Creates a new KinectTotalSpaceTravelledForATimeLauncher and initializes it with the given parameters.
-	 * @param userId The user's label ID whose joint we want calculate the space it goes over throughout the given time.
 	 * @param joint The user's joint we want to calculate the space it goes over throughout the given time.
 	 * @param time The time throughout we are going to track the user's joint.
 	 */
-	public KinectTotalSpaceTravelledForATimeLauncher(int userId, SkeletonJoint joint, long time) {
-		this.userId=userId;
+	public KinectTotalSpaceTravelledForATimeLauncher( SkeletonJoint joint, long time) {
+
 		this.joint=joint;
 		this.time=time;
 		this.running=false;
@@ -74,7 +70,7 @@ public class KinectTotalSpaceTravelledForATimeLauncher extends LauncherWrapper i
 	 */
 	public void startCounting(){
 		running=true;
-		Thread t1 = new Thread(new KinectTotalSpaceTravelledForATime(userId, joint, time,this));
+		Thread t1 = new Thread(new KinectTotalSpaceTravelledForATime( joint, time,this));
 		t1.start();
 	
 	}
@@ -84,7 +80,7 @@ public class KinectTotalSpaceTravelledForATimeLauncher extends LauncherWrapper i
 	 */
 	public void startCounting(long overwrittenTime){
 		running=true;
-		Thread t1 = new Thread(new KinectTotalSpaceTravelledForATime(userId, joint, overwrittenTime, this));
+		Thread t1 = new Thread(new KinectTotalSpaceTravelledForATime( joint, overwrittenTime, this));
 		t1.start();
 	
 	}
@@ -112,11 +108,11 @@ public class KinectTotalSpaceTravelledForATimeLauncher extends LauncherWrapper i
 
 	/**
 	 * Throws the given KinectTotalSpaceTravelledForATimeEvent to listeners in the listenerList as a KinectTotalSpaceTravelledForATimeServiceEvent.
-	 * @param event The KinectTotalSpaceTravelledForATimeEvent.
+	 * @param ke The KinectTotalSpaceTravelledForATimeEvent.
 	 */
 	@Override
 	public void kinectTotalSpaceTravelledForATimeUpdate(KinectTotalSpaceTravelledForATimeEvent ke) {
-		KinectTotalSpaceTravelledForATimeServiceEvent se = new KinectTotalSpaceTravelledForATimeServiceEvent(ke.getUserId(),ke.getJoint(),ke.getSpace(), time);		
+		KinectTotalSpaceTravelledForATimeServiceEvent se = new KinectTotalSpaceTravelledForATimeServiceEvent(ke.getJoint(),ke.getSpace(), time);		
 	
 		Iterator<IListenerCommModule> it = super.listenersList.iterator();
 		while(it.hasNext()){
@@ -139,19 +135,7 @@ public class KinectTotalSpaceTravelledForATimeLauncher extends LauncherWrapper i
 		this.running = running;
 	}
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
 
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 
 	/**
 	 * @return the joint

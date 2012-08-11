@@ -30,10 +30,7 @@ import control.LauncherWrapper;
  * @author Santiago Hors Fraile
  */
 public class KinectUserMovementLauncher extends LauncherWrapper {
-	/**
-	 * This field represents the the ID label of the users we want to get the poses of.
-	 */
-	private int userId;
+
 	/**
 	 * The kinect pose launcher for the left leg risen pose
 	 */
@@ -70,33 +67,20 @@ public class KinectUserMovementLauncher extends LauncherWrapper {
 		return kplStand;
 	}
 	/**
-	 * Constructor with parameter.
-	 * @param userId The user's label we want to track his/her skeleton to.
+	 * Default constructor.
 	 */
-	public KinectUserMovementLauncher(int userId){
-		setUserId(userId);
+	public KinectUserMovementLauncher(){
+	
 		DeviceManager dm = DeviceManager.getDeviceManager();
-		kplWalkLeftLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_LEFT_LEG_UP);
-    	kplWalkRightLegUp= dm.getKinectPoseLauncher(userId, KinectPoseEnum.WALK_RIGHT_LEG_UP);
-    	kplStand= dm.getKinectPoseLauncher(userId, KinectPoseEnum.STAND);
+		kplWalkLeftLegUp= dm.getKinectPoseLauncher( KinectPoseEnum.WALK_LEFT_LEG_UP);
+    	kplWalkRightLegUp= dm.getKinectPoseLauncher( KinectPoseEnum.WALK_RIGHT_LEG_UP);
+    	kplStand= dm.getKinectPoseLauncher( KinectPoseEnum.STAND);
     
 
 	}
 	
 	
-	/**
-	 * @return the userId
-	 */
-	public int getUserId() {
-		return userId;
-	}
 
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
 
 
 
