@@ -13,18 +13,21 @@
 	position = The Vector3 position to create the entity.	
 	@Returns N/A
 */
-function Player( name, position ){
+function Player( meshName, models, position ){
 
 	// The name of the user.
-	this._name = name;
+	this._name = "";
 	// The global position.
 	this._position = position;
+	if( this._position == undefined )this._position = new THREE.Vector3( 0,0,0 );
 	// THe velocity of the player.
 	this._velocity = new THREE.Vector3(0,0,0);
+	// The starting position.
+	this._startingPos = new THREE.Vector3(0,0,0);
 	// The acceleration...
-	this._accel = new THREE.Vector3(0,-9.81,0);
+	this._accel = new THREE.Vector3( 0,-9.81,0 );
 	// The walkspeed, could replace velocity.
-	this._walkSpeed = 50;
+	this._walkSpeed = 500;
 	// Define the up axis on the cartesian plane.
 	this._upAxis = new THREE.Vector3( 0,1,0 );
 	// The unique id, i.p address for Example.
@@ -32,7 +35,9 @@ function Player( name, position ){
 	// The score of the player.
 	this._score = 0;
 	// The local id from the kinect.
-	this._userKey = undefined;			
+	this._userKey = undefined;
+	// The team the user is on.
+	this._team = undefined;	
 	// The Kinect data. Hard coded as Lars for debugging.
 	this._kinectData ={
      "leftElbow": {
@@ -121,17 +126,13 @@ function Player( name, position ){
 	// The url of the Avatar.
 	this._meshName = undefined;
 	// The data for the joints
-	this._rig = new Model( jointList, this._position );
+	this._rig = new Model( jointList, models, this._position );
 	// Move 100 units in the z direction, this is the players orientation.
-	this._sightNode = new THREE.Vector3( position.x , this._kinectData["head"].y + 1000 , position.z - 5000 );
+	this._sightNode = new THREE.Vector3( this._position.x , this._kinectData["head"].y + 1000 , this._position.z - 5000 );
 	// The direction of the player.
 	this._direction = new THREE.Vector3( this._sightNode.x - this._position.x, this._position.y, this._sightNode.z- this._position.z );
 	this._direction.normalize();
-	
-	this._goalDirection = undefined;
-	this._firstPersonNode = undefined;
-	this._thirdPersonNode = undefined;
-	
+
 	// The central position of the player. Represented by a sphere for debugging.
 	var radius = 10, segments = 10, rings = 10;
 	var Material = new THREE.MeshLambertMaterial( {color: 0xfffffffff });
@@ -139,20 +140,12 @@ function Player( name, position ){
 	
 	// The mesh of the Joint. Contains physical properties.
 	this._mesh = new THREE.Mesh( Geometry , Material );	
-	this._mesh.name	= "player";
+	this._mesh.name	= meshName;
 	// Add ourself to the scene.
 	scene.add( this._mesh );	
 	
 	this._mesh.position = this._position;
-	
-	// The following is a sphere to represent the sightNode. Also for debugging.
-	var radius = 100, segments = 10, rings = 10;
-	var Material = new THREE.MeshLambertMaterial( {color: 0xfffffffff });
-	var Geometry = new THREE.SphereGeometry( radius, segments, rings );
-	this.sight = new THREE.Mesh( Geometry , Material );	
-	this.sight.name	= "sightNode";
-	scene.add( this.sight );	
-	
+		
 };
 
 
@@ -199,7 +192,7 @@ Player.prototype.syncJoints = function( ){
 Player.prototype.update = function( ){
 
 	// Apply the movement enumerations from the Kinect.
-	this.handleMovement();
+	this.processCommands();
 	// Put the kinect joints in game space.
 	this.syncJoints();
 	// Update the joints.
@@ -221,7 +214,17 @@ Player.prototype.update = function( ){
 */
 Player.prototype.setPosition = function( pos ){
 
-	this._position = pos;
+	var oldPos = new THREE.Vector3( this._position.x , this._position.y , this._position.z  ); 
+	var newPos = new THREE.Vector3( pos.x, 0 , pos.z );
+	var vect = new THREE.Vector3( 0,0,0 );
+	
+	vect.x = newPos.x - oldPos.x;
+	vect.y = 0;
+	vect.z = newPos.z - oldPos.z;
+	
+	this._position.addSelf( vect );
+	this._sightNode.addSelf( vect );
+	
 	this._mesh.position = pos;
 };
 
@@ -233,7 +236,7 @@ Player.prototype.setPosition = function( pos ){
 */
 Player.prototype.getPosition = function(  ){
 
-	return ( new THREE.Vector3( this._position.x,this._position.y,this._position.z ) );
+	return ( new THREE.Vector3( this._position.x, this._position.y, this._position.z ) );
 };
 
 
@@ -250,61 +253,79 @@ Player.prototype.getSightNode = function( ) {
 };
 
 
-/**	@Name:	Handle Movement	
+/**	@Name:	Process commands.	
 	@Brief:
 	Process the commands that were sent from the users Kinect.	
 	@Arguments: N/A	
 	@Returns: N/A
 
 */
-Player.prototype.handleMovement = function(  ) {
+Player.prototype.processCommands = function(  ) {
 	
 	// Process all the states to be applied to the Player.
 	var state = undefined;
 	var needsUpdate = true;
 	
-	for ( index in this._kinectData ){
+	try{
+		// If the left hand is above the head.
+		if(  (this._kinectData[ "leftHand" ].y > this._kinectData[ "head" ].y )  
+			&& ( this._kinectData[ "rightHand" ].y < this._kinectData[ "torso" ].y ) ){
 		
-		if (  this._kinectData[ index ] == "true" ){
-			
-			state = index;		
+			state = "rotateLeft";
+		}
+		else if( ( this._kinectData[ "rightHand" ].y > this._kinectData[ "head" ].y )  
+					&& ( this._kinectData[ "leftHand" ].y < this._kinectData[ "torso" ].y  )){
+		
+			state = "rotateRight";
+		}		
+		else if( ( this._kinectData[ "rightKnee" ].y > this._kinectData[ "leftKnee" ].y + 50 )  
+					||( this._kinectData[ "leftKnee" ].y > this._kinectData[ "rightKnee" ].y + 50 ) ){
+		
+			state = "walk";
 		}
 		
-		switch( state ){
-			case "walk":
-				this._walkSpeed = 1;
-				//this.move( 1 );
-				this.moveModel( 1 );
-				console.log( state );
-				break;
-			case "run":
-				this._walkSpeed = 1;
-				this.moveModel( 1 );
-				console.log( state );
-				break;
-			case "rotateLeft":
-				this.rotateModelLeft();
-				console.log( state );
-				break;
-			case "rotateRight":
-				this.rotateModelRight();
-				console.log( state );
-				break;
-			case "standStill":
-				console.log( state );
-				// Do nowt!
-				break;
-			case "backwards":
-				this._walkSpeed = 1;
-				this.moveModel( -1 );
-				console.log( state );
-				break;
-			default:
-				needsUpdate = false;
-				break;
-		}//End Switch
+		if( this._kinectData[ "hug" ] ){
 		
-	}// End for 	
+			this._score += 100;
+			console.log( "I've performed a hug" );
+		}
+	}
+	catch( error ){
+		// Something bad happened.
+		//console.log( "Player.processCommands catch "+ error );
+	}
+	switch( state ){
+		case "walk":
+			this._walkSpeed = 10;
+			this.moveModel( 1 );
+			console.log( state );
+			break;
+		case "run":
+			this._walkSpeed = 1;
+			this.moveModel( 1 );
+			console.log( state );
+			break;
+		case "rotateLeft":
+			this.rotateModelLeft();
+			console.log( state );
+			break;
+		case "rotateRight":
+			this.rotateModelRight();
+			console.log( state );
+			break;
+		case "standStill":
+			console.log( state );
+			// Do nowt!
+			break;
+		case "backwards":
+			this._walkSpeed = 1;
+			this.moveModel( -1 );
+			console.log( state );
+			break;
+		default:
+			needsUpdate = false;
+			break;
+	}
 };
 
 
@@ -316,7 +337,7 @@ Player.prototype.handleMovement = function(  ) {
 */
 Player.prototype.rotateModelLeft = function( ){
 	
-	var theta = 0.1;
+	var theta = 0.05;
 	// Move the sight node around the torso.
 	var torso = this._rig._joint[ "torso"].getPosition();
 
@@ -335,10 +356,7 @@ Player.prototype.rotateModelLeft = function( ){
 	// Translate...back again.
 	this._sightNode.addSelf( this._position );
 
-	this._angle += theta;
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
-	
+	this._angle += theta;	
 };
 
 
@@ -367,10 +385,7 @@ Player.prototype.rotateSightByAngle = function( angle ){
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
 
-	this._angle += angle;
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
-	
+	this._angle += angle;	
 };
 
 
@@ -382,7 +397,7 @@ Player.prototype.rotateSightByAngle = function( angle ){
 */
 Player.prototype.rotateModelRight = function( ){
 
-	var theta = -0.1;
+	var theta = -0.05;
 	// Move the sight node around the torso.
 	var torso = this._rig._joint[ "torso"].getPosition();
 
@@ -402,8 +417,6 @@ Player.prototype.rotateModelRight = function( ){
 	this._sightNode.addSelf( torso );
 	
 	this._angle += theta;
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
 };
 
 
@@ -484,20 +497,13 @@ Player.prototype.rotateUp = function( ) {
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
 
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
 };
 
 
-/**	@Name:	Rotate Down
-	
-	@Brief:
-
-	
-	@Arguments: N/A
-	
+/**	@Name:	Rotate Down	
+	@Brief:	
+	@Arguments: N/A	
 	@Returns: 
-
 */
 Player.prototype.rotateDown = function( ) {
 
@@ -520,9 +526,6 @@ Player.prototype.rotateDown = function( ) {
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
 
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
-	
 };
 
 
@@ -565,6 +568,16 @@ Player.prototype.getScore = function(  ) {
 	@Arguments: N/A	
 	@Returns: 
 */
+Player.prototype.resetPosition = function(  ) {
+
+	this.setPosition( this._startingPos );
+};
+
+/**	@Name:  	
+	@Brief:	
+	@Arguments: N/A	
+	@Returns: 
+*/
 Player.prototype.getJoint = function( jointName ) {
 
 	return ( this._rig.getJoint( jointName ) );	
@@ -601,4 +614,8 @@ Player.prototype.loadModelMesh = function( url ){
 		
 		scene.add( that._model );
 	});
+};
+
+Player.prototype.getModels = function(  ){
+	return this._rig.getModelMeshes();
 };

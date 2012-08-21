@@ -1,9 +1,0 @@
-package control;
-/**
- * Empty interface which acts as a super-interface for all services of services package
- * @author santiago
- *
- */
-public interface IEventCommModule {
-
-}

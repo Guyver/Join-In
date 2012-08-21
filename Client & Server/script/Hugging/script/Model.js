@@ -7,7 +7,7 @@
 */
 var that;
 
-function Model( jointNames, playerPos ){
+function Model( jointNames, models, playerPos ){
 
 	this._joint = {};				        // Map of joint objects.
 	this._jointNames = jointNames;			// Array of key values for the kinect data.
@@ -42,6 +42,85 @@ function Model( jointNames, playerPos ){
 	
 	// Create the limbs.
 	this.createLimbs();
+/*	
+	if( this._jointModels == undefined ){
+		// re-initalise the models 
+		this._jointModels = []
+		// Create the limbs.
+		this.createLimbs();
+	}
+	else if ( this._jointModels.length == 14 ){
+		
+		var name;
+		for ( i in this._jointModels){
+		
+			name = this._jointModels[ i ].name;
+			
+			switch( name ){
+			
+				case "HEAD":
+					this._head = this._jointModels[ i ];
+					break;
+				case "TORSO":
+					this._torso = this._jointModels[ i ];
+					break;
+				case "ARM_UPPER_L":
+					this._upperArmL = this._jointModels[ i ]; 
+					break;
+				case "ARM_UPPER_R":
+					this._upperArmR = this._jointModels[ i ]; 
+					break;
+				case "FOREARM_L":
+					this._lowerArmL =this._jointModels[ i ]; 
+					break;
+				case "FOREARM_R":
+					this._lowerArmR = this._jointModels[ i ]; 
+					break;
+				case "HAND_L":
+					this._handL = this._jointModels[ i ];
+					break;
+				case "HAND_R":
+					this._handR = this._jointModels[ i ]; 
+					break;
+				case "LEG_UPPER_L":
+					this._upperLegL = this._jointModels[ i ];
+					break;
+				case "LEG_UPPER_R":
+					this._upperLegR = this._jointModels[ i ];
+					break;
+				case "LEG_LOWER_L":
+					this._lowerLegL = this._jointModels[ i ];
+					break;
+				case "LEG_LOWER_R":
+					this._lowerLegR = this._jointModels[ i ];
+					break;
+				case "FOOT_L":
+					this._footL = this._jointModels[ i ];
+					break;
+				case "FOOT_R":
+					this._footR = this._jointModels[ i ];
+					break;
+				default:
+					break;
+					
+				scene.add( this._jointModels[ i ] );
+			}
+		}
+	}
+	//this.limbsLoaded = false;
+	//this.loading();
+*/
+};
+
+
+/**	@Name:
+	@Brief:	
+	@Arguments:	
+	@Returns:
+*/
+Model.prototype.loading = function(  ){
+
+
 };
 
 
@@ -57,6 +136,7 @@ Model.prototype.update = function( sightNode, kinectData ){
 	//	
 	if ( kinectData != undefined && kinectData != null && this._jointModels.length == 14 ){
 	
+		
 		this._head.position 		= 	this.getJointPosition( "neck" );
 		this._torso.position 		= 	this.getJointPosition( "torso" );
 		this._upperArmL.position 	= 	this.getJointPosition( "leftShoulder" );
@@ -90,6 +170,7 @@ Model.prototype.update = function( sightNode, kinectData ){
 		this._lowerLegR.lookAt( this.getJointPosition( "rightFoot") );
 		
 	}// If the kinect data isn't bogus.	
+	
 	//
 	// Do the scaling before the positioning otherwise it will be off.
 	//	
@@ -127,7 +208,6 @@ Model.prototype.getJointPosition = function( name ){
 	return ( this._joint[ name ].getPosition( ) );
 
 };
-
 
 
 /**	@Name:
@@ -602,4 +682,15 @@ Model.prototype.remove = function(){
 	for ( index in this._joint ){
 		this._joint[ index ].remove();
 	}
+};
+
+
+/**	@Name:
+	@Brief:	
+	@Arguments:
+	@Returns:
+*/
+Model.prototype.getModelMeshes = function(){
+	return this._jointModels;
+
 };

@@ -1,8 +1,0 @@
-package control;
-
-/**
-  * Empty interface which acts as a super-interface for all other interfaces of the iservices package
-  */
-public interface IListenerCommModule {
-
-}

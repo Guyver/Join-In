@@ -11,15 +11,18 @@ function Player_Manager(  ){
 	this._walklist = [];
 	
 	// The Spawn Position
-	this._spawnPosition= new THREE.Vector3( 6500,0,6500 ) ;
+	this._spawnPosition= new THREE.Vector3(  16000 , 100 ,10000 ) ;
+	this._spawnPosition2= new THREE.Vector3( 20000,0,14000 ) ;
+	this._spawnPosition3= new THREE.Vector3( 20000,0,20000 ) ;
+	this._spawnPosition4= new THREE.Vector3( 16000,0,26000 ) ;
 
 	// The Player in question.
-	this._player = new Player( "Default", this._spawnPosition );
-	
+	this._player = new Player( "Player", undefined, this._spawnPosition );
+	this._otherPlayers = [];
 	// Begin the game.
-	this._playGame = true;
+	this._playGame = false;
 	
-	// The game is over.
+	// The game is over. Dont start initally.
 	this._gameOver = false;
 	
 	// Score Multiplier. Can be changed on various logic.
@@ -42,7 +45,10 @@ function Player_Manager(  ){
 Player_Manager.prototype.update = function(  ){
 
 	// update the player...
-	this._player.update();	
+	this._player.update();
+	for ( i in this._otherPlayers ){
+		this._otherPlayers[ i ].update();
+	}
 };
 
 
@@ -76,6 +82,17 @@ Player_Manager.prototype.getPlayerScore = function(  ){
 Player_Manager.prototype.playGame = function(  ){
 
 	this._playGame = true;
+};
+
+
+/**	@Name: 
+	@Brief:
+	@Arguments:N/A
+	@Returns:N/A
+*/
+Player_Manager.prototype.isGameReady = function(  ){
+
+	return this._playGame;
 };
 
 

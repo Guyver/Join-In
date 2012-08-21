@@ -56,56 +56,8 @@
 		swfobject.embedSWF( "http://www.youtube.com/v/hUVwR0rw5fk?enablejsapi=1&playerapiid=ytplayer&version=3",
 				   "div_youtubeVideo", "800", "600", "8", null, null, params, atts);
 		 
-		var socket= io.connect('193.156.105.162:7541');
+		var socket= io.connect('193.156.105.158:7541');
 
-/*
-		socket.on('updateNewUser',function(user, myTeam) {
-
-				
-				var frames = window.parent.frames;
-				var team;
-		
-				frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
-				
-
-		
-				for(i in myTeam){
-					team=JSON.parse( myTeam[i].team );
-				
-					
-					if(JSON.parse( myTeam[i].ready )==true){
-							
-						var divName= "div_"+JSON.parse( myTeam[i].userKey );
-						
-						if(frames[0].document.getElementById(divName)!=null){
-							frames[0].document.getElementById(divName).style.backgroundColor='green';
-						} 	
-					}
-				}	
-			
-	
-		});
-		socket.on('updateGoneUser',function(user) {
-
-				
-				var frames = window.parent.frames;
-
-				frames[0].document.getElementById(user.userKey).src=user.disconnectedImageUrl;
-				
-				var divName= "div_"+JSON.parse( user.userKey );
-				
-				if(frames[0].document.getElementById(divName)!=null){
-					frames[0].document.getElementById(divName).style.backgroundColor='grey';
-				} 	
-					
-			
-		
-		});
-*/
-			
-
-		
-		
 		//
 		//
 		//
@@ -116,11 +68,9 @@
 
 			for( i in users ){
 				
-				var parsedUserKey=JSON.parse( users[i].userKey );
+				var divName= "div_"+ users[ i ].userKey;
 				
-				var divName= "div_"+parsedUserKey;
-				
-				if( frames[0].document.getElementById(divName).style.backgroundColor=='grey' ){
+				if( frames[ 0 ].document.getElementById( divName ).style.backgroundColor=='grey' ){
 				
 					allReady=false;
 					break;
@@ -128,8 +78,8 @@
 			}
 			
 			if( allReady ){
-		
-				window.parent.location.href="./gamePage.html";				
+				// Maybe tell the server how many of the team are beginning the game.
+				window.parent.location.href="./hugging.html";				
 			}
 		});
 		

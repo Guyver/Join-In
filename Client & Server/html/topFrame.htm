@@ -13,132 +13,108 @@
 
 <script src="/socket.io/socket.io.js"></script><!-- Passed from the server -->
 <script>
-	//g_ready=[];
-	var socket= io.connect('193.156.105.162:7541');
-	
-	
-	//
-	//
-	//
-	function getCookie(c_name)
-	{
-		var i,x,y,ARRcookies=document.cookie.split(";");
-		for (i=0;i<ARRcookies.length;i++){
-		
-			x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-			y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-			x=x.replace(/^\s+|\s+$/g,"");
-			if (x==c_name)
-			{
-				return unescape(y);
-			}
-		}
-	}
-	
-	var userKey= getCookie("userKey");
-	
-	socket.emit('giveMeUserPictures',userKey);	
+	// Open the socket.
+	var socket= io.connect('193.156.105.158:7541');
+	// Retrieve the user key.
+	var userKey = localStorage.userKey;
+	// Get the user pictures to be displayed.
+	socket.emit( 'giveMeUserPictures', userKey );	
 
 	//
 	//Callback functions
 	//
-	socket.on('sendingUserPictures',function(images) {	
+	socket.on( 'sendingUserPictures' , function( images ) {	
 		
-		var parsedImages=images;
+		var parsedImages = images;
 
-		document.write("<div id=\"container\" style=\"width:464px; margin:auto;\">");			
+		document.write( "<div id=\"container\" style=\"width:464px; margin:auto;\">" );			
 	
-		for(index in images){	
-			document.write("<div id=\"div_"+parsedImages[index].userKey+"\" style=\"background-color:grey; width:100px;height:100px; float:left; border:solid; margin:5px;\"> ");
-			document.write("<img src=\""+parsedImages[index].image+"\" type=\"image\" id=\""+parsedImages[index].userKey+"\" title=\"Image of the user "+parsedImages[index].userKey+"\" width=\"100\" height=\"85\"\\/\\>");
+		for( index in images ){	
+			document.write("<div id=\"div_"+parsedImages[ index ].userKey + "\" style=\"background-color:grey; width:100px;height:100px; float:left; border:solid; margin:5px;\"> ");
+			document.write("<img src=\"" + parsedImages[ index ].image + "\" type=\"image\" id=\"" + parsedImages[ index ].userKey + "\" title=\"Image of the user " + parsedImages[index].userKey + "\" width=\"100\" height=\"85\"\\/\\>");
 			document.write("</div>");
 		
-		}
-	
-		document.write("</div>");
-		
+		}	
+		document.write("</div>");	
 	});
 
 	
 	//
 	//
-	//
-	
-	
-	
-	socket.on('updateNewUser',function(user, myTeam) {
+	//	
+	socket.on( 'updateNewUser' , function( user, myTeam ) {
 
 				
-				var frames = window.parent.frames;
-				var team;
+		var frames = window.parent.frames;
+		var team;
 		
-				frames[0].document.getElementById(user.userKey).src=user.connectedImageUrl;
+		frames[ 0 ].document.getElementById( user.userKey ).src = user.connectedImageUrl;
 				
-
-		
-				for(i in myTeam){
-					team=JSON.parse( myTeam[i].team );
+		for( i in myTeam ){
+			team = myTeam[ i ].team ;
 				
 					
-					if(JSON.parse( myTeam[i].ready )==true){
+			if( myTeam[ i ].ready == true ){
 							
-						var divName= "div_"+JSON.parse( myTeam[i].userKey );
+				var divName= "div_" + myTeam[ i ].userKey ;
 						
-						if(frames[0].document.getElementById(divName)!=null){
-							frames[0].document.getElementById(divName).style.backgroundColor='green';
-						} 	
-					}
-				}	
-			
-		checkIfAllConnectedUsersAreReady(team);
-		});
-		socket.on('updateGoneUser',function(user) {
-
-				
-				var frames = window.parent.frames;
-
-				frames[0].document.getElementById(user.userKey).src=user.disconnectedImageUrl;
-				
-				var divName= "div_"+JSON.parse( user.userKey );
-				
-				if(frames[0].document.getElementById(divName)!=null){
-					frames[0].document.getElementById(divName).style.backgroundColor='grey';
+				if( frames[ 0 ].document.getElementById( divName ) != null ){
+					frames[ 0 ].document.getElementById( divName ).style.backgroundColor = 'green';
 				} 	
-					
-			
-			
-		});
+			}
+		}	
+		// Check and see if the team is ready.	
+		checkIfAllConnectedUsersAreReady( team );
+		
+	});
+	
 	
 	//
-	function checkIfAllConnectedUsersAreReady(team){
-		socket.emit('giveMeConnectedUsers', team);
+	//
+	//
+	socket.on( 'updateGoneUser' , function( user ) {
+
+				
+		var frames = window.parent.frames;
+
+		frames[ 0 ].document.getElementById( user.userKey ).src = user.disconnectedImageUrl;
+				
+		var divName= "div_"+JSON.parse( user.userKey );
+				
+		if( frames[ 0 ].document.getElementById( divName ) != null ){
+			frames[ 0 ].document.getElementById( divName ).style.backgroundColor = 'grey';
+		} 			
+	});
+	
+	//
+	//
+	//
+	function checkIfAllConnectedUsersAreReady( team ){
+		socket.emit( 'giveMeConnectedUsers', team );
 	}
 
+	//
+	//
+	//
+	socket.on( "hereYouAreTheConnectedUsers" , function( myTeam ){
 	
-	//
-	//
-	//
-	socket.on("hereYouAreTheConnectedUsers", function( myTeam ){
-	
-		var allReady=true;
+		var allReady = true;
 		var frames = window.parent.frames;	
 
-		console.log("[TOP]here you are");
-
-		for(i in myTeam){
-			console.log("Iterating in my team "+i);
-			var parsedUserKey=JSON.parse( myTeam[i].userKey );
+		for( i in myTeam ){
 	
-			var divName= "div_"+parsedUserKey;
+			var divName= "div_" +  myTeam[ i ].userKey;
 			
-			if( frames[0].document.getElementById(divName).style.backgroundColor=='grey' ){
-				allReady=false;
+			if( frames[ 0 ].document.getElementById( divName ).style.backgroundColor == 'grey' ){
+				allReady = false;
 				break;
 			}
 		}
 		if( allReady ){
+			
+			//socket.emit( 'giveMeConnectedUsers', team );
 			// If all are ready go to the next page.
-			window.parent.location.href="./gamePage.html";		
+			window.parent.location.href="./hugging.html";		
 		}
 	});
 	
@@ -146,14 +122,14 @@
 	//
 	//
 	//
-	socket.on('deleteHim',function( player ){
+	socket.on( 'deleteHim' , function( player ){
 		
 		//To avoid the double call.			
 		if( player != null ){
 			 
-			document.getElementById(player.userKey).src=player.disconnectedImageUrl;
-			var divName= "div_"+player.userKey;
-			document.getElementById(divName).style.backgroundColor='grey'; 
+			document.getElementById( player.userKey ).src = player.disconnectedImageUrl;
+			var divName= "div_" + player.userKey;
+			document.getElementById( divName ).style.backgroundColor = 'grey'; 
 		}
 		else{
 		

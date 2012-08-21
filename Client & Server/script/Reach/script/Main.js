@@ -11,27 +11,9 @@
 // Connect to the server.
 var socket = io.connect('193.156.105.162:7541');
 
-function getCookie(c_name)
-{
-	var i,x,y,ARRcookies=document.cookie.split(";");
-	for (i=0;i<ARRcookies.length;i++){
-		
-		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-		x=x.replace(/^\s+|\s+$/g,"");
-		if (x==c_name)
-		{
-			return unescape(y);
-		}
-	}
-}
-function setCookie(c_name,value,exdays)
-{
-	var exdate=new Date();
-	exdate.setDate(exdate.getDate() + exdays);
-	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-	document.cookie=c_name + "=" + c_value;
-}
+// Connect to Sandra.
+var sandra = io.connect( '127.0.0.1:8080' );
+var kinectData;
 
 // Variables for the sugary goodness!
 var gui, param, varNum, interval;
@@ -59,7 +41,7 @@ var waiting = false;
 var paused = false;
 // The level manager.
 var level_Manager;
-
+var plrOne, plrTwo,plrThree = false;
 // Game objects.
 var objects = [];
 
@@ -234,7 +216,7 @@ function createObjects(){
 	level_Manager = new Level_Manager();
 	
 	
-	level_Manager.getPlayer()._userKey = getCookie("userKey");
+	level_Manager.getPlayer()._userKey = localStorage.userKey;
 	// Define the map with hash tags.
 	var my_scene = {
 				"map" : [
@@ -280,13 +262,13 @@ function gameLoop(){
 		// Render the scene.
 		render();
 		
-		socket.emit( 'updateKinect' );
+		sandra.emit( 'getData' );
 	}
 	else{
 	
 		if( !waiting && !paused && level_Manager._player_Manager._gameOver ){
 			// If we're not waiting and the game isn't paused and its game over go in here.
-			setCookie( "score" , level_Manager.getPlayer()._score , 1 );
+			//setCookie( "score" , level_Manager.getPlayer()._score , 1 );
 			socket.emit( 'gameOver', level_Manager.getPlayer()._score  );
 			waiting = true;	
 			console.log( "Waiting for the call from the server that the team is finished." );
@@ -297,7 +279,96 @@ function gameLoop(){
 			console.log( "The game is paused." );
 		
 		}
+		
+		if( !level_Manager._player_Manager._playGame ){
+		
+			// The game is still loading, check to see if its ready yet.
+			var modelCount = level_Manager._player_Manager.getPlayer().getModels().length;
+			
+			for ( i in level_Manager._player_Manager._otherPlayers ){
+			
+				// Add the amount of times the model loads.
+				modelCount += level_Manager._player_Manager._otherPlayers[ i ].getModels().length ;			
+			}
+			
+			switch( modelCount ){
+				case 14:
+					if( !plrOne ){
+						// Load the next one.
+						level_Manager._player_Manager._otherPlayers.push( new Player( "Player2", undefined, undefined ) );
+						plrOne = true;						
+					}
+					break;
+				case 28:
+					if( !plrTwo ){
+						// Load the next one.
+						level_Manager._player_Manager._otherPlayers.push( new Player( "Player3", undefined, undefined ) );
+						plrTwo = true;						
+					}
+					break;
+				case 42:
+					if( !plrThree ){
+						// Load the next one.
+						level_Manager._player_Manager._otherPlayers.push( new Player( "Player4", undefined, undefined ) );
+						plrThree = true;						
+					}
+					break;
+				case 56:
+					if( !level_Manager._player_Manager._playGame && plrOne && plrTwo && plrThree){
+						// Get my team mates by the team id.
+						createTeam();				
+					}
+					break;				
+				default:
+					// Loading
+					break;
+			}// Switch
+		}
 	}
+};
+
+
+/**
+
+
+
+*/
+function createTeam(){
+	
+	var team = globalTeam;
+	var offset = 0;
+	// Pair the team members to the empty players in other players.
+	for ( i in team ){
+
+		if( i != level_Manager._player_Manager.getPlayer()._ip )
+		{
+			for ( j in level_Manager._player_Manager._otherPlayers ){
+			
+				var index =  ( parseInt( j ) + offset ).toString() ;
+				level_Manager._player_Manager._otherPlayers[ index ]._name = team[ i ].name;
+				level_Manager._player_Manager._otherPlayers[ index ]._ip = team[ i ].ip;
+				level_Manager._player_Manager._otherPlayers[ index ]._userKey = team[ i ].userKey;
+				level_Manager._player_Manager._otherPlayers[ index ]._kinectData = team[ i ].kinect;
+				level_Manager._player_Manager._otherPlayers[ index ]._score = team[ i ].score;
+				level_Manager._player_Manager._otherPlayers[ index ]._position.x = team[ i ].pos.x;
+				level_Manager._player_Manager._otherPlayers[ index ]._position.y = team[ i ].pos.y;
+				level_Manager._player_Manager._otherPlayers[ index ]._position.z = team[ i ].pos.z;
+				level_Manager._player_Manager._otherPlayers[ index ]._sightNode.x = team[ i ].sight.x;
+				level_Manager._player_Manager._otherPlayers[ index ]._sightNode.y = team[ i ].sight.y;
+				level_Manager._player_Manager._otherPlayers[ index ]._sightNode.z = team[ i ].sight.z;
+				level_Manager._player_Manager._otherPlayers[ index ]._team = team[ i ].team;
+				delete team[ i ];
+				break;
+			}	
+			offset+=1;
+		}
+		else
+		{
+			//level_Manager._player_Manager.getPlayer()._kinectData = team[ i ].kinect;		
+		}
+	}
+	// Set the game to start after the players have been assigned.
+	level_Manager._player_Manager._playGame = true;	
 };
 
 
@@ -818,6 +889,76 @@ function handleKeyEvents( event ) {
 	  		return;		
 	}
 };
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+sandra.on( 'returnData', function( dataR ){
+	
+	level_Manager.getPlayer()._kinectData = JSON.parse( dataR );			
+});
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'teamMates', function( team ){
+	// Works fine.
+	globalTeam = team;
+	
+	//Need to figure out when to delete unused players from other players.
+	// ...and when to start the game.
+	if ( level_Manager._player_Manager._playGame ){
+		createTeam();
+	}
+});
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'youWereCreated', function( data ){
+
+	level_Manager.getPlayer()._name = data.name;
+	level_Manager.getPlayer()._ip = data.ip;
+	level_Manager.getPlayer()._team = data.team;
+	level_Manager.getPlayer()._userKey = data.userKey;
+	
+	var pos = new THREE.Vector3();
+	var x,z;
+
+	switch( data.teamNumber ){
+		case 1:
+			pos.copy( level_Manager._player_Manager._spawnPosition );
+			level_Manager.getPlayer().rotateSightByAngle( 180 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition );
+			break;
+		case 2:
+			pos.copy( level_Manager._player_Manager._spawnPosition2 );
+			level_Manager.getPlayer().rotateSightByAngle( 90 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition2 );
+			break;
+		case 3:
+			pos.copy( level_Manager._player_Manager._spawnPosition3 );
+			level_Manager.getPlayer().rotateSightByAngle( 90 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition3 );
+			break;
+		case 4:
+			pos.copy( level_Manager._player_Manager._spawnPosition4 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition4 );
+			break;
+	};
+	
+	level_Manager.getPlayer().setPosition( pos ) 
+});
+
 
 socket.on( 'topScorePage', function( ){
 

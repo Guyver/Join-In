@@ -4,31 +4,13 @@
 	Where the game logic is controlled.
 */
 
-
 // Connect to the server.
-var socket = io.connect('193.156.105.142:7541');
+var socket = io.connect( '193.156.105.158:7541' );
 
-function getCookie(c_name)
-{
-	var i,x,y,ARRcookies=document.cookie.split(";");
-	for (i=0;i<ARRcookies.length;i++){
-		
-		x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-		y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-		x=x.replace(/^\s+|\s+$/g,"");
-		if (x==c_name)
-		{
-			return unescape(y);
-		}
-	}
-}
-function setCookie(c_name,value,exdays)
-{
-	var exdate=new Date();
-	exdate.setDate(exdate.getDate() + exdays);
-	var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-	document.cookie=c_name + "=" + c_value;
-}
+// Connect to Sandra.
+var sandra = io.connect( '127.0.0.1:8080' );
+var kinectData;
+
 
 // Variables for the sugary goodness!
 var gui, param, varNum, interval;
@@ -47,13 +29,15 @@ var windowHeight = window.innerHeight;
 var numJoints, model, jointList;
 
 // Game Physics vars TODO: Move to player manager.
-var players;
+var players, globalTeam;
 
 // The time since last frame.
-var deltaTime, last, current;
+var deltaTime, last, current, countDown;
 
 var waiting = false;
 var paused = false;
+var plrOne, plrTwo,plrThree = false;
+var key = false;
 // The level manager.
 var level_Manager;
 
@@ -63,13 +47,14 @@ var objects = [];
 // The scene builder.
 var architect;
 
+
 /**	@Name:	Init
 	@Brief:	Initalise objects we need.
 	@Arguments:N/A
 	@Returns:N/A
 */
 function init(){
-
+	
 	// Set up the three scene.
 	initScene();
 	// Set up the renderer type.
@@ -83,11 +68,18 @@ function init(){
 
 	// Skybox...etc.
 	setupEnviornment();
+	//
+	addTrees();
+	//
+	addHouse();
+	//
+	addKey();
 	// Send the server your data.
 	sendData();	
 	// The first call to the game loop.
 	gameLoop();
 	
+	sandra.emit( 'giveMeHugs', true );
 };
 
 
@@ -118,6 +110,8 @@ function initCamera(){
 function initScene(){
 	// the scene contains all the 3D object data
 	scene = new THREE.Scene();	
+	scene.fog = new THREE.FogExp2( 0x000000, 0.000035 );
+	
 };
 
 
@@ -140,7 +134,6 @@ function initRenderer(){
 	
 	// Fit the render area into the window.
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	
 	// The renderer's canvas domElement is added to the body.
 	document.body.appendChild( renderer.domElement );
 };
@@ -153,18 +146,24 @@ function initRenderer(){
 */
 function setupLights(){
 	var ambient = new THREE.AmbientLight( 0xffffff );
+	//ambient.castShadow = true;
+	//ambient.shadowDarkness = 0.5;
 	scene.add( ambient );
 
 	directionalLight = new THREE.DirectionalLight( 0xffffff );
 	directionalLight.position.y = -70;
 	directionalLight.position.z = 100;
 	directionalLight.position.normalize();
+	//directionalLight.castShadow = true;
+	//directionalLight.shadowDarkness = 0.5;
 	scene.add( directionalLight );
 
 	pointLight = new THREE.PointLight( 0xffaa00 );
 	pointLight.position.x = 0;
 	pointLight.position.y = 0;
 	pointLight.position.z = 0;
+	//pointLight.castShadow = true;
+	//pointLight.shadowDarkness = 0.5;
 	scene.add( pointLight );
 				
 	// Directional
@@ -173,6 +172,8 @@ function setupLights(){
 	directionalLight.position.y = 500;
 	directionalLight.position.z = 0;
 	directionalLight.position.normalize();
+	//directionalLight.castShadow = true;
+	//directionalLight.shadowDarkness = 0.5;
 	// Add to the scene.
 	scene.add( directionalLight );
 
@@ -182,6 +183,8 @@ function setupLights(){
 	directionalLight.position.y = 500;
 	directionalLight.position.z = -2000;
 	directionalLight.position.normalize();
+	//directionalLight.castShadow = true;
+	//directionalLight.shadowDarkness = 0.5;
 	// Add to the scene.
 	scene.add( directionalLight );
 	
@@ -213,16 +216,24 @@ function createObjects(){
 				'torso'];
 	// Initalise the level manager.
 	level_Manager = new Level_Manager();
-	
-	
-	level_Manager.getPlayer()._userKey = getCookie("userKey");
+	level_Manager.getPlayer()._userKey = localStorage.userKey;
+
 	// Define the map with hash tags.
 	var my_scene = {
 				"map" : [
-					" "
+					"##########",
+					"#........#",
+					"#........#",
+					"#........#",
+					"#........#",
+					"#........#",
+					"#...,....#",
+					"#........#",
+					"#........#",
+					"##########"
 				] 
 	};
-	
+
 	// Initalise the scene builder with the hash map.
 	architect = new Scene_Builder( my_scene );	
 	
@@ -236,34 +247,155 @@ function createObjects(){
 */
 function gameLoop(){
 	
+	if( !sandra.socket.connected ){
+		try{
+			sandra = undefined;
+			sandra = io.connect( '127.0.0.1:8080' );	
+		}catch( error ){
+			console.log( "Failed to initalise Sandra socket." );
+		}
+	}
+	
 	requestAnimationFrame( gameLoop, renderer.domElement );
 	
-	if( !level_Manager._player_Manager._gameOver && !paused ){
+	if( !level_Manager._player_Manager._gameOver && !paused && level_Manager._player_Manager._playGame ){
 		
 		// Update the level manager.
-		level_Manager.update( scene, camera );
+		var gotKey = level_Manager.update( scene, camera );
+		
+		key.rotation.x += 0.1;
 		
 		// Render the scene.
 		render();
 		
-		socket.emit( 'updateKinect' );
+		if( gotKey ){
+		
+			level_Manager._player_Manager._gameOver = true;
+		}
+		sandra.emit( 'getData' );
 	}
 	else{
 	
 		if( !waiting && !paused && level_Manager._player_Manager._gameOver ){
+		
 			// If we're not waiting and the game isn't paused and its game over go in here.
-			setCookie( "score" , level_Manager.getPlayer()._score , 1 );
-			socket.emit( 'gameOver', level_Manager.getPlayer()._score  );
+			localStorage.score = level_Manager.getPlayer()._score;
+			socket.emit( 'endHugging' );
 			waiting = true;	
 			console.log( "Waiting for the call from the server that the team is finished." );
 		}
 		
 		if( paused ){
 			// Do nothing 
-			console.log( "The game is paused." );
+			console.log( "The game is paused." );		
+		}
 		
+		if( !level_Manager._player_Manager._playGame && !level_Manager._player_Manager._gameOver ){
+		
+			// The game is still loading, check to see if its ready yet.
+			var modelCount = level_Manager._player_Manager.getPlayer().getModels().length;
+			
+			for ( i in level_Manager._player_Manager._otherPlayers ){
+			
+				// Add the amount of times the model loads.
+				modelCount += level_Manager._player_Manager._otherPlayers[ i ].getModels().length ;			
+			}
+			
+			switch( modelCount ){
+				case 14:
+					if( !plrOne ){
+						// Load the next one.
+						level_Manager._player_Manager._otherPlayers.push( new Player( "Player2", undefined, undefined ) );
+						plrOne = true;						
+					}
+					break;
+				case 28:
+					if( !plrTwo ){
+						// Load the next one.
+						level_Manager._player_Manager._otherPlayers.push( new Player( "Player3", undefined, undefined ) );
+						plrTwo = true;						
+					}
+					break;
+				case 42:
+					if( !plrThree ){
+						// Load the next one.
+						level_Manager._player_Manager._otherPlayers.push( new Player( "Player4", undefined, undefined ) );
+						plrThree = true;						
+					}
+					break;
+				case 56:
+					if( !level_Manager._player_Manager._playGame && plrOne && plrTwo && plrThree){
+						// Get my team mates by the team id.
+						createTeam();				
+					}
+					break;				
+				default:
+					// Loading
+					break;
+			}// Switch
 		}
 	}
+	
+		if( !paused ){
+
+			// Package your player into a map.
+			var me = {
+				name : level_Manager.getPlayer()._name,
+				pos : level_Manager.getPlayer()._position,
+				sight : level_Manager.getPlayer()._sightNode,
+				kinect : level_Manager.getPlayer()._kinectData,	
+				team : level_Manager.getPlayer()._team,
+				userKey : level_Manager.getPlayer()._userKey
+			};
+			
+			// Send it to the server to be stored for others.
+			socket.emit( 'updateMe', me  );		
+		}
+		
+};
+
+
+/**
+
+
+
+*/
+function createTeam(){
+	
+	var team = globalTeam;
+	var offset = 0;
+	// Pair the team members to the empty players in other players.
+	for ( i in team ){
+
+		if( i != level_Manager._player_Manager.getPlayer()._ip )
+		{
+			for ( j in level_Manager._player_Manager._otherPlayers ){
+			
+				var index =  ( parseInt( j ) + offset ).toString() ;
+				level_Manager._player_Manager._otherPlayers[ index ]._name = team[ i ].name;
+				level_Manager._player_Manager._otherPlayers[ index ]._ip = team[ i ].ip;
+				level_Manager._player_Manager._otherPlayers[ index ]._userKey = team[ i ].userKey;
+				level_Manager._player_Manager._otherPlayers[ index ]._kinectData = team[ i ].kinect;
+				level_Manager._player_Manager._otherPlayers[ index ]._score = team[ i ].score;
+				level_Manager._player_Manager._otherPlayers[ index ]._position.x = team[ i ].pos.x;
+				level_Manager._player_Manager._otherPlayers[ index ]._position.y = team[ i ].pos.y;
+				level_Manager._player_Manager._otherPlayers[ index ]._position.z = team[ i ].pos.z;
+				level_Manager._player_Manager._otherPlayers[ index ]._sightNode.x = team[ i ].sight.x;
+				level_Manager._player_Manager._otherPlayers[ index ]._sightNode.y = team[ i ].sight.y;
+				level_Manager._player_Manager._otherPlayers[ index ]._sightNode.z = team[ i ].sight.z;
+				level_Manager._player_Manager._otherPlayers[ index ]._team = team[ i ].team;
+				delete team[ i ];
+				break;
+			}	
+			offset+=1;
+		}
+		else
+		{
+			//level_Manager._player_Manager.getPlayer()._kinectData = team[ i ].kinect;		
+		}
+	}
+	// Set the game to start after the players have been assigned.
+	level_Manager._player_Manager._playGame = true;	
 };
 
 
@@ -356,6 +488,83 @@ function Skybox(){
 	
 };
  
+ 
+ function addTrees(){
+ 
+	var treeNum = 100;
+
+	var treeBill = new THREE.Texture( imageManager.getAsset( 'img/Tree1.png' , {}, render()));	
+		treeBill.needsUpdate = true;
+	var treeGeo = new THREE.PlaneGeometry( 500, 500, 1, 10 );
+
+	for( var i =0; i< treeNum;i++ ){
+		
+		var tree = new THREE.Mesh( treeGeo, new THREE.MeshBasicMaterial({
+			 map: treeBill, transparent:true  
+		}));
+
+		//tree .rotation.x = -Math.PI / 2;
+		tree .position.x = randomRange( 25000, 40000 );
+		tree .position.z = randomRange( 5000, 40000 );
+		tree .receiveShadow = true;
+		tree .castShadow = true;
+		tree .doubleSided = true;
+		tree .scale.set( 10,10,10 );
+		tree .position.y = 2000;
+		tree .rotation.x = Math.PI/2;
+		tree .rotation.z = Math.PI/2;
+		
+		scene.add( tree );
+		//tree .lookAt( level_Manager.getPlayer().getPosition() );
+	}
+ };
+ 
+ 
+ 
+function addHouse( ){
+ 
+	var loader = THREE.ColladaLoader();
+	loader.load( '../model/house.dae', function( collada ){
+	
+		var model = collada.scene;
+		model.updateMatrix();
+		scene.add( model );
+
+		model.name = "House";
+		model .castShadow = true;
+		model.position.x = 8000;
+		model.position.y -= 20;
+		model.position.z = 20000;
+		model.scale.set( 250,250,250 );
+		model.rotation.x = -Math.PI/2;
+		model.rotation.z = Math.PI/2;
+	});
+ };
+ 
+ 
+ 
+ function addKey( ){
+ 
+	var loader = THREE.ColladaLoader();
+	loader.load( '../model/key.dae', function( collada ){
+	
+		var model = collada.scene;
+		model.updateMatrix();
+		scene.add( model );
+
+		model.name = "Object";
+		model.boundRadius = 500;
+		model .castShadow = true;
+		model.position.x = 16000;
+		model.position.y = 1000;
+		model.position.z = 20000;
+		model.scale.set( 100,100,100 );
+		
+		key = model;
+	});
+ };
+ 
+ 
 /**	@Name:	
 	@Brief:	
 	@Arguments:N/A
@@ -369,8 +578,10 @@ function sendData(  ) {
 
 		userKey	: level_Manager.getPlayer()._userKey,
 		pos : level_Manager.getPlayer()._position,
-		kinect : level_Manager.getPlayer()._kinectData
-	});	
+		kinect : level_Manager.getPlayer()._kinectData,
+		sight : level_Manager.getPlayer()._sightNode
+	});
+	
 }; //end func. 
 
 
@@ -389,7 +600,7 @@ function load() {
 	@Arguments: int min, int max
 	@Returns: int random value
 */
-function randomRange(min, max) {
+function randomRange( min, max ) {
 	return Math.random()*(max-min) + min;
 };
 
@@ -458,22 +669,132 @@ function handleKeyEvents( event ) {
 	}
 };
 
-socket.on( 'nextLevel', function( ){
 
-	window.parent.location.href="./reach.html";
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'nextLevel', function( data ){
+
+	window.parent.location.href = data;
 });
 
 
-socket.on('syncKinect', function( data ){
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+sandra.on( 'returnData', function( dataR ){
+	
+	level_Manager.getPlayer()._kinectData = JSON.parse( dataR );			
+});
+			
+			
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'teamMates', function( team ){
+	// Works fine.
+	globalTeam = team;
+	
+	//Need to figure out when to delete unused players from other players.
+	// ...and when to start the game.
+	if ( level_Manager._player_Manager._playGame ){
+		createTeam();
+	}
+});
 
-	level_Manager.getPlayer()._kinectData = data;
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'syncKinect', function( data ){
+
+	//level_Manager.getPlayer()._kinectData = data;
 
 });
 
 
-socket.on('updateNewUser',function(user) {
-		console.log( "User is :"+ JSON.parse( user ).name );	
-		console.log( "User's ip :"+ JSON.parse( user ).ip );		
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'youWereCreated', function( data ){
+
+	level_Manager.getPlayer()._name = data.name;
+	level_Manager.getPlayer()._ip = data.ip;
+	level_Manager.getPlayer()._team = data.team;
+	level_Manager.getPlayer()._userKey = data.userKey;
+	
+	var pos = new THREE.Vector3();
+	var x,z;
+
+	switch( data.teamNumber ){
+		case 1:
+			pos.copy( level_Manager._player_Manager._spawnPosition );
+			level_Manager.getPlayer().rotateSightByAngle( 180 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition );
+			break;
+		case 2:
+			pos.copy( level_Manager._player_Manager._spawnPosition2 );
+			level_Manager.getPlayer().rotateSightByAngle( 90 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition2 );
+			break;
+		case 3:
+			pos.copy( level_Manager._player_Manager._spawnPosition3 );
+			level_Manager.getPlayer().rotateSightByAngle( 90 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition3 );
+			break;
+		case 4:
+			pos.copy( level_Manager._player_Manager._spawnPosition4 );
+			level_Manager.getPlayer()._startingPos.copy( level_Manager._player_Manager._spawnPosition4 );
+			break;
+	};
+	
+	level_Manager.getPlayer().setPosition( pos ) 
+});
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'updateNewUser', function( user, team ) {
+/*	
+	// Check to see if its the main Player.
+	globalTeam = team;
+	if ( level_Manager._player_Manager._playGame ){
+		createTeam();
+	}
+*/
+});
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'deleteUser', function( data ){
+
+	var player = data.user;
+	
+	// Find the player with the same team number and delete his ass.
+	for ( i in level_Manager._player_Manager._otherPlayers ){
+	
+		if( String( level_Manager._player_Manager._otherPlayers[ i ]._ip ) == String ( player.ip ) ){
+			level_Manager._player_Manager._otherPlayers[ i ].remove();
+			level_Manager._player_Manager._otherPlayers[ i ].setPosition( new THREE.Vector( 0,0,0 ) );
+		}	
+	}
 });
 
 
@@ -498,14 +819,17 @@ function resize(){
     render();
 };
 
-
+function clone( obj ) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
 window.addEventListener('resize', resize, false);
 window.addEventListener('orientationchange', resize, false);
 //window.addEventListener( 'mousemove', handleMouseEvents, false );
 window.addEventListener( 'keydown', handleKeyEvents, false );
 // Tell me when the window loads!
 window.onload = load;
-
-  
-
-

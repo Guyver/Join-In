@@ -1,0 +1,5 @@
+1) Run the Mongo remote server.
+2) Run the  remote game server.  
+3) Run the sandra server locally.
+4) Connect via ip port to the game server for a session.
+5) Run SANDRA batch file to begin storing kinect data.

@@ -19,6 +19,8 @@ function Level_Manager(  ){
 	this._cameraPosition = undefined;
 	// Camera Type, 1 = 1st, 3 = 3rd.
 	this._cameraType = 3;
+	// The collision manager.
+	this._collisionHandler = new Collision_Manager();
 
 };
 
@@ -33,6 +35,29 @@ Level_Manager.prototype.update = function( scene , camera ){
 	// Get the Player Manager to update the players.
 	this._player_Manager.update( );
 	
+	var leftHand =  this._player_Manager.getPlayer()._rig.getJoint( "leftHand" )._mesh;
+	var rightHand = this._player_Manager.getPlayer()._rig.getJoint( "rightHand" )._mesh;
+	
+	var name = this._collisionHandler.update( leftHand, rightHand, scene );
+	
+	switch( name ){
+		case "Player":
+			this._player_Manager.getPlayer().resetPosition();
+			break;
+		case "Player2":
+			this._player_Manager._otherPlayers[ 0 ].resetPosition();
+			break;
+		case "Player3":
+			this._player_Manager._otherPlayers[ 1 ].resetPosition();
+			break;
+		case "Player4":
+			this._player_Manager._otherPlayers[ 2 ].resetPosition();
+			break;
+		case "Got Key":
+			return ( true );
+			break;
+	};
+	
 	switch ( this._cameraType ){
 		case 1:
 			this.firstPersonCamera( this._player_Manager.getPlayer(), camera );
@@ -44,6 +69,8 @@ Level_Manager.prototype.update = function( scene , camera ){
 			this.firstPersonCamera( this._player_Manager.getPlayer(), camera );
 			break;
 	};	
+	
+	return false;
 };
 
 
