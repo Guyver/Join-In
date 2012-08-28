@@ -1,23 +1,18 @@
 ## Join-In
 http://www.helmholtz-muenchen.de/en/join-in/home
 
-#The open source device library for interfacing the Kinect.
-
+###OpenNi
 http://75.98.78.94/default.aspx
 
-#Node.js and all its trimmings.
-
+###Node.js
 http://nodejs.org/
 
-#We used Three.js for rendering the enviornment.
-
+###Three.js
 https://github.com/mrdoob/three.js/
 
-# MongoDB for the remote database.
-
+### MongoDB
 http://www.mongodb.org/
 
-Dev Branch, May not be stable.
 
 #How to use
 
