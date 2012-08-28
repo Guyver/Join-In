@@ -1,19 +1,6 @@
 ## Join-In
 http://www.helmholtz-muenchen.de/en/join-in/home
 
-###OpenNi
-http://75.98.78.94/default.aspx
-
-###Node.js
-http://nodejs.org/
-
-###Three.js
-https://github.com/mrdoob/three.js/
-
-### MongoDB
-http://www.mongodb.org/
-
-
 #How to use
 
 ## Remote
@@ -40,3 +27,12 @@ Finally you can connect to the game server and begin the game.
 
 The most stable browser is Google's Chrome, latest version. Firefox hasnt been used for development so browser specific bugs aren't ironed out yet. FF works if refreshed atm
 
+
+###OpenNi
+http://75.98.78.94/default.aspx
+###Node.js
+http://nodejs.org/
+###Three.js
+https://github.com/mrdoob/three.js/
+### MongoDB
+http://www.mongodb.org/
