@@ -21,8 +21,8 @@ http://www.mongodb.org/
 On the server machine you need to have node.js and mongoDB installed. Open the port needed to run Nodejs. In this version I used port 7541.
 Before running the server.js you must run the mongo server and use the db provided called 'test'. There is a copy of the data folder that mongo uses in client/server, you can it place on your C:/ Once the Mongo server is running and waiting for connections you may start the Game server ( server.js ).
 
-1) Run MongoD ( C:/Mongo/bin/mongoD - cmd - mongod )
-2) Run server.js ( cmd - node server.js )
+1) Run MongoD ( C:/Mongo/bin/mongoD - cmd - mongod )                                  
+2) Run server.js ( cmd - node server.js )                                             
 
 
 ## Client side
