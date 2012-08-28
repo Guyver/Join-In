@@ -24,10 +24,10 @@ Dev Branch, May not be stable.
 ## Remote
 
 On the server machine you need to have node.js and mongoDB installed. Open the port needed to run Nodejs. In this version I used port 7541.
-Before running the server.js you must run the mongo server and use the db provided called 'test'. Once the Mongo server is running you may start the Game server ( server.js ).
+Before running the server.js you must run the mongo server and use the db provided called 'test'. There is a copy of the data folder that mongo uses in client/server, you can it place on your C:/ Once the Mongo server is running and waiting for connections you may start the Game server ( server.js ).
 
-1) Run MongoD
-2) Run server.js
+1) Run MongoD ( C:/Mongo/bin/mongoD - cmd - mongod )
+2) Run server.js ( cmd - node server.js )
 
 
 ## Client side
@@ -37,11 +37,11 @@ You may then run the Sandra batch file to start using sandra.
 
 Finally you can connect to the game server and begin the game.
 
-1) Run sandra.js
-2) Run sandra.bat
-3) Connect to the game server's ip:port
+1) Run sandra.js ( cmd - node sandra.js )
+2) Double click sandra.bat
+3) Connect to the game server's ip:port using Google Chrome
 
 Note:
 
-The most stable browser is Google's Chrome, latest version. Firefox hasnt been used for development so browser specific bugs aren't ironed out yet. 
+The most stable browser is Google's Chrome, latest version. Firefox hasnt been used for development so browser specific bugs aren't ironed out yet. FF works if refreshed atm
 
