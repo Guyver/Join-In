@@ -37,11 +37,11 @@ You may then run the Sandra batch file to start using sandra.
 
 Finally you can connect to the game server and begin the game.
 
-1) Run sandra.js ( cmd - node sandra.js )
-2) Double click sandra.bat
-3) Connect to the game server's ip:port using Google Chrome
+1) Run sandra.js ( cmd - node sandra.js )                                   
+2) Double click sandra.bat                                
+3) Connect to the game server's ip:port using Google Chrome                                       
 
-Note:
+###Note:
 
 The most stable browser is Google's Chrome, latest version. Firefox hasnt been used for development so browser specific bugs aren't ironed out yet. FF works if refreshed atm
 
