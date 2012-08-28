@@ -13,17 +13,20 @@ http://nodejs.org/
 
 https://github.com/mrdoob/three.js/
 
+# MongoDB for the remote database.
+
+http://www.mongodb.org/
 
 Dev Branch, May not be stable.
 
 #How to use
 
-  1. Install node.
-  2. Open ports 7541 & 7540 for tcp traffic on you nat. Allow through firewall also.
-  3. Open Client/script/NodeCon.js and enter your ipaddress in place of mine or your localhost ip.
-  4. Open cmd at server.js dir and enter node server.js
-  5. Connect to your ip:host in your browser.
-  6. Run the Java client to start the stream of kinect data.
+On the server machine you need to have node.js and mongoDB installed. Open the port needed to run Nodejs. In this version I used port 7541.
+Before running the server.js you must run the mongo server and use the db provided called 'test'. Once the Mongo server is running you may start the Game server ( server.js ).
 
+Locally, before a user connects to the game server, they must run the sandra server. This will store the data sent from Sandra and will be accessed by the client javascript.
+You may then run the Sandra batch file to start using sandra. 
+
+Finally you can connect to the game server and begin the game.
 
 
