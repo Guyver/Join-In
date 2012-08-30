@@ -109,17 +109,19 @@ sandraSocket.on('close', function () {
 sandraSocket.on( 'connection', function ( sandra ) {
 
 	console.log( 'Sandra connected.' );
+	// Store a copy of the socket to send at anytime.
 	g_sandra = sandra;
+	
 	sandra.write( "{continue:true}\n" );
 	
     sandra.on( 'data', function( data ){
 		
-		console.log('Sandra data recieved.');
+		console.log( 'Sandra data recieved.' );
 		gotData( sandra, data );	
 	});
 
 
-    sandra.on('close', function() {
+    sandra.on('close', function( ) {
 
 
     });
@@ -129,6 +131,7 @@ sandraSocket.listen( 7540 );
 
 
 var socket = io.listen( 8080 );
+
 
 socket.on( 'connection' , function( client ){
 
@@ -154,6 +157,12 @@ socket.on( 'connection' , function( client ){
 });
 
 
+/**
+	@Name:
+	@Name:
+	@Name:
+	@Name:
+*/
 function ActivateHugs( flag ){
 
 	var giveMeHugsMap;
@@ -163,11 +172,23 @@ function ActivateHugs( flag ){
 	}else{
 		giveMeHugsMap = "{device:kinect,action:stop,type:hug}\n" ;
 	}
-
-	g_sandra.write( giveMeHugsMap );
+	
+	try{
+		// Tell Sandra that we want the hugs.
+		g_sandra.write( giveMeHugsMap );
+	}catch( error ){
+		
+		console.log( "Trying to write to the wrong socket." );
+	}
 };
 
 
+/**
+	@Name:
+	@Name:
+	@Name:
+	@Name:
+*/
 function gotData( sandra, data ){
 		
 	dataBuffer += data;
@@ -175,7 +196,7 @@ function gotData( sandra, data ){
 
 	if( newlineIndex == -1 ){
 		// Send next packet.
-		sandra.write( "\n");
+		sandra.write( "\n" );
 		return;// If there was no end of package in the data return.
 	}
 	

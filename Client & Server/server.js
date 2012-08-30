@@ -8,9 +8,89 @@ var fs = require('fs');
 var path = require('path');
 // Sockets
 var io = require('./lib/socket.io');
-// I dunno, its Santis
+// I dunno, its Santi's
 var clientsConnected = [];
-
+// Dummy kinect.
+var kinectData ={
+     "leftElbow": {
+         "x": -274.7901123046875,
+         "y": 280.0702239990234,
+         "z": 2308.780859375
+     },
+     "head": {
+         "x": 241.60778045654297,
+         "y": 523.9069396972657,
+         "z": 2158.64599609375
+     },
+     "rightElbow": {
+         "x": 653.9172607421875,
+         "y": 216.89061584472657,
+         "z": 2262.339697265625
+     },
+     "rightKnee": {
+         "x": 281.5267761230469,
+         "y": -634.7611511230468,
+         "z": 2234.8218017578124
+     },
+     "device": "kinect",
+     "leftShoulder": {
+         "x": 8.228845655918121,
+         "y": 304.7044708251953,
+         "z": 2242.640625
+     },
+     "leftFoot": {
+         "x": -78.25286865234375,
+         "y": -1038.9497192382812,
+         "z": 2347.7722412109374
+     },
+     "rightHip": {
+         "x": 255.50746459960936,
+         "y": -175.0600601196289,
+         "z": 2202.8742431640626
+     },
+     "rightFoot": {
+         "x": 280.81434020996096,
+         "y": -1053.9205322265625,
+         "z": 2347.6310791015626
+     },
+     "rightShoulder": {
+         "x": 388.03627624511716,
+         "y": 263.89619903564454,
+         "z": 2194.360546875
+     },
+     "rightHand": {
+         "x": 997.0059692382813,
+         "y": 280.8474090576172,
+         "z": 2333.0134765625
+     },
+     "neck": {
+         "x": 198.1325653076172,
+         "y": 284.3003356933594,
+         "z": 2218.5005615234377
+     },
+     "torso": {
+         "x": 174.02362518310548,
+         "y": 60.23494758605957,
+         "z": 2217.4669189453125
+     },
+     "leftKnee": {
+         "x": -30.573639106750488,
+         "y": -610.0912719726563,
+         "z": 2241.30546875
+     },
+     "leftHand": {
+         "x": -653.9635803222657,
+         "y": 304.9511779785156,
+         "z": 2292.358349609375
+     },
+     "leftHip": {
+         "x": 44.321907424926756,
+         "y": -152.60081939697267,
+         "z": 2229.9922607421877
+     }
+ };
+ 
+ 
 var server = http.createServer( function ( request , response ) {
  
     //console.log('request starting...'+ request.url);
@@ -50,29 +130,37 @@ var server = http.createServer( function ( request , response ) {
             contentType = 'text/plain';
 			filePath = '.'+request.url;
 			//console.log( "Serving DAE "+request.url ); 
+		case '.wav':// We're serving an image.
+            contentType = 'text/wav';
+			filePath = '.'+request.url;
+			//console.log( "Serving DAE "+request.url ); 
+		case '.mp3':// We're serving an image.
+            contentType = 'text/mp3';
+			filePath = '.'+request.url;
+			//console.log( "Serving DAE "+request.url ); 
             break;
     }
      
-    path.exists( filePath, function(exists) {// Check to see if the file exists
+    path.exists( filePath, function( exists ) {// Check to see if the file exists
      
-        if (exists) {// Returned from the callback, checking to see if valid.
+        if ( exists ) {// Returned from the callback, checking to see if valid.
 			// Read file from disk and trigger callback.
-            fs.readFile( filePath, function(error, content) {
-                if (error) {
+            fs.readFile( filePath, function( error, content ) {
+                if ( error ) {
 					// If there's and error throw 500
-                    response.writeHead(500);
+                    response.writeHead( 500 );
                     response.end();
                 }
                 else {
 					// Otherwise return the file.
-                    response.writeHead(200, { 'Content-Type': contentType });
-                    response.end(content, 'utf-8');
+                    response.writeHead( 200, { 'Content-Type': contentType } );
+                    response.end( content, 'utf-8' );
                 }
             });
         }
         else {
 			// Throw 404 if the file isn't there.
-            response.writeHead(404);
+            response.writeHead( 404 );
             response.end();
         }
 	});
@@ -81,7 +169,7 @@ var server = http.createServer( function ( request , response ) {
 
 // Listen for connections 
 var socket = io.listen( server,{
-        'log level': 0                // socket.io spams like whore, silence it
+        'log level': 0         // Set the log level.
 });
 	
 // The users data.
@@ -100,7 +188,6 @@ var totalClients = 0;
 var mongoose = require( 'mongoose' );
 mongoose.connect( 'mongodb://localhost/test' );
 var Schema = mongoose.Schema;
-
 
 var userSchema = new Schema({
 			userKey: Number,
@@ -310,6 +397,7 @@ socket.sockets.on( 'connection', function( client ){
 
 	});
 
+	
 	//
 	//
 	//
@@ -366,6 +454,7 @@ socket.sockets.on( 'connection', function( client ){
 		
 			console.log( "Failed deleting the user" );
 		}
+	
 	});
 
 });// End of 'onConnection'
@@ -375,7 +464,10 @@ socket.sockets.on( 'connection', function( client ){
 server.listen( clientPort );
 
 /**
-	Get all team mates in the users array.
+	@name:
+	@brief:
+	@args:
+	@returns:
 */
 function findTeamMates( teamId ){
 
@@ -393,8 +485,10 @@ function findTeamMates( teamId ){
 };
 
 /**
-	Get all the sockets for the team arg.
-
+	@name:
+	@brief:
+	@args:
+	@returns:
 */
 function findTeamMatesSockets( teamArray ){
 	
@@ -409,8 +503,10 @@ function findTeamMatesSockets( teamArray ){
 };
 
 /**
-	Sent to all the sockets to name and data
-
+	@name:
+	@brief:
+	@args:
+	@returns:
 */
 function sendToTeam( team, name, data ){
 
@@ -420,187 +516,6 @@ function sendToTeam( team, name, data ){
 	}
 };
 
-/*
-// The listening port for Sandra
-var javaPort = 7540;
-// A buffer for incoming data.
-var dataBuffer = "";
-// The index of the beffer string where a /n was found.
-var newlineIndex = 0;
-// Create a TCP/UDP server 
-var javaServer = require('net').createServer();
-// A store of the Sandra sockets.
-var javaSockets = [];
-
-
-//
-//
-//
-javaServer.on('listening', function () {
-
-    console.log('Server is listening on for kinect data on :' + javaPort);
-});
-
-
-//
-//
-//
-javaServer.on('error', function ( e ) {
-
-    console.log('Server error: ');// + e.code);
-});
-
-
-//
-//
-//
-javaServer.on('close', function () {
-
-    console.log('Server closed');
-});
-
-
-//
-//
-//
-javaServer.on( 'connection', function ( javaSocket ) {
-
-	javaSocket.write( "{continue:true}\n");
-	javaSockets[ javaSocket.remoteAddress ] = javaSocket;
-	
-	//
-	// 
-	//
-    javaSocket.on('data', function( data ){
-	
-		dataBuffer += data;
-		newlineIndex = dataBuffer.indexOf( '\n' );
-	
-		if( !( clientsConnected [ javaSocket.remoteAddress ] == undefined || 
-			clientsConnected [ javaSocket.remoteAddress ] == undefined ||  
-			clientsConnected [ javaSocket.remoteAddress ] == null ) ){
-			
-			clientsConnected [ javaSocket.remoteAddress ]= true;
-			if( clients[ javaSocket.remoteAddress ] != undefined && clients[ javaSocket.remoteAddress ] != null){
-			
-				clients[ javaSocket.remoteAddress ].emit( 'sandraHasConnected' );
-			}
-		}
-	
-		if( newlineIndex == -1 ){
-			// Send next packet.
-			javaSocket.write( "{continue:true}\n");
-			console.log( "The data sent was never ending :"+ newlineIndex );
-			return;// If there was no end of package in the data return.
-		}
-		
-		// Store the kinect data locally on the server.
-		if( users[ javaSocket.remoteAddress ] !== undefined ){
-
-			var info = JSON.parse( dataBuffer.slice( 0, newlineIndex ) );
-			
-			if( info != null && info != undefined ){
-			
-				console.log( "The SANDRA address is :"+ javaSocket.remoteAddress );
-				console.log( "The SANDRA is storing data in user :"+ users[ javaSocket.remoteAddress ] );
-				users[ javaSocket.remoteAddress ].kinect = info;
-			}	
-			else{
-				console.log( "The SANDRA info is bogus:"+ info );
-			}
-
-			for( i in info ){
-
-				if( i == "pause" && info[ i ] == "true" ){
-				
-					clients[ javaSocket.remoteAddress ].emit( "pause", true );
-					console.log("-----------------------------------------------------PAUSED-----------------------------------------------------");
-				}
-				else if( i == "resume" && info[ i ]== "true" ){
-				
-					clients[ javaSocket.remoteAddress ].emit( "pause", false );
-					console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++RESUMED++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-				}	
-				
-				if( i == "accept" && info[ i ] == "true" ){
-					var myTeam={};
-					var team;
-					var givenUser={};
-					
-					// For each of the users...
-					for( i3 in users ){
-						
-						// If this user has the same ip of sandra...
-						if( users[ i3 ].ip == javaSocket.remoteAddress ){
-							
-							// Assign a user team id to team...
-							team = users[ i3 ].team;	
-							// Assign him as the given user...
-							givenUser = users[ i3 ];
-							// That user is now ready...
-							users[ i3 ].ready = true;					
-						}
-					}
-						
-					// For each of the users again...
-					for( i3 in users ){
-						
-						// If the users team is the team id...
-						if( users[ i3 ].team == team ){
-								
-							// My team
-							myTeam[ i3 ] = users[ i3 ];		
-						}
-					}
-						
-					socket.sockets.emit( 'updateNewUser',  givenUser, myTeam );
-				
-				}else if( i=="cancel" && info[ i ] == "true" ){
-					var myTeam={};
-					var team;
-					var givenUser={};
-	
-					for( i3 in users ){
-						if( users[ i3 ].ip == javaSocket.remoteAddress ){
-
-							team = users[ i3 ].team;	
-							givenUser=users[ i3 ];
-							users[ i3 ].ready = false;					
-						}
-					}
-					for( i3 in users ){
-						if( users[ i3 ].team == team ){
-
-							myTeam[ i3 ] = users[ i3 ];		
-						}
-					}
-					socket.sockets.emit( 'updateNewUser',  givenUser, myTeam );
-				}	
-			}
-		}
-		else
-		{
-			console.log( "The SANDRA address is :"+ javaSocket.remoteAddress );
-			console.log( "The users are :"+ users ); 
-		}
-
-        dataBuffer = dataBuffer.slice( newlineIndex + 1 );	
-		javaSocket.write(  "{continue:true}\n" );
-
-	});// End of on.Data
-
-	// User has disconnected...
-    javaSocket.on('close', function() {
-
-	//users[ javaSocket.address().address ].visible = false;
-
-    });
-});
-
-// Listen for connections on the java port specified!
-javaServer.listen( javaPort );
-
-*/
 
 /**
 	@name:
@@ -610,7 +525,7 @@ javaServer.listen( javaPort );
 */
 function registerUser( client, userKeyParam ){
 
-	var clientIPAddress=client.handshake.address.address;
+	var clientIPAddress = client.handshake.address.address;
 
 	usersModel.findOne( { userKey : userKeyParam } , function ( err, doc ) {
 
@@ -627,7 +542,7 @@ function registerUser( client, userKeyParam ){
 			"disconnectedImageUrl": "http://1.bp.blogspot.com/_NBiNZNE1Qn0/TSHNPsWH0fI/AAAAAAAAALw/rlChMDZ_2OE/s1600/offline_Jan_03_Main.png",
 			"pos": 0,
 			"sight" : 0,
-			"kinect": null,
+			"kinect": kinectData,
 			"visible": true,
 			"meshName": doc.meshName,
 			"team": doc.teamId,
@@ -639,11 +554,11 @@ function registerUser( client, userKeyParam ){
 		// Store me in the map format.
 		users[ clientIPAddress ] =  map ;	
 
-		var myTeam={};
+		var myTeam = {};
 		// Update the green bar of the others about me
 		for( index in users ){
-
-			if( ( users[ index ].team ) - ( users[ clientIPAddress ].team ) == 0){
+		
+			if( ( users[ index ].team ) - ( users[ clientIPAddress ].team ) == 0 ){
 				myTeam[ index ] = users[ index ];	
 			}
 		}	

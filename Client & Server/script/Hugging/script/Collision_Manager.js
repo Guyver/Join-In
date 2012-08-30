@@ -1,7 +1,5 @@
 /**	@Name:	Collision_Manager Class
-
-	@Author: James Browne
-	
+	@Author: James Browne	
 	@Brief:
 	A Collision_Manager that controls all collisions regarding the 3d objects.
 	Only look after your own players collision and then all the objects/Walls.
@@ -26,6 +24,7 @@ Collision_Manager.prototype.testCollision = function( leftHand, rightHand, scene
 	var wallMeshes = [];
 	var playerMeshes = [];
 	var moveableObjects = [];
+	var imoveableObjects = [];
 	var collision = false;
 	
 	// Cycle through all the meshes in the scene.
@@ -46,6 +45,9 @@ Collision_Manager.prototype.testCollision = function( leftHand, rightHand, scene
 			
 			moveableObjects.push( sceneMeshes[ index ] );
 		}
+		else if( sceneMeshes[ index ].name === "House" ){
+			imoveableObjects.push( sceneMeshes[ index ] );
+		}
 	}
 	
 	// For all the moveable objects, test against the hands.
@@ -57,12 +59,26 @@ Collision_Manager.prototype.testCollision = function( leftHand, rightHand, scene
 		if( coll1 && coll2 ){
 		
 			var collision = true;
-			console.log( "Someones hands have collided with object %i", moveableObjects[ index ].id );
+			//console.log( "Someones hands have collided with object %i", moveableObjects[ index ].id );
 			return { mesh : moveableObjects[ index ] , flag : "Got Key" };
 		}
 	}	
 	
 	// For all the players, test against the wall radius.
+	for ( index in imoveableObjects ){
+		
+		for( i in playerMeshes )
+		{
+			var collision = this.ballWall( playerMeshes[ i ] , imoveableObjects[ index ] );
+			
+			if( collision ){
+				//console.log( "Player has collided with wall %i", wallMeshes[ i ].id );
+				return { mesh : playerMeshes[ index ], flag : "Reset Player" };
+			}
+		}
+	}
+	
+	// Collision with the house.
 	for ( index in playerMeshes ){
 		
 		for( i in wallMeshes )
@@ -70,7 +86,7 @@ Collision_Manager.prototype.testCollision = function( leftHand, rightHand, scene
 			var collision = this.ballWall( playerMeshes[ index ] , wallMeshes[ i ] );
 			
 			if( collision ){
-				console.log( "Player has collided with wall %i", wallMeshes[ i ].id );
+				//console.log( "Player has collided with wall %i", wallMeshes[ i ].id );
 				return { mesh : playerMeshes[ index ], flag : "Reset Player" };
 			}
 		}

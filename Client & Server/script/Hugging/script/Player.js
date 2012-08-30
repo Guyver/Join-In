@@ -17,6 +17,10 @@ function Player( meshName, models, position ){
 
 	// The name of the user.
 	this._name = "";
+	// An image of the player.
+	this._image = new Image();
+	// Src
+	this._image.src = "http://4.bp.blogspot.com/_SJsqZeAk064/SxLz6pn9_aI/AAAAAAAACd8/lozmwiAthnk/s1600/offline.bmp";
 	// The global position.
 	this._position = position;
 	if( this._position == undefined )this._position = new THREE.Vector3( 0,0,0 );
@@ -34,6 +38,8 @@ function Player( meshName, models, position ){
 	this._ip  = undefined;
 	// The score of the player.
 	this._score = 0;
+	// Hug counter
+	this._hugCount = 0;
 	// The local id from the kinect.
 	this._userKey = undefined;
 	// The team the user is on.
@@ -121,6 +127,8 @@ function Player( meshName, models, position ){
 	this._visible = undefined;
 	// Angle of Rotation.
 	this._angle = 0;
+	// Hugging boolian
+	this._hugged = false;
 	// The avatar url.
 	this._model = undefined;
 	// The url of the Avatar.
@@ -197,6 +205,7 @@ Player.prototype.update = function( ){
 	this.syncJoints();
 	// Update the joints.
 	this._rig.update( this._sightNode, this._kinectData );
+	
 	// For debugging using the keyboard. 
 	if( this._kinectData == undefined ){
 	
@@ -282,19 +291,33 @@ Player.prototype.processCommands = function(  ) {
 					||( this._kinectData[ "leftKnee" ].y > this._kinectData[ "rightKnee" ].y + 50 ) ){
 		
 			state = "walk";
-		}
-		
-		if( this._kinectData[ "hug" ] ){
-		
-			this._score += 100;
-			console.log( "I've performed a hug" );
-		}
+		}		
 	}
 	catch( error ){
 		// Something bad happened.
-		//console.log( "Player.processCommands catch "+ error );
+		console.log( "Player.processCommands catch "+ error );
 	}
+	
+	var lHand = this._kinectData[ "leftHand" ];
+	var rHand = this._kinectData[ "rightHand" ];
+	var torso = this._kinectData[ "torso" ];	
+	var dist = getDistance3D( lHand, rHand );
+	var distFromTorso = getDistance3D( lHand, torso );
+	var madeHug = ( dist < 300 ) && ( distFromTorso > 300 ) && ( ( lHand.y < ( torso.y + 200 ) ) && ( lHand.y > ( torso.y - 200 ) ) );
+	
+	if( madeHug && !this._hugged ){
+		
+		sounds[ 1 ].play();
+		this._score += 100;
+		this._hugCount++;
+		console.log( "I've performed a hug!" );
+		this._hugged = true;
+	}else if( !madeHug ){
+		this._hugged = false;	
+	}
+			
 	switch( state ){
+	
 		case "walk":
 			this._walkSpeed = 10;
 			this.moveModel( 1 );
@@ -324,7 +347,7 @@ Player.prototype.processCommands = function(  ) {
 			break;
 		default:
 			needsUpdate = false;
-			break;
+			break;			
 	}
 };
 
@@ -615,6 +638,7 @@ Player.prototype.loadModelMesh = function( url ){
 		scene.add( that._model );
 	});
 };
+
 
 Player.prototype.getModels = function(  ){
 	return this._rig.getModelMeshes();

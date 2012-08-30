@@ -12,6 +12,7 @@ function Model( jointNames, models, playerPos ){
 	this._joint = {};				        // Map of joint objects.
 	this._jointNames = jointNames;			// Array of key values for the kinect data.
 	this._jointModels = [];
+	this._translatedMap = {};
 	this._head = undefined;
 	this._torso = undefined;
 	this._upperArmL = undefined; 
@@ -232,25 +233,26 @@ Model.prototype.getJoint = function( name ){
 Model.prototype.setAllJoints = function( playerPos, angle, kinectMap ){
 
 	// The kinect pos of the joint to rotate and the Vector to that from the TORSO.
-	var joint  = new THREE.Vector3(0,0,0);
+	var joint  = new THREE.Vector3( 0,0,0 );
 	
 	// The distance of the joint from the torso.
-	var jointFromTorso = new THREE.Vector3(0,0,0);
+	var jointFromTorso = new THREE.Vector3( 0,0,0 );
 	// Torso
 	try{
 		var torso = new THREE.Vector3( kinectMap[ "torso" ].x, kinectMap[ "torso" ].y, kinectMap[ "torso" ].z );		
 	}catch(err){
-		var torso = new THREE.Vector3(0,0,0);
+		var torso = new THREE.Vector3( 0,0,0 );
 	}
 	// The position of the new joint after being translated from the player position.
-	var translatedPos = new THREE.Vector3(0,0,0);
+	var translatedPos = new THREE.Vector3( 0,0,0 );
 	
 	// Cycle through the joints and set the according to the map.
 	for ( i in this._jointNames ){
+	
 		try{
 			// Get a joint from the kinect map.
 			joint = new THREE.Vector3( kinectMap[ this._jointNames[ i ] ].x , kinectMap[ this._jointNames[ i ] ].y , kinectMap[ this._jointNames[ i ] ].z );
-		}catch(err){
+		}catch( err ){
 		
 		}
 
@@ -282,6 +284,9 @@ Model.prototype.setAllJoints = function( playerPos, angle, kinectMap ){
 		// Set the translated joint position to the position of the corresponding joint object's position.
 		this._joint[ this._jointNames[ i ] ].setPosition( new THREE.Vector3( translatedPos.x, translatedPos.y, translatedPos.z ) );
 		
+		// Store the new, translated, kinect joints.
+		this._translatedMap[ this._jointNames[ i ] ] = translatedPos;
+		
 	}// End for
 	
 	// Return the player pos for the next iteration. 
@@ -289,6 +294,24 @@ Model.prototype.setAllJoints = function( playerPos, angle, kinectMap ){
 	
 };//End set all Joints
 
+/**
+	Loop through all the translated kinect joints and set the joint positions.
+	
+*/
+Model.prototype.setPreTrannyPts= function( map ){
+
+	
+		for ( i in this._jointNames ){
+		
+			this._joint[ this._jointNames[ i ] ].setPosition(	new THREE.Vector3( 
+			
+					map[ this._jointNames[ i ] ].x , 
+					map[ this._jointNames[ i ] ].y , 
+					map[ this._jointNames[ i ] ].z 
+			) );
+		
+		}
+};
 
 /**	@Name: Move
 	@Brief:	

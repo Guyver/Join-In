@@ -25,6 +25,7 @@ var camera, nearClip, farClip, aspectRatio, fov;
 var tanFOV;
 var windowHeight = window.innerHeight;
 
+var guiCanvas,guiCtx;
 // Kinect data
 var numJoints, model, jointList;
 
@@ -33,6 +34,7 @@ var players, globalTeam;
 
 // The time since last frame.
 var deltaTime, last, current, countDown;
+var sounds = [];
 
 var waiting = false;
 var paused = false;
@@ -65,7 +67,8 @@ function init(){
 	initCamera();
 	// Create the game objects.
 	createObjects();
-
+	// Audio
+	initSound();
 	// Skybox...etc.
 	setupEnviornment();
 	//
@@ -83,14 +86,23 @@ function init(){
 };
 
 
+function initSound(){
+	
+	sounds[0] = document.getElementById( 'ambient' ) ;
+	sounds[1] = document.getElementById( 'hug' ) ;
+	sounds[2] = document.getElementById( 'error' );
+};
+
+
 /**	@Name:	Init Camera
 	@Brief:	Initalise camera objects we need.
 	@Arguments:N/A
 	@Returns:N/A
 */
 function initCamera(){
+
 	nearClip = 1;
-	farClip = 100000;
+	farClip = 1000000;
 	fov = 70;
 	aspectRatio = window.innerWidth / window.innerHeight;
 	camera = new THREE.PerspectiveCamera( fov, aspectRatio, nearClip, farClip );
@@ -122,9 +134,10 @@ function initScene(){
 */
 function initRenderer(){
 
+	// Create the WebGl renderer using the canvas 3d.
 	renderer = new THREE.WebGLRenderer({
 			antialias: true,
-			canvas: document.createElement( 'canvas' ),
+			canvas: document.getElementById( "canvas3D" ),
 			clearColor: 0x000000,
 			clearAlpha: 0,
 			maxLights: 4,
@@ -134,8 +147,15 @@ function initRenderer(){
 	
 	// Fit the render area into the window.
 	renderer.setSize( window.innerWidth, window.innerHeight );
+	// Initalise the Gui canvas.
+	guiCanvas = document.getElementById( "canvas2D" );
+	guiCanvas.width = window.innerWidth;
+	guiCanvas.height = window.innerHeight;
+	// Get the context for drawing.
+	guiCtx = guiCanvas.getContext( "2d" );
 	// The renderer's canvas domElement is added to the body.
-	document.body.appendChild( renderer.domElement );
+	//document.body.appendChild( renderer.domElement );
+
 };
 
 
@@ -247,6 +267,7 @@ function createObjects(){
 */
 function gameLoop(){
 	
+	// Try reconnecting.
 	if( !sandra.socket.connected ){
 		try{
 			sandra = undefined;
@@ -256,6 +277,14 @@ function gameLoop(){
 		}
 	}
 	
+	// Reset Audio.
+	for ( i in sounds ){
+		if( sounds[ i ].ended ){
+			// Reload if finished.
+			sounds[ i ].load();
+		}
+	}
+		
 	requestAnimationFrame( gameLoop, renderer.domElement );
 	
 	if( !level_Manager._player_Manager._gameOver && !paused && level_Manager._player_Manager._playGame ){
@@ -264,6 +293,22 @@ function gameLoop(){
 		var gotKey = level_Manager.update( scene, camera );
 		
 		key.rotation.x += 0.1;
+		
+		// GUI Stuff
+		guiCanvas.width = guiCanvas.width;
+		// Set the font and size.
+		guiCtx.font = 'italic 40px Calibri';
+		guiCtx.shadowOffsetX = 5;
+		guiCtx.shadowOffsetY = 5;
+		guiCtx.shadowBlur    = 4;
+		guiCtx.shadowColor   = 'rgba( 155, 155, 155, 0.5)';
+		guiCtx.fillStyle     = 'rgba(255, 255, 255, 0.5)';
+		guiCtx.fillRect( 5, 5, 255, 255 );
+		guiCtx.fillStyle     = '#000';
+		guiCtx.drawImage( level_Manager._player_Manager.getPlayer()._image, 10 ,10 , 128, 128 );
+		guiCtx.fillText( level_Manager._player_Manager.getPlayer()._name, 10, 180 );
+		guiCtx.fillText( 'Score : '+ level_Manager._player_Manager.getPlayer()._score, 10, 210 );
+		guiCtx.fillText( 'Hugs : '+ level_Manager._player_Manager.getPlayer()._hugCount, 10, 240 );
 		
 		// Render the scene.
 		render();
@@ -343,7 +388,7 @@ function gameLoop(){
 				name : level_Manager.getPlayer()._name,
 				pos : level_Manager.getPlayer()._position,
 				sight : level_Manager.getPlayer()._sightNode,
-				kinect : level_Manager.getPlayer()._kinectData,	
+				kinect : level_Manager.getPlayer()._rig._translatedMap,	
 				team : level_Manager.getPlayer()._team,
 				userKey : level_Manager.getPlayer()._userKey
 			};
@@ -373,9 +418,17 @@ function createTeam(){
 			
 				var index =  ( parseInt( j ) + offset ).toString() ;
 				level_Manager._player_Manager._otherPlayers[ index ]._name = team[ i ].name;
+				level_Manager._player_Manager._otherPlayers[ index ]._image = team[ i ].connectedImageUrl;
 				level_Manager._player_Manager._otherPlayers[ index ]._ip = team[ i ].ip;
 				level_Manager._player_Manager._otherPlayers[ index ]._userKey = team[ i ].userKey;
-				level_Manager._player_Manager._otherPlayers[ index ]._kinectData = team[ i ].kinect;
+				
+				if( team[ i ].kinect != undefined && team[ i ].kinect != null ){
+					level_Manager._player_Manager._otherPlayers[ index ]._kinectData = team[ i ].kinect;
+				}
+				else{
+					console.log( "The kinect data was null or undefined." );
+				}
+				
 				level_Manager._player_Manager._otherPlayers[ index ]._score = team[ i ].score;
 				level_Manager._player_Manager._otherPlayers[ index ]._position.x = team[ i ].pos.x;
 				level_Manager._player_Manager._otherPlayers[ index ]._position.y = team[ i ].pos.y;
@@ -416,18 +469,6 @@ function render(){
 */
 function setupEnviornment(){
 
-	var x = new THREE.ColladaLoader();	
-	x.load( '../model/HOUSE.dae' , function( collada ){
-
-	var house = collada.scene;
-		house.updateMatrix();
-		scene.add( house  );
-		
-		house.name = "HEAD";
-		house.scale.set(30,30,30);
-		house.position = new THREE.Vector3( 6500,0,6000 );
-	});
-
 	//
 	// Create Sky Box.
 	//
@@ -443,7 +484,7 @@ function setupEnviornment(){
 	planeTex.wrapS = THREE.RepeatWrapping;
 	planeTex.repeat.set( 100, 100 );// Higher for smaller tiles
 	
-	var planeGeo = new THREE.PlaneGeometry(100000, 100000, 1, 10);
+	var planeGeo = new THREE.PlaneGeometry( 100000, 100000, 1, 10);
 	
 	var ground = new THREE.Mesh( planeGeo, new THREE.MeshBasicMaterial({
 		 map: planeTex
@@ -524,7 +565,7 @@ function Skybox(){
 function addHouse( ){
  
 	var loader = THREE.ColladaLoader();
-	loader.load( '../model/house.dae', function( collada ){
+	loader.load( '../model/scene.dae', function( collada ){
 	
 		var model = collada.scene;
 		model.updateMatrix();
@@ -532,12 +573,13 @@ function addHouse( ){
 
 		model.name = "House";
 		model .castShadow = true;
+		model .boundRadius = 6000;
 		model.position.x = 8000;
-		model.position.y -= 20;
+		model.position.y -= 100;
 		model.position.z = 20000;
 		model.scale.set( 250,250,250 );
 		model.rotation.x = -Math.PI/2;
-		model.rotation.z = Math.PI/2;
+		model.rotation.z = -Math.PI/2;
 	});
  };
  
@@ -625,9 +667,12 @@ function handleKeyEvents( event ) {
 			level_Manager.getPlayer().rotateDown();
 	  		break;
 		case 37:// LEFT ARROW
+			//sounds[0].loop = true;
+			sounds[0].play();
 	  		// Strafe Left
 	  		break;
 		case 39:// RIGHT ARROW
+			sounds[1].play();
 	  		// Strafe Right
 	  		break;
 		case 65:// A
@@ -688,7 +733,10 @@ socket.on( 'nextLevel', function( data ){
 */
 sandra.on( 'returnData', function( dataR ){
 	
-	level_Manager.getPlayer()._kinectData = JSON.parse( dataR );			
+	var data = JSON.parse( dataR );	
+	if( data[ 'head' ] != undefined && data[ 'head' ] != null ){
+		level_Manager.getPlayer()._kinectData = data;		
+	}	
 });
 			
 			
@@ -698,6 +746,7 @@ sandra.on( 'returnData', function( dataR ){
 	@Returns:N/A
 */
 socket.on( 'teamMates', function( team ){
+	
 	// Works fine.
 	globalTeam = team;
 	
@@ -732,7 +781,7 @@ socket.on( 'youWereCreated', function( data ){
 	level_Manager.getPlayer()._ip = data.ip;
 	level_Manager.getPlayer()._team = data.team;
 	level_Manager.getPlayer()._userKey = data.userKey;
-	
+	level_Manager.getPlayer()._image.src = data.connectedImageUrl;
 	var pos = new THREE.Vector3();
 	var x,z;
 
@@ -791,11 +840,33 @@ socket.on( 'deleteUser', function( data ){
 	for ( i in level_Manager._player_Manager._otherPlayers ){
 	
 		if( String( level_Manager._player_Manager._otherPlayers[ i ]._ip ) == String ( player.ip ) ){
+		
 			level_Manager._player_Manager._otherPlayers[ i ].remove();
-			level_Manager._player_Manager._otherPlayers[ i ].setPosition( new THREE.Vector( 0,0,0 ) );
+			level_Manager._player_Manager._otherPlayers[ i ].setPosition( new THREE.Vector3( 0,0,0 ) );
 		}	
 	}
 });
+
+
+/**	@Name: Distance
+	@Brief:	
+	@Arguments: 2 3d Vectors
+	@Returns:
+*/
+function getDistance3D( objA, objB ){
+
+		var dx,dy,dz,x2,y2,z2,dist;
+		// Deltas.
+		dx = objA.x - objB.x;
+		dy = objA.y - objB.y;
+		dz = objA.z - objB.z;
+		// Squares.
+		x2 = dx * dx;
+		y2 = dy * dy;
+		z2 = dz * dz;
+		// Root
+		return ( Math.sqrt( x2 + y2 + z2 ) );
+};
 
 
 /**	@Name:	Resize
@@ -814,19 +885,12 @@ function resize(){
     camera.lookAt( scene.position );
 
     renderer.setSize( window.innerWidth, window.innerHeight );
-	
+	guiCanvas.width = window.innerWidth;
+	guiCanvas.height = window.innerHeight;
     // Redraw 
     render();
 };
 
-function clone( obj ) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
-}
 window.addEventListener('resize', resize, false);
 window.addEventListener('orientationchange', resize, false);
 //window.addEventListener( 'mousemove', handleMouseEvents, false );

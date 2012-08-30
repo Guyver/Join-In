@@ -46,8 +46,18 @@ Player_Manager.prototype.update = function(  ){
 
 	// update the player...
 	this._player.update();
-	for ( i in this._otherPlayers ){
-		this._otherPlayers[ i ].update();
+	try{
+		for ( var k = 0; k < this._otherPlayers.length; k++ ){
+		
+			if( this._otherPlayers[ k ]._kinectData != undefined ){ 
+			
+				this._otherPlayers[ k ]._rig.setPreTrannyPts( this._otherPlayers[ k ]._kinectData );
+				this._otherPlayers[ k ]._rig.update( this._otherPlayers[ k ]._sightNode, this._otherPlayers[ k ]._kinectData );
+			}
+		}	
+	}
+	catch( error ){
+		console.log( "The other players got broked... :(" );
 	}
 };
 
