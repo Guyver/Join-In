@@ -5,19 +5,17 @@
 
 */
 
-
-function Object( position, type ){
+function Object( position, type, meshUrl ){
 
 	this._id = undefined;
-	this._mesh = undefined;
+	this._mesh = meshUrl;
 	this._position = position ;
 	this._equipped = false;
 	this._owner = undefined;
 	this._alive = true;
-	this._velocity = new THREE.Vector3( 0,0,0);
-	this._acceleration = new THREE.Vector3( 0,0,0);
-	this._direction = new THREE.Vector3( 0,0,0);
+	this._loaded = false;
 	this._type = type;		// Is is the bin or and object.
+	that = this;
 	this.createMesh();
 };
 
@@ -137,7 +135,7 @@ Object.prototype.removeFromMesh = function(){
 	this._owner = undefined;
 	this._equipped = false;
 	this._alive = true;
-	this._position = new THREE.Vector3( 6000,2000,6000 );
+	this._position = new THREE.Vector3( 0,0,0 );
 	this._mesh.position = this._position;
 };
 

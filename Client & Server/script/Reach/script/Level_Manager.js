@@ -12,27 +12,15 @@
 */
 function Level_Manager(  ){
 
-	// The number of different levels.
-	this._maxLevels = 5;
-	// The current level...
-	this._currentLevel = 1;
 	// Handle Collisions.
 	this._collision_Manager = new Collision_Manager();
 	// The objects.
 	this._objects = [];
 	// Handle the Players.
 	this._player_Manager = undefined;
-	// Handle the Scene.
-	//this._scene_Manager = new Scene_Builder( this._maxLevels, this._currentLevel );
 	this._cameraPosition = undefined;
 	// Camera Type, 1 = 1st, 3 = 3rd.
 	this._cameraType = 3;
-	// The sounds 
-	this._sounds = [];
-	// The background audio.
-	this._music = [];
-	// The particle effects
-	this._particleEmitter = undefined;
 	// Create all the moveable objects.
 	this.createObjects();
 
@@ -75,8 +63,8 @@ Level_Manager.prototype.update = function( scene , camera ){
 
 	// Update the height of the catchable objects.
 	var head = this._player_Manager.getPlayer().getJointPosition( "head" ).y;
+	
 	// Find the maximum reach height using the length of the Arms.
-	//var elbowHand = this._player_Manager.getPlayer().getJointPosition( "elbow" );
 	var height = head + 100;
 	for ( i in this._objects ){
 	
@@ -126,9 +114,13 @@ Level_Manager.prototype.testPickups = function( player, objects ){
 				if( !objects[ index ]._equipped ){
 
 					player.addInventory( objects[ index ] );	// Add it to the players inventory.
-					objects[ index ].equipToMesh( rHand );		// Equip it to the right hands position.
+					objects[ index ].equipToMesh( rHand );		// Equip it to the right hands position.'
+					sounds[ 0 ].play();
+					sounds[ 1 ].play();
 					console.log("One or both of the hands are in a moveable object");
+					
 				}//end if object equipped
+				
 			}// end if coll1&2
 			else{//Either the left hand let go or trying to pick up a dead object or you're just not near it.
 			
@@ -175,12 +167,19 @@ Level_Manager.prototype.testDrops = function( player, objects ){
 				bin = objects[ item ];
 				// Does the moveable radius intersect the box radius?
 				var coll = this._collision_Manager.sphereSphereCollision( bin._mesh, equippedItem._mesh );
+				
 				if( coll == true ){
+				
 					this.removeItemFromPlayer( player , objects[ index ] );	
+					
 				}// An object needs to be dropped.
+				
 			}//Is the object a bin?
-		}//Each item.			
+			
+		}//Each item.		
+		
 	}// End each equipped item.
+	
 };// End test drops.
 
 
@@ -306,12 +305,6 @@ Level_Manager.prototype.getPlayer = function(  ){
 */
 Level_Manager.prototype.createObjects = function(  ){
 	
-	/* The 4 corners of the map.
-	this._checkpoint1 =new THREE.Vector3( 1450,0,1360 );
-	this._checkpoint2 =new THREE.Vector3( 13710,0,1360 );
-	this._checkpoint3 =new THREE.Vector3( 13710,0,12890 );
-	this._checkpoint4 =new THREE.Vector3( 2280,0,13600 );
-	*/
 	var checkpoints = [];
 	
 	// 1st to last order checkpoints.
@@ -328,11 +321,15 @@ Level_Manager.prototype.createObjects = function(  ){
 	checkpoints.push( new THREE.Vector3( 1360, 0, 6000 ) );
 	checkpoints.push( new THREE.Vector3( 1360, 0, 3000 ) );
 	
+	var objectUrls = [ "BRASS.dae", "urn.dae", "Lantern.dae", "Sconce.dae", "record.dae" ];
+	
 	for ( i in checkpoints ){
-		this._objects.push( new Object( checkpoints[i], "Object" ) );
+		var rand = parseInt( randomRange( 0, objectUrls.length -1 ) );
+		this._objects.push( new Object( checkpoints[ i ], "Object" ) );
 	}
 	checkpoints.push( new THREE.Vector3( 6000, 0, 6000 ) );
 	this._player_Manager = new Player_Manager( checkpoints );
 };
+
 
 	

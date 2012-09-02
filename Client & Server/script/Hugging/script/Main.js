@@ -3,6 +3,8 @@
 	@Brief:	 Hugging Level
 	Where the game logic is controlled.
 */
+var currentLevel = "hugging";
+
 
 // Connect to the server.
 var socket = io.connect( '193.156.105.158:7541' );
@@ -325,7 +327,7 @@ function gameLoop(){
 		
 			// If we're not waiting and the game isn't paused and its game over go in here.
 			localStorage.score = level_Manager.getPlayer()._score;
-			socket.emit( 'endHugging' );
+			socket.emit( 'endLevel', { level : currentLevel } );
 			waiting = true;	
 			console.log( "Waiting for the call from the server that the team is finished." );
 		}

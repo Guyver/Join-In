@@ -19,10 +19,9 @@ function Player( name, position ){
 	this._name = name;
 	// The global position.
 	this._position = position;
-	// THe velocity of the player.
-	this._velocity = new THREE.Vector3(0,0,0);
-	// The acceleration...
-	this._accel = new THREE.Vector3(0,-9.81,0);
+	this._image = new Image();
+	// Src
+	this._image.src = "http://4.bp.blogspot.com/_SJsqZeAk064/SxLz6pn9_aI/AAAAAAAACd8/lozmwiAthnk/s1600/offline.bmp";
 	// The walkspeed, could replace velocity.
 	this._walkSpeed = 50;
 	// Define the up axis on the cartesian plane.
@@ -31,6 +30,8 @@ function Player( name, position ){
 	this._ip  = undefined;
 	// The score of the player.
 	this._score = 0;
+	// Time in between pickups.
+	this._split = 0;
 	// The local id from the kinect.
 	this._userKey = undefined;			
 	// The Kinect data. Hard coded as Lars for debugging.
@@ -146,14 +147,6 @@ function Player( name, position ){
 	scene.add( this._mesh );	
 	
 	this._mesh.position = this._position;
-	
-	// The following is a sphere to represent the sightNode. Also for debugging.
-	var radius = 100, segments = 10, rings = 10;
-	var Material = new THREE.MeshLambertMaterial( {color: 0xfffffffff });
-	var Geometry = new THREE.SphereGeometry( radius, segments, rings );
-	this.sight = new THREE.Mesh( Geometry , Material );	
-	this.sight.name	= "sightNode";
-	scene.add( this.sight );	
 	
 };
 
@@ -381,8 +374,7 @@ Player.prototype.rotateModelLeft = function( ){
 	this._sightNode.addSelf( this._position );
 
 	this._angle += theta;
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
+
 	
 };
 
@@ -413,8 +405,7 @@ Player.prototype.rotateSightByAngle = function( angle ){
 	this._sightNode.addSelf( torso );
 
 	this._angle += angle;
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
+
 	
 };
 
@@ -447,8 +438,6 @@ Player.prototype.rotateModelRight = function( ){
 	this._sightNode.addSelf( torso );
 	
 	this._angle += theta;
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
 };
 
 
@@ -529,8 +518,6 @@ Player.prototype.rotateUp = function( ) {
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
 
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
 };
 
 
@@ -564,9 +551,6 @@ Player.prototype.rotateDown = function( ) {
 	
 	// Translate...back again.
 	this._sightNode.addSelf( torso );
-
-	// Update the graphical sight node.
-	this.sight.position = this._sightNode
 	
 };
 
@@ -646,4 +630,8 @@ Player.prototype.loadModelMesh = function( url ){
 		
 		scene.add( that._model );
 	});
+};
+
+Player.prototype.getModels = function(  ){
+	return this._rig.getModelMeshes();
 };

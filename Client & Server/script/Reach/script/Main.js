@@ -8,8 +8,12 @@
 	* Will the timing events be server side or client side?
 	* Will the game flow logic be client or server side?
 */
+
+
+var currentLevel = "reach";
+
 // Connect to the server.
-var socket = io.connect('193.156.105.162:7541');
+var socket = io.connect('193.156.105.158:7541');
 
 // Connect to Sandra.
 var sandra = io.connect( '127.0.0.1:8080' );
@@ -27,10 +31,10 @@ var camera, nearClip, farClip, aspectRatio, fov;
 // remember these initial values
 var tanFOV;
 var windowHeight = window.innerHeight;
-
+var guiCanvas,guiCtx;
 // Kinect data
 var numJoints, model, jointList;
-
+var sounds = [];
 // Game Physics vars TODO: Move to player manager.
 var players;
 
@@ -41,7 +45,11 @@ var waiting = false;
 var paused = false;
 // The level manager.
 var level_Manager;
-var plrOne, plrTwo,plrThree = false;
+
+
+var playerLoaded, objectsLoaded, startGame = false;
+var groupScore, winner;
+
 // Game objects.
 var objects = [];
 
@@ -55,17 +63,6 @@ var architect;
 */
 function init(){
 	
-	container = document.createElement( 'div' );
-	document.body.appendChild( container );
-
-	var info = document.createElement( 'div' );
-	info.style.position = 'absolute';
-	info.style.top = '10px';
-	info.style.width = '100%';
-	info.style.textAlign = 'center';
-	info.innerHTML = 'Use W,A,S,D to move around';
-	container.appendChild( info );
-
 	// Set up the three scene.
 	initScene();
 	// Set up the renderer type.
@@ -74,17 +71,14 @@ function init(){
 	setupLights();
 	// Set up the camera.
 	initCamera();
+	// Audio
+	initSound();
 	// Create the game objects.
 	createObjects();
-	// Gui stuff.
-	//setupGui();
 	// Skybox...etc.
 	setupEnviornment();
 	// Send the server your data.
-	sendData();
-	// Test code is stuffed in here.
-	//ExampleCode();
-	
+	sendData();	
 	// The first call to the game loop.
 	gameLoop();
 	
@@ -128,9 +122,10 @@ function initScene(){
 */
 function initRenderer(){
 
+	// Create the WebGl renderer using the canvas 3d.
 	renderer = new THREE.WebGLRenderer({
 			antialias: true,
-			canvas: document.createElement( 'canvas' ),
+			canvas: document.getElementById( "canvas3D" ),
 			clearColor: 0x000000,
 			clearAlpha: 0,
 			maxLights: 4,
@@ -140,9 +135,12 @@ function initRenderer(){
 	
 	// Fit the render area into the window.
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	
-	// The renderer's canvas domElement is added to the body.
-	document.body.appendChild( renderer.domElement );
+	// Initalise the Gui canvas.
+	guiCanvas = document.getElementById( "canvas2D" );
+	guiCanvas.width = window.innerWidth;
+	guiCanvas.height = window.innerHeight;
+	// Get the context for drawing.
+	guiCtx = guiCanvas.getContext( "2d" );
 };
 
 
@@ -186,6 +184,14 @@ function setupLights(){
 	scene.add( directionalLight );
 	
 
+};
+
+
+function initSound(){
+	
+	sounds[0] = document.getElementById( 'ambient' ) ;
+	sounds[1] = document.getElementById( 'hug' ) ;
+	sounds[2] = document.getElementById( 'error' );
 };
 
 
@@ -254,78 +260,125 @@ function gameLoop(){
 	
 	requestAnimationFrame( gameLoop, renderer.domElement );
 	
-	if( !level_Manager._player_Manager._gameOver && !paused ){
+	//
+	// GUI Stuff
+	//
+	guiCanvas.width = guiCanvas.width;
+	// Set the font and size.
+	guiCtx.font = 'italic 40px Calibri';
+	guiCtx.shadowOffsetX = 5;
+	guiCtx.shadowOffsetY = 5;
+	guiCtx.shadowBlur    = 4;
+	guiCtx.shadowColor   = 'rgba( 155, 155, 155, 0.5)';
+	guiCtx.fillStyle     = 'rgba(255, 255, 255, 0.5)';
+	guiCtx.fillRect( 5, 5, 255, 255 );
+	guiCtx.fillStyle     = '#000';
+	guiCtx.drawImage( level_Manager._player_Manager.getPlayer()._image, 10 ,10 , 128, 128 );
+	guiCtx.fillText( level_Manager._player_Manager.getPlayer()._name, 10, 180 );
+	guiCtx.fillText( 'Score : '+ level_Manager._player_Manager.getPlayer()._score, 10, 210 );
+	guiCtx.fillText( 'Split : '+ level_Manager._player_Manager.getPlayer()._split, 10, 240 );
+		
+		
+	//
+	// Audio Stuff
+	//
+	for ( i in sounds ){
+		if( sounds[ i ].ended ){
+			// Reload if finished.
+			sounds[ i ].load();
+		}
+	}
+	
+	// Get the Sandra Data.
+	sandra.emit( 'getData' );
+	
+	/*
+		Wait while the player models load, the objects, the other players and finally a call from the server to syncronise start!	
+		if( !gameOver && PlayersLoaded && ObjectsLoaded && startGame )
+	*/
+	
+	if(  playerLoaded && objectsLoaded && startGame && !level_Manager._player_Manager._gameOver && !paused ){
 		
 		// Update the level manager.
 		level_Manager.update( scene, camera );
 		
 		// Render the scene.
-		render();
+		render();		
 		
-		sandra.emit( 'getData' );
 	}
 	else{
 	
-		if( !waiting && !paused && level_Manager._player_Manager._gameOver ){
+		/*
+			Check to see if the players models are loaded. Then load the Objects.
+		*/
+		if( !playerLoaded ){
+			
+			// Count the models to see if they are loaded yet.
+			var modelCount = level_Manager._player_Manager.getPlayer().getModels().length;
+
+			if( modelCount == 14 ){
+			
+				playerLoaded = true;
+
+				// Begin loading the models. 			
+			}
+
+		}
+		
+		
+		/*
+			Check to see if the objects are loaded. 
+		*/
+		if( !objectsLoaded && playerLoaded ){
+			
+			objectsLoaded = true;
+			startGame = true;
+		}
+	
+
+		if( !waiting && !paused && level_Manager._player_Manager._gameOver && level_Manager._player_Manager._playGame ){
+		
 			// If we're not waiting and the game isn't paused and its game over go in here.
-			//setCookie( "score" , level_Manager.getPlayer()._score , 1 );
-			socket.emit( 'gameOver', level_Manager.getPlayer()._score  );
+			socket.emit( 'getGroupScore', { score : level_Manager.getPlayer()._score } );
 			waiting = true;	
-			console.log( "Waiting for the call from the server that the team is finished." );
 		}
 		
 		if( paused ){
 			// Do nothing 
 			console.log( "The game is paused." );
+			guiCtx.fillText( "PAUSED", guiCanvas.width/2 , guiCanvas.height/2 );
+		}
+		
+		if( waiting ){
+	
+			guiCtx.fillText( "Group Score : "+groupScore , guiCanvas.width/2 , 30 );
+			guiCtx.fillText( "First finished : "+winner , guiCanvas.width/2 , 70 );
 		
 		}
 		
-		if( !level_Manager._player_Manager._playGame ){
+	}// End Else.
+	
+	if( !paused ){
+
+			// Package your player into a map.
+			var me = {
+				name : level_Manager.getPlayer()._name,
+				pos : level_Manager.getPlayer()._position,
+				sight : level_Manager.getPlayer()._sightNode,
+				kinect : level_Manager.getPlayer()._rig._translatedMap,	
+				team : level_Manager.getPlayer()._team,
+				userKey : level_Manager.getPlayer()._userKey,
+				score : level_Manager.getPlayer()._score
+			};
+			
+			// Send it to the server to be stored for others.
+			socket.emit( 'updateMe', me  );	
+
+		level_Manager.getPlayer().update( );
 		
-			// The game is still loading, check to see if its ready yet.
-			var modelCount = level_Manager._player_Manager.getPlayer().getModels().length;
-			
-			for ( i in level_Manager._player_Manager._otherPlayers ){
-			
-				// Add the amount of times the model loads.
-				modelCount += level_Manager._player_Manager._otherPlayers[ i ].getModels().length ;			
-			}
-			
-			switch( modelCount ){
-				case 14:
-					if( !plrOne ){
-						// Load the next one.
-						level_Manager._player_Manager._otherPlayers.push( new Player( "Player2", undefined, undefined ) );
-						plrOne = true;						
-					}
-					break;
-				case 28:
-					if( !plrTwo ){
-						// Load the next one.
-						level_Manager._player_Manager._otherPlayers.push( new Player( "Player3", undefined, undefined ) );
-						plrTwo = true;						
-					}
-					break;
-				case 42:
-					if( !plrThree ){
-						// Load the next one.
-						level_Manager._player_Manager._otherPlayers.push( new Player( "Player4", undefined, undefined ) );
-						plrThree = true;						
-					}
-					break;
-				case 56:
-					if( !level_Manager._player_Manager._playGame && plrOne && plrTwo && plrThree){
-						// Get my team mates by the team id.
-						createTeam();				
-					}
-					break;				
-				default:
-					// Loading
-					break;
-			}// Switch
-		}
-	}
-};
+	}// End of Not Paused
+	
+};// End of Game Loop
 
 
 /**
@@ -370,7 +423,7 @@ function createTeam(){
 	// Set the game to start after the players have been assigned.
 	level_Manager._player_Manager._playGame = true;	
 };
-
+ 
 
 /**	@Name:	Render 
 	@Brief:	Draw the scene.
@@ -381,327 +434,6 @@ function render(){
 	renderer.render( scene, camera );
 };
 
-
-/**	@Name:	Setup Gui
-	@Brief:	Creates the GUI panel on screen and assigns variables to change at run time for debugging
-	@Arguments:N/A
-	@Returns:N/A
-*/
-function setupGui(){
-	
-	// The number of entries/spaces on the GUI
-	varNum = 47
-	
-	// Create the GUI
-	gui = new DAT.GUI( { varNum : 5 * 32 - 1} );
-	 
-		 // Store the list of changable parameters.
-	param = {
-		 fps:60,
-		 parallaxSpeed:2,
-		 camera_X:8000,		// 0
-		 camera_Y:5000,
-		 camera_Z:8000,
-		 Head_X:8000,		// 1
-		 Head_Y:500,
-		 Head_Z:8000,
-		 UpperArmL_X:8000,	// 2
-		 UpperArmL_Y:1500,
-		 UpperArmL_Z:8000,
-		 UpperArmR_X:8000,	// 3
-		 UpperArmR_Y:500,
-		 UpperArmR_Z:8000,
-		 ForeArmL_X:8000,	// 4
-		 ForeArmL_Y:1500,
-		 ForeArmL_Z:8000,
-		 ForeArmR_X:8000,	// 5
-		 ForeArmR_Y:500,
-		 ForeArmR_Z:8000,
-		 Torso_X:8000,		// 6
-		 Torso_Y:500,
-		 Torso_Z:8000,
-		 HandL_X:8000,		// 7
-		 HandL_Y:500,
-		 HandL_Z:8000,
-		 HandR_X:8000,		// 8
-		 HandR_Y:500,
-		 HandR_Z:8000,
-		 UpperLegL_X:8000,	// 9
-		 UpperLegL_Y:500,
-		 UpperLegL_Z:8000,
-		 UpperLegR_X:8000,	// 10
-		 UpperLegR_Y:500,
-		 UpperLegR_Z:8000,
-		 LowerLegL_X:8000,	// 11
-		 LowerLegL_Y:500,
-		 LowerLegL_Z:8000,
-		 LowerLegR_X:8000,	// 12
-		 LowerLegR_Y:500,
-		 LowerLegR_Z:8000,
-		 FootL_X:8000,		// 13
-		 FootL_Y:500,
-		 FootL_Z:8000,
-		 FootR_X:8000,		// 14
-		 FootR_Y:500,
-		 FootR_Z:8000,
-	 
-	 };
-	 
-	 // Add the paramater values to the GUI, give it a name, upon change specify the callback function.
-	 gui.add( param, 'fps').name('Frame Rate').onFinishChange(function(){
-	 
-		// Clear the current framerate 
-		clearInterval( interval );
-		
-		// Set it up again using the paramater!
-		setInterval( "gameLoop()", 1000/ param['fps']);
-	});
-	
-	 // Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	 gui.add( param, 'parallaxSpeed').name('Parallax Speed').min(-5).max(5).step(0.25).onFinishChange(function(){
-	 
-		// No need to change, the next loop will use the new scroll speed! 
-	});
-	
-	
-	// Camera GUI data, no need to call anything on change. It will update on the next tick.
-	
-	/* Add the paramater values to the GUI, give it a name, set the min and max values 
-		inside the clip plane upon change specify the callback function*/
-	gui.add( param, 'camera_X').name('Camera_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'camera_Y').name('Camera_Y').min(( 0 ) * -1).max( farClip ).step(100).onFinishChange(function(){
-		
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'camera_Z').name('Camera_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		
-		
-	});
-	
-	//
-	gui.add( param, 'Head_X').name('Head_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		head.position.x = param['Head_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'Head_Y').name('Head_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		head.position.y = param['Head_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'Head_Z').name('Head_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		head.position.z = param['Head_Z'];
-		
-	});
-	
-	
-	//
-	gui.add( param, 'Torso_X').name('Torso_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		torso.position.x = param['Torso_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'Torso_Y').name('Torso_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		torso.position.y = param['Torso_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'Torso_Z').name('Torso_Z').min( 5000 ).max( farClip ).step( 10 ).onFinishChange(function(){
-		torso.position.z = param['Torso_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'UpperArmL_X').name('UpperArmL_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperArmL.position.x = param['UpperArmL_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperArmL_Y').name('UpperArmL_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		upperArmL.position.y = param['UpperArmL_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperArmL_Z').name('UpperArmL_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperArmL.position.z = param['UpperArmL_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'UpperArmR_X').name('UpperArmR_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperArmR.position.x = param['UpperArmR_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperArmR_Y').name('UpperArmR_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		upperArmR.position.y = param['UpperArmR_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperArmR_Z').name('UpperArmR_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperArmR.position.z = param['UpperArmR_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'ForeArmL_X').name('ForeArmL_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		lowerArmL.position.x = param['ForeArmL_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'ForeArmL_Y').name('ForeArmL_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		lowerArmL.position.y = param['ForeArmL_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'ForeArmL_Z').name('ForeArmL_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		lowerArmL.position.z = param['ForeArmL_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'ForeArmR_X').name('ForeArmR_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		lowerArmR.position.x = param['ForeArmR_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'ForeArmR_Y').name('ForeArmR_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		lowerArmR.position.y = param['ForeArmR_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'ForeArmR_Z').name('ForeArmR_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		lowerArmR.position.z = param['ForeArmR_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'HandL_X').name('HandL_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		handL.position.x = param['HandL_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'HandL_Y').name('HandL_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		handL.position.y = param['HandL_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'HandL_Z').name('HandL_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		handL.position.z = param['HandL_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'HandR_X').name('HandR_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		handR.position.x = param['HandR_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'HandR_Y').name('HandR_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		handR.position.y = param['HandR_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'HandR_Z').name('HandR_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		handR.position.z = param['HandR_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'UpperLegL_X').name('UpperLegL_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperLegL.position.x = param['UpperLegL_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperLegL_Y').name('UpperLegL_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		upperLegL.position.y = param['UpperLegL_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperLegL_Z').name('UpperLegL_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperLegL.position.z = param['UpperLegL_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'UpperLegR_X').name('UpperLegR_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperLegR.position.x = param['UpperLegR_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperLegR_Y').name('UpperLegR_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		upperLegR.position.y = param['UpperLegR_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'UpperLegR_Z').name('UpperLegR_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		upperLegR.position.z = param['UpperLegR_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'FootL_X').name('FootL_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		footL.position.x = param['FootL_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'FootL_Y').name('FootL_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		footL.position.y = param['FootL_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'FootL_Z').name('FootL_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		footL.position.z = param['FootL_Z'];
-		
-	});
-	
-	//
-	gui.add( param, 'FootR_X').name('FootR_X').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		footR.position.x = param['FootR_X'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'FootR_Y').name('FootR_Y').min( 0 ).max( 5000 ).step( 10 ).onFinishChange(function(){
-		footR.position.y = param['FootR_Y'];
-		
-	});
-	
-	// Add the paramater values to the GUI, give it a name, upon change specify the callback function
-	gui.add( param, 'FootR_Z').name('FootR_Z').min( 5000 ).max( 10000 ).step( 10 ).onFinishChange(function(){
-		footR.position.z = param['FootR_Z'];
-		
-	});	
-};
 
 
 /**	@Name:	Setup Enviornment 
@@ -725,12 +457,12 @@ function setupEnviornment(){
 	imageManager.queueDownload( 'img/grassTile01.png' );
 	
 	*/
-	var planeTex = new THREE.Texture(imageManager.getAsset('img/grassTile01.png', {}, render()));
+	var planeTex = new THREE.Texture(imageManager.getAsset('img/seamlessFloor.jpg', {}, render()));
 	
 	planeTex.needsUpdate = true;
 	planeTex.wrapT = THREE.RepeatWrapping;
 	planeTex.wrapS = THREE.RepeatWrapping;
-	planeTex.repeat.set( 100, 100 );// Higher for smaller tiles
+	planeTex.repeat.set( 50 , 50 );// Higher for smaller tiles
 	
 	var planeGeo = new THREE.PlaneGeometry(100000, 100000, 1, 10);
 	
@@ -788,6 +520,7 @@ function Skybox(){
 	
  };
 
+ 
 /**	@Name:	
 	@Brief:	
 	@Arguments:N/A
@@ -896,9 +629,9 @@ function handleKeyEvents( event ) {
 	@Arguments:N/A
 	@Returns:N/A
 */
-sandra.on( 'returnData', function( dataR ){
-	
-	level_Manager.getPlayer()._kinectData = JSON.parse( dataR );			
+socket.on( 'nextLevel', function( data ){
+
+	window.parent.location.href = data;
 });
 
 
@@ -907,7 +640,22 @@ sandra.on( 'returnData', function( dataR ){
 	@Arguments:N/A
 	@Returns:N/A
 */
+sandra.on( 'returnData', function( dataR ){
+	
+	var data = JSON.parse( dataR );	
+	if( data[ 'head' ] != undefined && data[ 'head' ] != null ){
+		level_Manager.getPlayer()._kinectData = data;		
+	}	
+});
+			
+			
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
 socket.on( 'teamMates', function( team ){
+	
 	// Works fine.
 	globalTeam = team;
 	
@@ -924,15 +672,26 @@ socket.on( 'teamMates', function( team ){
 	@Arguments:N/A
 	@Returns:N/A
 */
+socket.on( 'error', function( data ){
+
+	console.log( data.error );
+
+});
+
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
 socket.on( 'youWereCreated', function( data ){
 
 	level_Manager.getPlayer()._name = data.name;
 	level_Manager.getPlayer()._ip = data.ip;
 	level_Manager.getPlayer()._team = data.team;
 	level_Manager.getPlayer()._userKey = data.userKey;
-	
+	level_Manager.getPlayer()._image.src = data.connectedImageUrl;
 	var pos = new THREE.Vector3();
-	var x,z;
 
 	switch( data.teamNumber ){
 		case 1:
@@ -960,22 +719,24 @@ socket.on( 'youWereCreated', function( data ){
 });
 
 
-socket.on( 'topScorePage', function( ){
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'deleteUser', function( data ){
 
-	window.parent.location.href="./highScore.html";
-});
-
-
-socket.on('syncKinect', function( data ){
-
-	level_Manager.getPlayer()._kinectData = data;
-
-});
-
-
-socket.on('updateNewUser',function(user) {
-		console.log( "User is :"+ JSON.parse( user ).name );	
-		console.log( "User's ip :"+ JSON.parse( user ).ip);		
+	var player = data.user;
+	
+	// Find the player with the same team number and delete his ass.
+	for ( i in level_Manager._player_Manager._otherPlayers ){
+	
+		if( String( level_Manager._player_Manager._otherPlayers[ i ]._ip ) == String ( player.ip ) ){
+		
+			level_Manager._player_Manager._otherPlayers[ i ].remove();
+			level_Manager._player_Manager._otherPlayers[ i ].setPosition( new THREE.Vector3( 0,0,0 ) );
+		}	
+	}
 });
 
 
@@ -984,6 +745,20 @@ socket.on( 'pause' , function( value ) {
 	paused = value;
 });
 
+
+/**	@Name:	
+	@Brief:	
+	@Arguments:N/A
+	@Returns:N/A
+*/
+socket.on( 'groupScore', function( data ){
+	
+	waiting = true;
+	level_Manager._player_Manager._gameOver = true;
+	groupScore = data.score;
+	winner = data.winner;
+	setTimeout( function(){ socket.emit( 'endLevel', { level : currentLevel } ) } , 5000 );
+});
 
 
 /**	@Name:	Resize

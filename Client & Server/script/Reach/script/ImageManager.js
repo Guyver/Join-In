@@ -139,6 +139,8 @@ function loadResources(){
 	imageManager.queueDownload( '../img/Tree1.png' );
 	imageManager.queueDownload( '../img/popcornCeiling.png' );
 	imageManager.queueDownload( '../img/wallPaper.png' );
+	imageManager.queueDownload( '../img/seamlessFloor.jpg' );
+	imageManager.queueDownload( '../img/seamlessWall.jpg' );
 	imageManager.downloadAll( onImagesComplete );
 
 };

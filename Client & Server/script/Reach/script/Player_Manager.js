@@ -58,27 +58,19 @@ Player_Manager.prototype.update = function(  ){
 	// Get direction.
 	var playerPos = this._player.getPosition();
 	// The distance of the player to the next checkpoint.
-	var dist = this.getDistance( this._player.getPosition(), this._checkpoints[0] )
+	var dist = this.getDistance( this._player.getPosition(), this._checkpoints[ 0 ] )
 	
 	if( this._playGame && !this._gameOver ){	
 	
 		// If the player is within 50 units of the checkpoint.
 		if ( dist < 50 ){					
-					
-			if( this._checkpoints[1] != undefined ){
+			
+			// Is this the last position?
+			if( this._checkpoints[ 1 ] != undefined ){
 			
 				// Check to see if the player has an object in his inventory.
 				if( this._player.checkInventory() ){
-								
-					var map = { 
-						pos : this._player.getPosition(), 
-					};
-					// Tell the server what checkpoint we're at.
-					socket.emit('updateMe', map	);
-					
-					// If at the position, push it into the walklist again, infinite game :D
-					//this._checkpoints.push( this._checkpoints[0] );
-					
+													
 					// Pop off the so the current goal is the next one.
 					this._checkpoints.shift();
 					// Remove the equipped item from the Player.
@@ -91,6 +83,7 @@ Player_Manager.prototype.update = function(  ){
 					// Reset last time to now.
 					this._lastTime = this._currentTime;	
 						
+					this._player._split = this._deltaTime;
 					// Calculate the multiplier from the time taken.
 					if( this._deltaTime < 3000)
 						this._scoreMultiplier = 5;
@@ -118,12 +111,10 @@ Player_Manager.prototype.update = function(  ){
 			var goalDir = new THREE.Vector3( this._checkpoints[0].x - playerPos.x, 
 								0, 
 								this._checkpoints[0].z - playerPos.z );
-			//goalDir.normalize();
 			
 			var playerSight = new THREE.Vector3( this._player.getSightNode().x - playerPos.x, 
 								0, 
 								this._player.getSightNode().z - playerPos.z );
-					//playerSight.normalize();
 					
 			// Get the angle needed to rotate so we're facing the target.
 			if( this._autoRotate ){
@@ -134,7 +125,6 @@ Player_Manager.prototype.update = function(  ){
 					playerSight.x = this._player.getSightNode().x - playerPos.x; 
 					playerSight.y = 0; 
 					playerSight.z = this._player.getSightNode().z - playerPos.z; 
-					//playerSight.normalize();
 					
 					var angle = Math.acos( goalDir.dot( playerSight ) / (goalDir.length() * playerSight.length() ) );
 					angle = angle * ( 180 / Math.PI ) ;

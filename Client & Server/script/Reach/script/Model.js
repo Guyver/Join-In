@@ -28,7 +28,8 @@ function Model( jointNames, playerPos ){
 	this._footR = undefined;
 	that = this;
 	this._angle = 0;
-	
+	// The translated kinect data.
+	this._translatedMap = {};
 	// Construct all the joints.
 	for( var i = 0; i < this._jointNames.length; i++){
 	
@@ -201,6 +202,9 @@ Model.prototype.setAllJoints = function( playerPos, angle, kinectMap ){
 		
 		// Set the translated joint position to the position of the corresponding joint object's position.
 		this._joint[ this._jointNames[ i ] ].setPosition( new THREE.Vector3( translatedPos.x, translatedPos.y, translatedPos.z ) );
+		
+		// Store the new, translated, kinect joints.
+		this._translatedMap[ this._jointNames[ i ] ] = translatedPos;
 		
 	}// End for
 	
@@ -602,4 +606,14 @@ Model.prototype.remove = function(){
 	for ( index in this._joint ){
 		this._joint[ index ].remove();
 	}
+};
+
+/**	@Name:
+	@Brief:	
+	@Arguments:
+	@Returns:
+*/
+Model.prototype.getModelMeshes = function(){
+	return this._jointModels;
+
 };

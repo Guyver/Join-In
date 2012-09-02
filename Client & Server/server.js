@@ -201,7 +201,7 @@ var userSchema = new Schema({
 			meshName :String,
 			teamPosition: Number,
 			teamId: Number
-	});				
+});				
 		
 var usersModel = mongoose.model( 'users' , userSchema );
 
@@ -277,13 +277,38 @@ socket.sockets.on( 'connection', function( client ){
 
 
 	// 				
-	// 
+	// TODO: Validate Key and prevent multi.
 	//	
 	client.on( 'registerMeInServer' , function( data ){
-
-		// Get stuff from the database using the user key.
-		registerUser( client, data.userKey );	
-
+		
+		console.log( "A new user has asked to be registered in a team" );
+		var ip = client.handshake.address.address
+		var exists = validateKey( data.userKey , ip  );
+		
+		try{
+			if( !exists ){
+			
+				try{
+				
+					// Get stuff from the database using the user key.
+					registerUser( client, data.userKey );
+					console.log( "User has been registered fine." );
+					
+				}catch( error ){
+				
+					console.log( "There was a problem in registerUser(). Error details :"+error );
+				}
+			}
+			else{
+			
+				// Send some feedback to the client.
+				client.emit( 'error', { error : "User key is already in use" } );
+			}
+			
+		}catch( error ){
+		
+			console.log( "There was a problem in validateKey(). Error details :"+error );
+		}
 	});
 
 	
@@ -300,23 +325,12 @@ socket.sockets.on( 'connection', function( client ){
 				users[ client.handshake.address.address ].kinect = me.kinect;
 				users[ client.handshake.address.address ].sight = me.sight;
 				users[ client.handshake.address.address ].pos = me.pos;
+				users[ client.handshake.address.address ].score = me.score;
 				
-				var team = {};
-				var teamCount = 0;
-				for ( i in users ){
-
-					if( users[ i ].team == me.team ){
-					
-						team[ i ] = users[ i ];
-						teamCount++;
-					}				
-				}
+				var team = findTeamMates( me.team );
 				
-				// If its multiplayer, send the data.
-				if( teamCount > 0 ){
-					// Give back the users team mates.
-					client.emit( 'teamMates' , team ); 
-				}
+				// Give back the users team mates.
+				client.emit( 'teamMates' , team ); 
 			}
 			catch( error ){
 				
@@ -344,59 +358,34 @@ socket.sockets.on( 'connection', function( client ){
 	//			
 	// 	
 	//
-	client.on( 'gameOver', function( userScore ) {
-
-		// Store the score of the client and check if its game over.
-		users[ client.handshake.address.address ].score = userScore;	
-
-		var userCount = users.length;
-		var usersFinished = 0;
-		var totalClients = 0;
-
-		for ( i in users ){
-
-			if( users[ i ].score != 0 ){
-
-				// Increment the number of users finished.
-				usersFinished++;
-				// Increment the topScore.
-				topScore += users[ i ].score;				
-			}
-			totalClients++;
-		}
-
-		//topScore = userScore;
-		if( usersFinished == userCount || ( usersFinished == totalClients && usersFinished != 0 ) ){
-
-			for ( i in users ){
-
-				var ip = users[ i ].ip;
-				// Game over, all the players are finished.
-				clients[ ip ].emit( 'topScorePage' );
-			}
-		}
-		else{
-			// Reset the score
-			topScore = 0;
-		}	
-	});
-
-	
-	//			
-	// 	
-	//
-	client.on( 'endHugging', function( ) {
+	client.on( 'endLevel', function( data ) {
 
 		// Find the user who called.
 		var keyHolder = users[ client.handshake.address.address ];
 		// Get his team mates' clients.
 		var team = findTeamMates( keyHolder.team );
+		// Find the sockets for the entire team.
 		var sockets = findTeamMatesSockets( team )
-		// Send to them that its game over time.
-		sendToTeam( sockets, 'nextLevel', './reach.html' ); 
-
+		
+		switch( data.level ){
+		
+			case "index":
+				sendToTeam( sockets, 'nextLevel', './Hugging.html' ); 
+				break;
+			case "hugging":
+				sendToTeam( sockets, 'nextLevel', './Reach.html' ); 
+				break;
+			case "reach":
+				sendToTeam( sockets, 'nextLevel', './Hugging.html' ); 
+				break;
+			case "pickUp":
+				sendToTeam( sockets, 'nextLevel', './index.html' ); 
+				break;
+			default:
+				sendToTeam( sockets, 'nextLevel', './index.html' ); 
+				break;		
+		}
 	});
-
 	
 	//
 	//
@@ -412,26 +401,25 @@ socket.sockets.on( 'connection', function( client ){
 	//
 	//
 	//
-	client.on( 'getGroupScore', function( groupScore ){	
-
-			//users[ client.handshake.address.address ].score = userScore;
-			// Assign who the key holder was.
-			var keyHolder = "Not implemented yet!";	
-
-			var test = {};
-			for ( i in users ){
-				test[ i ] = users[ i ];
-			}
-
-			// Construct a map with the score and the keyholder in it.
-			var data = {
-				"score":topScore,
-				"keyHolder":keyHolder,	
-				"users":test
-			};		
-
-			// Send the score to the client.
-			client.emit( 'groupScore', data );	
+	client.on( 'getGroupScore', function( data ){	
+		try{
+		
+			var userData = users[ client.handshake.address.address ];
+			console.log( "The team id is "+userData.team );	
+			var totalScore = getGroupScore( userData.team );
+			console.log( "The team totalScore is "+totalScore );	
+				
+			// Get his team mates' clients.
+			var team = findTeamMates( userData.team );
+			// Find the sockets for the entire team.
+			var sockets = findTeamMatesSockets( team );
+			// Send to the team.
+			sendToTeam( sockets, 'groupScore', { score : totalScore, winner : userData.name } ); 
+			
+		}catch( error ){
+		
+			console.log( "Something happened in getGroupScore. Error details :" + error );		
+		}
 
 	});
 
@@ -463,6 +451,30 @@ socket.sockets.on( 'connection', function( client ){
 // Listen for connection
 server.listen( clientPort );
 
+
+
+/**
+	@name:
+	@brief:
+	@args:
+	@returns:
+*/
+function getGroupScore( teamId ){
+
+	var team = findTeamMates( teamId );
+	console.log( "The team is : "+team );
+	var totalScore = 0;
+	
+	for ( i in team ){
+	
+		console.log( "Team member"+ team[ i ].score );
+		totalScore += team[ i ].score;	
+	}
+	
+	return totalScore;
+};
+
+
 /**
 	@name:
 	@brief:
@@ -482,6 +494,42 @@ function findTeamMates( teamId ){
 	}
 	
 	return team;
+};
+
+
+
+/**
+	@name:
+	@brief:
+	@args:
+	@returns:
+*/
+function validateKey( id, ip ){
+
+	var keysMatch, ipMatch;
+	// Search existing players.
+	for( i in users ){
+		
+		keysMatch = ( String( users[ i ].userKey ) == String( id ) );
+		ipMatch = ( String( users[ i ].ip ) != String( ip ) ) ;
+	
+		if(  keysMatch && ipMatch ){
+			
+			console.log( "That user already exists. User : "+ users[ i ].ip );
+			// That user already exists.
+			return true;
+		}
+		else{
+			
+			console.log( "Keys matching? : %s | ipMatch? : %s",keysMatch, ipMatch );
+		}
+		console.log( "Keys matching? : %s | ipMatch? : %s",keysMatch, ipMatch );
+	}
+	
+	// The key is valid.
+	console.log( "User key is valid. User : "+ id );
+	return false;
+	
 };
 
 /**
@@ -562,7 +610,8 @@ function registerUser( client, userKeyParam ){
 				myTeam[ index ] = users[ index ];	
 			}
 		}	
-			
+		
+		console.log( "create User"+ clientIPAddress );
 		// Return the user data for the main player.
 		client.emit( 'youWereCreated', users[ clientIPAddress ] );			
 			

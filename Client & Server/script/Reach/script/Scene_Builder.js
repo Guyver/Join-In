@@ -14,9 +14,12 @@ Scene_Builder.prototype.createScene = function( data ){
 	var rows = 0, columns = 0, yPosition, color, rotation = 0;
 
 	// Create a texture from an image, image mush be a power of 2 in size. i.e 512*256
-	var texture_blue = new THREE.Texture(imageManager.getAsset('img/wallPaper.png', {}, render()));
+	var texture_blue = new THREE.Texture( imageManager.getAsset('img/seamlessWall.jpg', {}, render()));
 	// Oh yes, it does need this!
 	texture_blue.needsUpdate = true;
+	//texture_blue.wrapT = THREE.RepeatWrapping;
+	//texture_blue.wrapS = THREE.RepeatWrapping;
+	texture_blue.repeat.set( 1 , 2 );// Higher for smaller tiles
 	
 	var geometry = new THREE.CubeGeometry( this._blockSize, this._blockSizeHeight, this._blockSizeDepth );
 		
