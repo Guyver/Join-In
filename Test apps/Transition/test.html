@@ -1,0 +1,182 @@
+<!-- 
+	A test html page for loading meshes in Three.js
+-->
+
+<html>
+	<head>
+		<style>
+			#game{
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 1;		
+			}
+			
+			#gui{
+				background-color: transparent;
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 2;		
+			}
+			
+			#trans{
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 3;		
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="game" width=window.innerWidth height="320"><p>Your browser does not support HTML5!</p></canvas>
+		<canvas id="gui" width=window.innerWidth height="320"><p>Your browser does not support HTML5!</p></canvas>
+		<canvas id="trans" width="480" height="320"><p>Your browser does not support HTML5!</p></canvas>
+		
+		<video id='introVid' width="0" height="0" src="./Video/intro.mp4" type="video/mp4"></video>
+		<video id='tutVid1' width="0" height="0" src="./Video/level_one.mp4" type="video/mp4" ></video>
+		<video id='tutVid2' width="0" height="0" src="./Video/level_two.mp4" type="video/mp4" ></video>
+		
+		<script src='./Three.js'></script>
+		<script src='./ColladaLoader.js'></script>
+		<script src='./Globals.js'></script>
+		<script>
+		
+			// House...
+			MESH_LOADER.addMesh( 'house', './Objects/HOUSE.dae' );
+			
+			// mesh_loader should be usable here... Limbs
+			MESH_LOADER.addMesh( 'head', './limbs/head.dae' );
+			MESH_LOADER.addMesh( 'torso', './limbs/torso.dae' );
+			MESH_LOADER.addMesh( 'hand_l', './limbs/hand_l.dae' );
+			MESH_LOADER.addMesh( 'hand_r', './limbs/hand_r.dae' );
+			MESH_LOADER.addMesh( 'forearm_l', './limbs/forearm_l.dae' );
+			MESH_LOADER.addMesh( 'forearm_r', './limbs/forearm_r.dae' );
+			MESH_LOADER.addMesh( 'upperArm_l', './limbs/armUpper_l.dae' );			
+			MESH_LOADER.addMesh( 'upperArm_r', './limbs/armUpper_r.dae' );			
+			MESH_LOADER.addMesh( 'upperLeg_l', './limbs/legUpper_l.dae' );			
+			MESH_LOADER.addMesh( 'upperLeg_r', './limbs/legUpper_r.dae' );			
+			MESH_LOADER.addMesh( 'lowerLeg_l', './limbs/legLower_l.dae' );
+			MESH_LOADER.addMesh( 'lowerLeg_r', './limbs/legLower_r.dae' );			
+			MESH_LOADER.addMesh( 'foot_l', './limbs/foot_l.dae' );
+			MESH_LOADER.addMesh( 'foot_r', './limbs/foot_r.dae' );		
+			
+	
+			var game = function()
+			{
+				update();
+				if ( INTRO_PLAYED )	// Wait for the intro to be played...
+				{
+					if( MESH_LOADED )	// Wait for the meshes to be loaded...
+					{
+						if( LEVEL_LOADED )	// Wait for the level to be loaded...
+						{
+							if( PLAYERS_LOADED )	// Wait for the players to be loaded...
+							{
+								if( LEVEL_ONE._loaded )	// Wait for level one to load...
+								{									
+									if( LEVEL_ONE._videoFinished )	// Wait for the video to finish...
+									{
+										if( CTX_TRANS.globalAlpha > 0.01 )
+										{										
+											// Fade out the video canvas' transparency.
+											CTX_TRANS.globalAlpha -= 0.005;
+										}
+										else
+										{
+											// Display game...
+										}
+									}
+									else
+									{
+									
+									}
+								}
+								else
+								{
+									// Play level one tutorial...
+									LEVEL_ONE._playTutorial();
+									// Load level 1 here...
+								}
+							}
+							else
+							{		
+								if( !PLAYERS_LOADING )
+								{
+									// Create players here...
+									PLAYERS_LOADING = true;
+									PLAYERS_LOADED = true; // TODO: Load the player properly
+								}
+							}
+						}
+						else
+						{	
+							if( !LEVEL_LOADING )
+							{
+								// Create level here...
+								LEVEL_LOADING = true;
+								LEVEL_LOADED = true; // TODO: Load the level properly
+							}
+						}
+					}
+					else
+					{
+						if( !MESH_LOADING )
+						{
+							// Load meshes here...
+							MESH_LOADER.beginLoading();
+							MESH_LOADING = true;
+						}
+					}
+				}
+				else
+				{	
+					INTRO_PLAYED = true; // TODO: Load the intro properly
+					if( !INTRO_PLAYING )
+					{
+						// Play intro here...
+						//playIntro();
+					}
+					else
+					{
+						if( INTRO_VIDEO.ended )
+						{		
+							// Signal that the video is finished...
+							INTRO_PLAYED = true;
+						}
+					}
+				}	
+				
+				draw();				
+			};
+			
+			var draw = function(){
+			
+				// Draw the game canvas...
+				CTX_GAME.drawImage( LEVEL_ONE._image,0,0, window.innerWidth, window.innerHeight );
+				LEVEL_ONE._draw();
+			};
+			
+			var update = function(){
+				resize();	
+			};	
+
+			var loadLevel = function()
+			{
+				introPlayed();
+				mesh_loaded();
+				level_loaded();
+				players_loaded();
+			}
+			var playIntro = function()
+			{
+				INTRO_VIDEO.width = window.innerWidth;
+				INTRO_VIDEO.height = window.innerHeight;
+				INTRO_VIDEO.play();
+				INTRO_PLAYING = true;
+			}
+			
+			window.onload = onLoad;
+		</script>
+	</body>
+</html>

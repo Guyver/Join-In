@@ -1,0 +1,222 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 11 (filtered)">
+<title>Installing Kinect on Windows to run Sandra</title>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Batang;
+	panose-1:2 3 6 0 0 1 1 1 1 1;}
+@font-face
+	{font-family:"\@Batang";}
+@font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+h4
+	{margin-right:0cm;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	font-weight:bold;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+p
+	{margin-right:0cm;
+	margin-left:0cm;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+pre
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 57.6pt 2.0cm 57.6pt;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-GB link=blue vlink=purple>
+
+<div class=Section1><pre><b><span style='font-size:16.0pt;font-family:Cambria'>Join-In Client Installation</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>General Remarks</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Join-In is a browser based social platform especially designed for exergaming. </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Games are accessible with a browser through the Join-In portal implemented on an Elgg platform. </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Social media connectors provide APIs to games and other Web platforms. For detail see &nbsp;<a
+href="https://github.com/itcgames/SocialMediaConnector/"><span
+style='color:windowtext'>https://github.com/itcgames/SocialMediaConnector/</span></a> (under construction)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Games using input devices already supported in browsers like mouse, keyboard or touch screens do not require further attention. The installation of the browser will be sufficient.</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Exergames with the need for motion, gesture or activity analysis require special bindings to the browser. </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>The SANDRA sensor server developed from Norut provides such bindings. The most important one is that for the Kinect Xbox 360. The binding is based on OpenNI, Java and node.js. </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>The SANDRA installation is divided into the following steps</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre
+style='margin-left:36.0pt;text-indent:-18.0pt'><span style='font-size:12.0pt;
+font-family:Cambria'>1.</span><span style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:12.0pt;font-family:Cambria'>Java installation </span></pre><pre
+style='margin-left:36.0pt;text-indent:-18.0pt'><span style='font-size:12.0pt;
+font-family:Cambria'>2.</span><span style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:12.0pt;font-family:Cambria'>OpenNI, </span><span
+style='font-size:12.0pt;font-family:Cambria'>Sensor Kinect and NITE installation </span></pre><pre
+style='margin-left:36.0pt;text-indent:-18.0pt'><span style='font-size:12.0pt;
+font-family:Cambria'>3.</span><span style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:12.0pt;font-family:Cambria'>SANDRA installation </span></pre><pre
+style='margin-left:36.0pt;text-indent:-18.0pt'><span style='font-size:12.0pt;
+font-family:Cambria'>4.</span><span style='font-size:7.0pt;font-family:"Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+style='font-size:12.0pt;font-family:Cambria'>Connecting to a test-server with the Walking Game</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Hardware Prerequisites for the Walking Game</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Client graphics with WebGL (OpenGL) acceleration for at least 60 fps.</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Test fps with example webgl_animation_cloth from: </span><a
+href="http://mrdoob.github.com/three.js/"><span style='color:windowtext'>http://mrdoob.github.com/three.js/</span></a><span
+style='font-size:12.0pt;font-family:Cambria'> </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Xbox 360 Kinect Sensor&nbsp;&nbsp;&nbsp; (remark: Asus Xtion devices and Kinect for Windows will not work)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:16.0pt;font-family:Cambria'>&nbsp;</span></b></pre><pre><b><span
+style='font-size:16.0pt;font-family:Cambria'>1. Installing Java (Oracle)</span></b></pre>
+
+<p><span style='font-family:Cambria'>Install Java 7(64) from <a
+href="http://www.java.com/de/download/index.jsp">http://www.java.com/de/download/index.jsp</a>
+<br>
+Add path of Java binary to path in Windows System Properties (Window-key + R)
+system variables</span></p>
+
+<pre><b><span style='font-size:16.0pt;font-family:Cambria'>&nbsp;</span></b></pre><pre><b><span
+style='font-size:16.0pt;font-family:Cambria'>2. Installing Kinect on Windows 7 64-bit using OpenNI and NITE</span></b></pre>
+
+<p><span style='font-family:Cambria'>The latest binaries (and source codes) can
+be downloaded from the OpenNI download website &nbsp;-<br>
+Binaries:  <a href="http://www.openni.org/Downloads/OpenNIModules.aspx">www.openni.org/Downloads/OpenNIModules.aspx</a>
+</span></p>
+
+<p><span style='font-family:Cambria'>Download the following binaries (and sources)
+from the OpenNI site if you are using Windows 7 64-bit or download
+corresponding binaries for 32bit systems -<br>
+1.&nbsp;PrimeSense Sensor Module (stable / <u>unstable</u>) – (Filename :
+avin2-SensorKinect-&lt;version&gt;) from <a
+href="https://github.com/avin2/SensorKinect">https://github.com/avin2/SensorKinect</a>
+(ZIP)<br>
+2. OpenNI binaries (stable / <u>unstable</u>) –
+(Filename:&nbsp;OpenNI-Win64-&lt;version&gt;)<br>
+3. OpenNI Compliant Middleware Binaries (NITE) &nbsp;- (Filename:&nbsp;NITE-Win64-&lt;version&gt;)</span></p>
+
+<p><u><span style='font-family:Cambria'>Installation instructions</span></u><span
+style='font-family:Cambria'> -<br>
+<strong><span style='font-family:Cambria'>Step 1:</span></strong> Uninstall
+everything, OpenNI, NITE, any Kinect Sensor Driver, Windows-Driver-Package Prime
+Sense Driver, Kinect Virtual Camera or any other driver related to Kinect.<br>
+<strong><span style='font-family:Cambria'>Step 2: </span></strong>Install the
+downloaded OpenNI 64bit binary.<br>
+<strong><span style='font-family:Cambria'>Step 3: </span></strong>Install avin2
+Sensor Kinect Driver.<br>
+This file is mainly a compressed file which has to be extracted to a desired
+location. After extracting<br>
+it to a desired location, Go to the ‘Bin’ folder inside it and install
+SensorKinectxxx-Bin-Win32xxxx.<br>
+Now go to the ‘Platform&gt;Win32&gt;Driver’ folder and execute the  dpinst-amd<b><span
+style='color:red'>64</span></b>.exe file.<br>
+<strong><span style='font-family:Cambria'>Step 4: </span></strong>Install downloaded
+NITE binary.<br>
+<strong><span style='font-family:Cambria'>Step 5: </span></strong>Hold “Win”
+key and press “R” button. Then type “Sysdm.cpl” and press enter.<br>
+<strong><span style='font-family:Cambria'>Step 6: </span></strong>Go to
+advanced tab and click on “Environment Variables”. From system variables select
+“Path” and click “Edit”. Then go to the end of the string at variable value
+field and add a “;” character and then your  “Kinect Sensor Driver”
+installation directory path  plus “\Bin64”, <br>
+ e.g. - “C:\Program Files\Prime Sense\SensorKinect”.<br>
+<b>Step 7:<strong><span style='font-family:Cambria'> Restart your PC.</span></strong><br>
+</b>After restarting your PC connect the kinect to any of the USB ports and
+wait for automatic installation to be complete. Three devices will be detected
+namely – Motor, Camera and Audio device. Your installation is complete. Now try
+checking your installation by running NITE samples.</span></p>
+
+<p><span style='font-family:Cambria'>After this you have to write the licence
+information in the data xmls installed with the above setups. You can download
+the xmls from&nbsp;<a
+href="http://www.studentguru.gr/blogs/vangos/how-to-successfully-install-kinect-windows-openni-nite/KinectXMLs.zip">here</a>
+<br>
+(studentguru.gr/blogs/vangos/how-to-successfully-install-kinect-windows-openni-nite/KinectXMLs.zip)
+<br>
+and replace the default xml files in the Data folder of the the OpenNI and NITE
+package which are installed in Program Files folder by default.</span></p>
+
+<pre><b><span style='font-size:14.0pt;font-family:Cambria'>3. SANDRA Installation (32bit)</span></b></pre><pre>&nbsp;</pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>3.1 Java 3D core Installation&nbsp;</span></b><b><span
+style='font-family:Cambria'> (</span></b><b><span style='font-size:12.0pt;
+font-family:Cambria'>exemplary for x86, use other files for AMD)</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>download j3d-1_5_2-windows-i586.exe from <a
+href="http://java3d.java.net/binary-builds.html"><span style='color:windowtext'>http://java3d.java.net/binary-builds.html</span></a></span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Run file for installation</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>3.2 Libusb Installation</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Download libusb-win32-bin-x.x.x.x.zip from  http://sourceforge.net/projects/libusb-win32/files/</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Extract files and start inf-wizard to create drivers for Kinect </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>3.3 LibusbJava Installation</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Download LibusbJava64_dll_0.2.4.0.zip from http://sourceforge.net/projects/libusbjava/files/libusbjava-snapshots/20090517/</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Extract libusbJava64.dll to Java bin directory </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>3.4 Install node.js </span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>(see <a href="http://nodejs.org/"><span
+style='color:windowtext'>http://nodejs.org/</span></a> &nbsp;and <a
+href="http://howtonode.org/how-to-install-nodejs"><span style='color:windowtext'>http://howtonode.org/how-to-install-nodejs</span></a> &nbsp;)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>3.5 SANDRA Modules Installation</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Download Sensor Manager SANDRA (ZIP) from <a
+href="https://github.com/Guyver/Join-In"><span style='color:windowtext;
+text-decoration:none'>https://github.com/Guyver/Join-In</span></a> (account activation required)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Compare with the ’How to use’ instructions at Guyver/Join-In also</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Unzip to&nbsp; ~/Join-In/</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; cd ~/Join-In/Sandra/</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start websocket server for Kinect and data and games with</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; node sandra &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(sandra.js)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start SANDRA Java Application for Kinect data fetching with</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; Sandra.bat</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&gt; Start a browser with the link to a test server providing the walking game. </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Confirm your user ID (default 1)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>Position yourself or a test user about 2m in front of the kinect with hands up. </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>After the LED on the Kinect switches to green move hands down </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>SANDRA will ACCEPT the user within a message in the running terminal.</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>The user should now be able to move through the scene of the game.</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>In case of problems take care of the lighting conditions (see Kinect guidelines)</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:14.0pt;font-family:Cambria'>4. Connecting to a test-server with the Walking Game </span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre><pre><b><span
+style='font-size:12.0pt;font-family:Cambria'>Test server at Norut</span></b></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>A test server at Norut is accessible through the following IP address</span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>193. 156.105.158:7541 </span></pre><pre><span
+style='font-size:12.0pt;font-family:Cambria'>&nbsp;</span></pre></div>
+
+</body>
+
+</html>
+

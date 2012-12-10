@@ -1,0 +1,45 @@
+<!-- 
+	A test html page for loading meshes in Three.js
+-->
+
+<html>
+	<head>
+
+	</head>
+	<body>
+		<script>
+		
+			function main( ) {
+
+			  console.log("step 1");
+			  console.log("step 2");
+			  doSomething( myCallBack );
+			  console.log("step 4");
+			}
+
+			function doSomething( f ) {
+
+			  accessTheDatabase(); // this could take a while
+			  console.log( "step 3" );
+			  f( ); // done - now call back
+			}
+
+			function myCallBack() {
+
+			  console.log("calling back!");
+			  
+			}
+			
+			function accessTheDatabase(){
+			
+				for( var i = 0; i < 100000000; i++ ){
+					var x = '0000000000000000000000000000000000000000000000000000000';				
+				}
+			};
+			
+			main();
+			
+		</script>
+
+	</body>
+</html>
