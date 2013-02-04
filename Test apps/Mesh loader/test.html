@@ -1,0 +1,57 @@
+<!-- 
+	A test html page for loading meshes in Three.js
+-->
+
+<html>
+	<head>
+
+	</head>
+	<body>
+		<script src='./Three.js'></script>
+		<script src='./ColladaLoader.js'></script>
+		<script src='./Mesh_loader.js'></script>
+		<script>
+		
+			// House...
+			mesh_loader.addMesh( 'house', './Objects/HOUSE.dae' );
+			
+			// mesh_loader should be usable here... Limbs
+			mesh_loader.addMesh( 'head', './limbs/head.dae' );
+			mesh_loader.addMesh( 'torso', './limbs/torso.dae' );
+			mesh_loader.addMesh( 'hand_l', './limbs/hand_l.dae' );
+			mesh_loader.addMesh( 'hand_r', './limbs/hand_r.dae' );
+			mesh_loader.addMesh( 'forearm_l', './limbs/forearm_l.dae' );
+			mesh_loader.addMesh( 'forearm_r', './limbs/forearm_r.dae' );
+			mesh_loader.addMesh( 'upperArm_l', './limbs/armUpper_l.dae' );			
+			mesh_loader.addMesh( 'upperArm_r', './limbs/armUpper_r.dae' );			
+			mesh_loader.addMesh( 'upperLeg_l', './limbs/legUpper_l.dae' );			
+			mesh_loader.addMesh( 'upperLeg_r', './limbs/legUpper_r.dae' );			
+			mesh_loader.addMesh( 'lowerLeg_l', './limbs/legLower_l.dae' );
+			mesh_loader.addMesh( 'lowerLeg_r', './limbs/legLower_r.dae' );			
+			mesh_loader.addMesh( 'foot_l', './limbs/foot_l.dae' );
+			mesh_loader.addMesh( 'foot_r', './limbs/foot_r.dae' );			
+			mesh_loader.beginLoading();
+	
+			// Log the mesh loader to see if all the objects are in order.
+			console.log( mesh_loader );
+			
+			/* 
+				Note that the code only passes here once.			
+				This is executed before/while the objects are loading.
+				Ideally I'd like for execution to wait here until the 
+				mesh loader is finished.
+				
+				Ex. Doesnt work, it stops the call backs.
+				while( !mesh.loader._loaded ){}
+				
+				The best way to combat this is to not create or initalise anything
+				until the models are loaded. So maybe pass in a callback to the mesh
+				loader such as init_game which will start the game initalisation.
+				
+				Surely there is a better way to do this!
+			*/
+			
+		</script>
+
+	</body>
+</html>

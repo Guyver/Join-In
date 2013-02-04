@@ -1,0 +1,24 @@
+
+Changes:
+
+Deleted mesh in joint class and tidied it so it uses it stand alone position instead of the mesh position. 								//1hr
+Deleted mesh in player class and tidied it so it uses its stand alone position instead of mesh position.								//2hr
+Deleled functions in the collision manager class and changed it to use the position of the joints and not meshes in the scene. 			//2hr
+
+Todo:
+
+Fix collision to work with player position and not a player mesh in the scene... or redo the meshes if bounding sphere is needed. 		// Est 2hr
+Fix the mesh loading to be done in the main to resolve the scope problems.																// Est 5hr
+Copy one set of players models and use them to create others instead of duplicate loading.												// Est 2hr.
+
+
+Ideas:
+
+Create all of the levels on the one scene so the loading is in one html page and uses one set of code.
+Use another canvas for tutorials.
+Use another canvas for loading the next level.
+Walking to use dt to make it acurate.
+Walking speed increased
+Rotation speed to use dt
+Rotation code decreased
+better trees.

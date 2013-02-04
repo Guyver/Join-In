@@ -1,0 +1,171 @@
+<!-- 
+	A test html page for loading meshes in Three.js
+-->
+
+<html>
+	<head>
+		<style>
+			#game{
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 1;		
+			}
+			
+			#fade{
+				position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 2;		
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="game" width=window.innerWidth height="320"><p>Your browser does not support HTML5!</p></canvas>
+		<canvas id="fade" width="480" height="320"><p>Your browser does not support HTML5!</p></canvas>
+		
+		<video id='introVid' width="0" height="0" src="./Video/intro.mp4" type="video/mp4"></video>
+		<video id='tutVid1' width="0" height="0" src="./Video/level_one.mp4" type="video/mp4" ></video>
+		<video id='tutVid2' width="0" height="0" src="./Video/level_two.mp4" type="video/mp4" ></video>
+		
+		<script>			
+			
+			var images = [];
+			var videos = [];
+			var canvasGame,canvasFade, ctxGame, ctxFade;
+			var fadeSplash = new Image();
+			fadeSplash.src = './Img/loading_screen.png';
+			gameSplash = new Image();
+			gameSplash.src = './Img/game.png';
+			
+			var loopInterval, fadeInterval;			
+			
+			
+			var loop = function()
+			{
+				update();
+				draw();					
+			};
+			
+			
+			
+			
+			var draw = function()
+			{	
+				ctxFade.clearRect( 0,0, ctxFade.canvas.width, ctxFade.canvas.height);
+				ctxGame.clearRect( 0,0, ctxGame.canvas.width, ctxGame.canvas.height);
+				ctxGame.drawImage( gameSplash, 0, 0, window.innerWidth, window.innerHeight );
+				ctxFade.drawImage( fadeSplash, 0, 0, window.innerWidth, window.innerHeight );
+			};
+			
+			
+			
+			
+			var update = function()
+			{
+				
+			};	
+			
+			
+			
+			
+			var init = function()
+			{
+				// Get the canvas', contexts, videos and images.
+				canvasGame = document.getElementById( 'game' );
+				canvasFade = document.getElementById( 'fade' );
+				
+				ctxGame = canvasGame.getContext( '2d');
+				ctxFade = canvasFade.getContext( '2d');
+				
+				videos.push( document.getElementById( 'introVid' ) );
+				videos.push( document.getElementById( 'tutVid1' ) ) ;
+				videos.push( document.getElementById( 'tutVid2' ) );
+				
+				images.push( new Image() );
+				images[0].src = './Img/level_one.png';
+				images.push( new Image() );
+				images[1].src = './Img/level_two.png';
+				images.push( new Image() );
+				images[2].src = './Img/loading.png';
+				
+			};init();
+			
+			
+			
+			
+			var resize = function()
+			{	
+				canvasGame.width = window.innerWidth;
+				canvasGame.height = window.innerHeight;	
+				
+				canvasFade.width = window.innerWidth;
+				canvasFade.height = window.innerHeight;
+				
+			};resize();
+
+			
+			
+			
+			var onLoad = function()
+			{	
+				loopInterval = setInterval( 'loop()', 1/60 );	
+			};
+			
+			
+			
+			
+			var fadeIn = function()
+			{
+				
+				// Kill the existing interval.
+				clearInterval( loopInterval );
+				ctxFade.globalAlpha += 0.005;
+				draw();
+				
+				if( ctxFade.globalAlpha > 0.9 )
+				{
+					ctxFade.globalAlpha = 1;
+					loopInterval = setInterval( 'loop()', 1/60 );
+					return;					
+				}
+				setTimeout( 'fadeIn()', 1/60 );
+			};
+			
+			
+			
+			
+			var fadeOut = function()
+			{
+				//  Kill the existing interval.
+				clearInterval( loopInterval );
+				ctxFade.globalAlpha -= 0.005;
+				draw();
+				
+				if( ctxFade.globalAlpha < 0.1 )
+				{
+					ctxFade.globalAlpha = 0.0;
+					loopInterval = setInterval( 'loop()', 1/60 );
+					return;
+				}
+				setTimeout( 'fadeOut()', 1/60 );
+			};
+			
+			window.onload = onLoad;
+			
+			window.onkeydown=function( e ){ 
+			
+				switch( e.keyCode )
+				{
+					case 88:
+						fadeIn();
+						break;
+					default:
+						fadeOut();
+						break;					
+				}
+			
+			};
+		</script>
+	</body>
+</html>

@@ -1,0 +1,5 @@
+This has been tested with an Xbox360 Kinect so I had to use the Beta SDK from Microsoft.
+
+Make sure all previous SDK's are removed along with any other Kinect drivers and install Beta SDK 1.
+
+Compile and run!

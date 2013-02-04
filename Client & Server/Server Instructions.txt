@@ -1,8 +1,0 @@
-The game server is a NodeJS server. The game server also depends on a mongo, noSql, database.
-
-1) Run the mongo server ( mongod )
-2) Run the Server
-
-Each client then connects and has to enter a unique id to log on which the server then retrieves the data associated to that key.
-It then creates a player map and stores it globally in the server and associates them by their clients ip addresses.
-It also keeps a store of the connected clients sockets so it can transmit to any client as needed.
