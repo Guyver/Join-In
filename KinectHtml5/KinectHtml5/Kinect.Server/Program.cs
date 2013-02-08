@@ -30,7 +30,7 @@ namespace Kinect.Server
         {
             sockets = new List<IWebSocketConnection>();
 
-            var server = new WebSocketServer("ws://localhost:8181");
+            var server = new WebSocketServer("ws://localhost:7540");
 
             server.Start(socket =>
             {

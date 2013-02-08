@@ -5,11 +5,10 @@
 */
 
 // Connect to the server.
-var socket = io.connect( '89.100.116.37:7541' );
+var socket = io.connect( '127.0.0.1:7541' );
 
-// Connect to Sandra.
-var sandra = io.connect( '127.0.0.1:8080' );
-var kinect = new WebSocket("ws://localhost:8181/KinectHtml5");
+// Connect to the new Kinect SDK.
+var kinect = new WebSocket("ws://localhost:7540/KinectHtml5");
 var kinectData;
 var status;
 var jsonObject;
@@ -107,8 +106,6 @@ function init()
 	
 	// Audio
 	initSound();
-	
-	sandra.emit( 'giveMeHugs', true );
 	
 	window.setInterval( 'gameLoop()', 1/60 );
 };
@@ -232,7 +229,7 @@ function setupLights()
 */
 function gameLoop()
 {	
-	connectToLocalSandraServer();
+	//connectToLocalSandraServer();
 	
 	resetAudio();
 	
@@ -354,8 +351,6 @@ function gameLoop()
 		g_waiting = false;
 		fadeOut();
 	}
-	
-	sandra.emit( 'getData' );
 	
 	checkPaused();
 };
@@ -704,21 +699,7 @@ socket.on( 'nextLevel', function( data )
 	 g_currentLevelFinished = true;
 });
 
-
-/**	@Name:	
-	@Brief:	
-	@Arguments:N/A
-	@Returns:N/A
-*/
-sandra.on( 'returnData', function( dataR )
-{	
-	var data = JSON.parse( dataR );	
-	if( data[ 'head' ] != undefined && data[ 'head' ] != null )
-	{
-		level_Manager.getPlayer()._kinectData = data;		
-	}	
-});
-			
+		
 			
 /**	@Name:	
 	@Brief:	
